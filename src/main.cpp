@@ -4,9 +4,10 @@
 #include "benchmark.hpp"
 
 int main() {
+    using namespace application;
     constexpr size_t s = 1000000;
     std::vector<int> arr(s);
-    application::Benchmark bm;
+    Benchmark bm;
     auto init_rands = bm.measure([&] {
         for(size_t i = 0; i < s; ++i) arr[i] = rand();
    });
@@ -16,8 +17,10 @@ int main() {
     auto sort_sorted = bm.measure([&] {
         std::sort(arr.begin(), arr.end());
     });
+    using namespace std::literals;
     std::cout 
         << "init random values: " << init_rands << std::endl
         << "sort it: " << sort_chaos << std::endl
-        << "sort again: " << sort_sorted << std::endl;
+        << "sort again: " << sort_sorted << std::endl
+        << "sort again: " << Benchmark::Timestamp{1123167173163s} << std::endl;
 }
