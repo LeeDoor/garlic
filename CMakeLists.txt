@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 4.1)
 project(batadase)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 add_executable(${CMAKE_PROJECT_NAME} main.cpp)

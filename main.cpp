@@ -1,6 +1,9 @@
 #include <iostream>
 
+[[nodiscard]] int func() { }
+
 int main() {
-    std::cout << "Hello, world!" << std::endl;
-    return 0;
+    int a = func();
+    func();
+    return a;
 }
