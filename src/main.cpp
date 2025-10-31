@@ -22,5 +22,6 @@ int main() {
         << "init random values: " << init_rands << std::endl
         << "sort it: " << sort_chaos << std::endl
         << "sort again: " << sort_sorted << std::endl;
-    return sort_chaos.duration >= 500ms;
+    bool fine_result = 1s < sort_chaos.duration && sort_chaos.duration < 2s;
+    return !fine_result;
 }
