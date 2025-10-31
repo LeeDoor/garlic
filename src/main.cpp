@@ -21,6 +21,6 @@ int main() {
     std::cout 
         << "init random values: " << init_rands << std::endl
         << "sort it: " << sort_chaos << std::endl
-        << "sort again: " << sort_sorted << std::endl
-        << "sort again: " << Benchmark::Timestamp{1123167173163s} << std::endl;
+        << "sort again: " << sort_sorted << std::endl;
+    return sort_chaos.duration >= 500ms;
 }

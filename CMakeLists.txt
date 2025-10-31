@@ -17,5 +17,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+enable_testing()
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 add_subdirectory(src)
