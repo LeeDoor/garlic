@@ -8,7 +8,7 @@ set(SANITIZERS_FLAGS "-fsanitize=address,undefined -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${SANITIZERS_FLAGS})
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${SANITIZERS_FLAGS})
 
-find_package(GTest REQUIRED)
+find_package(GTest)
 if(NOT ${GTest_FOUND})
     include(FetchContent)
     FetchContent_Declare(
