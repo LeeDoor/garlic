@@ -20,9 +20,7 @@ jobs:
         cmakeVersion: 4.1.x
 
     - name: Configure CMake
-      run: cmake -B build -S .
-
-    - name: Build
-      run: cmake --build build
+      run: cd scripts; ./build.sh
+      
     - name: Test
-      run: ctest --test-dir build --output-on-failure --timeout 4
+      run: cd scripts; ./test.sh
