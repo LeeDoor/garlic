@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install CMake
-      uses: lukka/get-cmake@vlatest 
+      uses: lukka/get-cmake@latest 
       with:
         cmakeVersion: 4.1.x
 
