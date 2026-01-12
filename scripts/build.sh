@@ -4,4 +4,4 @@ mkdir build
 cd build
 rm $exe
 cmake ..
-cmake --build . -j4
+cmake --build . -j$(nproc)
