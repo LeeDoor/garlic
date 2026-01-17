@@ -19,20 +19,20 @@ int main()
     Time elapsed_prev = Time::Zero;
     while (window.isOpen())
     {
-        car.roolie(0);
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-            car.roolie(-1);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-            car.roolie(1);
         Time elapsed = clock.getElapsedTime();
         Time delta = elapsed - elapsed_prev;
         elapsed_prev = elapsed;
         std::cout << "\r" << delta.asMicroseconds() << "mcs" << std::flush;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+            car.roolie(delta, -1);
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+            car.roolie(delta, 1);
+        else car.roolie(delta, 0);
         car.drive_tick(delta);
 
 

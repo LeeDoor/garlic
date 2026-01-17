@@ -5,6 +5,7 @@ class Car : public sf::Drawable {
     static constexpr Point CAR_SIZE { 100, 50 };
     static constexpr float ROTATION_DEG_PER_MS = 0.1;
     static constexpr float SPEED_PX_PER_MS = 0.2;
+    static constexpr float ROOLING_SPEED_PER_MS = 0.001f;
 public:
     Car(Point start_position) : 
         hitbox_{Rectangle::from_position_and_size(start_position, CAR_SIZE)}, 
@@ -25,12 +26,22 @@ public:
         Point normal_shift = get_normal_shift();
         hitbox_.move(normal_shift * speed_ * static_cast<float>(delta_time.asMicroseconds()) * 0.001f);
     }
-    void roolie(float new_wheel_rot) {
-        if(new_wheel_rot < -1.0f)
-            new_wheel_rot = -1;
-        if(new_wheel_rot > 1.0f)
-            new_wheel_rot = 1;
-        wheel_rotation_ = new_wheel_rot;
+    void roolie(Time delta_time, int rooling_dir) {
+        if(rooling_dir != 0 && std::abs(rooling_dir) != 1)
+            rooling_dir /= std::abs(rooling_dir);
+        if(rooling_dir == 0) {
+            if(wheel_rotation_ != 0) {
+                wheel_rotation_ += wheel_rotation_ / -std::abs(wheel_rotation_) * ROOLING_SPEED_PER_MS * delta_time.asMicroseconds() * 0.001f;
+            }
+        } else if(rooling_dir == -1) {
+            if(wheel_rotation_ > rooling_dir) {
+                wheel_rotation_ -= ROOLING_SPEED_PER_MS * delta_time.asMicroseconds() * 0.001f;
+            }
+        } else if(rooling_dir == 1) {
+            if(wheel_rotation_ < rooling_dir) {
+                wheel_rotation_ += ROOLING_SPEED_PER_MS * delta_time.asMicroseconds() * 0.001f;
+            }
+        }
     }
 private:
     Point get_normal_shift() const {
