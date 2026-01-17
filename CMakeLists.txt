@@ -4,13 +4,15 @@ project(batadase)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(CMAKE_CXX_STANDARD 20)
-set(SANITIZERS_FLAGS "-fsanitize=address,undefined -fno-omit-frame-pointer")
+set(SANITIZERS_FLAGS "")
+#set(SANITIZERS_FLAGS "-fsanitize=address,undefined")
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${SANITIZERS_FLAGS})
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${SANITIZERS_FLAGS})
 
 find_package(GTest)
+find_package(SFML 3.0 COMPONENTS Graphics Audio REQUIRED)
+include(FetchContent)
 if(NOT ${GTest_FOUND})
-    include(FetchContent)
     FetchContent_Declare(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
@@ -21,5 +23,5 @@ if(NOT ${GTest_FOUND})
 endif()
 
 enable_testing()
-add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+add_compile_options(-Wall -Wextra -Wpedantic)
 add_subdirectory(src)

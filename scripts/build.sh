@@ -3,5 +3,5 @@ cd ..
 mkdir build
 cd build
 rm $exe
-cmake ..
+cmake .. 
 cmake --build . -j$(nproc)
