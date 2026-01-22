@@ -12,16 +12,9 @@ static std::string ERROR_DATA_SIZE_MISMATCH = "trying to read/write data with wr
 class Table {
     using InitList = std::initializer_list<PublicColumnInfo>;
 public:
-    Table(InitList column_headers)
-    : row_size_bytes_{calculate_row_size(column_headers)}
-    , header_{create_column_header(column_headers)}
-    , content_{row_size_bytes_}
-    {}
+    Table(InitList column_headers);
 
-    /*! \returns id of created row or -1 if error occured */
-    ssize_t create_empty_row() {
-        return content_.create_empty_row();
-    }
+    size_t create_empty_row();
 
     template<typename T> 
     requires std::is_arithmetic_v<T>
@@ -70,7 +63,7 @@ public:
         std::memcpy(&out, bytes.data(), sizeof(T));
         return out;
     }
-    
+
     template<typename T>
     requires std::is_same_v<T, StringType>
     StringType get_value(size_t row, size_t column) {
@@ -92,29 +85,8 @@ private:
     template<typename T> requires std::is_same_v<T, FloatType> 
     static CellType get_cell_type() { return CellType::Float; }
 
-    static size_t calculate_row_size(const InitList& headers) {
-        return std::accumulate(headers.begin(), headers.end(), 0, 
-            [](size_t lhs, const PublicColumnInfo& rhs) {
-                size_t column_size = 
-                    rhs.type == String ? 
-                    rhs.size_characters * sizeof(CharType) : get_type_size(rhs.type);
-                return lhs + column_size; 
-            });
-    }
-    static std::vector<ColumnInfo> create_column_header(const InitList& column_headers) {
-        std::vector<ColumnInfo> result;
-        size_t offset = 0;
-        result.reserve(column_headers.size());
-        for(auto& column : column_headers) {
-            size_t column_size = 
-                column.type == String ? 
-                column.size_characters * sizeof(CharType) : get_type_size(column.type);
-            result.push_back(ColumnInfo { column.type, column.column_name, column_size, offset });
-            offset += column_size;
-        }
-        return result;
-    }
-
+    static size_t calculate_row_size(const InitList& headers);
+    static std::vector<ColumnInfo> create_column_header(const InitList& column_headers);
 
     size_t row_size_bytes_;
     std::vector<ColumnInfo> header_;
