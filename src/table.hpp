@@ -8,6 +8,7 @@ namespace garlic {
 static std::string ERROR_COLUMN_ID_TOO_BIG = "incoming column id is more than columns amount";
 static std::string ERROR_DATA_TYPE_MISMATCH = "trying to read/write wrong type of data";
 static std::string ERROR_DATA_SIZE_MISMATCH = "trying to read/write data with wrong size";
+
 class Table {
     using InitList = std::initializer_list<PublicColumnInfo>;
 public:
@@ -39,7 +40,9 @@ public:
         return content_.set_value(row, row_offset, value_bytes);
     }
 
-    void set_value(size_t row, size_t column, const std::string& value) {
+    template<typename T>
+    requires std::is_same_v<T, StringType>
+    void set_value(size_t row, size_t column, const T& value) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
         if(header_[column].type != String) 
@@ -69,30 +72,33 @@ public:
     }
     
     template<typename T>
-    requires std::is_same_v<T, std::string>
-    std::string get_value(size_t row, size_t column) {
+    requires std::is_same_v<T, StringType>
+    StringType get_value(size_t row, size_t column) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
         if(header_[column].type != String) 
             throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
 
         ByteArray bytes = content_.get_value(row, header_[column].offset, header_[column].size_bytes);
-        std::string out(bytes.size() / sizeof(char), '\0');
+        StringType out(bytes.size() / sizeof(CharType), '\0');
         std::memcpy(out.data(), bytes.data(), bytes.size());
         return out;
     }
 
 private:
-    template<typename T> requires std::is_same_v<T, int> 
+    template<typename T> requires std::is_same_v<T, IntType> 
     static CellType get_cell_type() { return CellType::Int; }
 
-    template<typename T> requires std::is_same_v<T, float> 
+    template<typename T> requires std::is_same_v<T, FloatType> 
     static CellType get_cell_type() { return CellType::Float; }
 
     static size_t calculate_row_size(const InitList& headers) {
         return std::accumulate(headers.begin(), headers.end(), 0, 
             [](size_t lhs, const PublicColumnInfo& rhs) {
-                return lhs + rhs.size_bytes;
+                size_t column_size = 
+                    rhs.type == String ? 
+                    rhs.size_characters * sizeof(CharType) : get_type_size(rhs.type);
+                return lhs + column_size; 
             });
     }
     static std::vector<ColumnInfo> create_column_header(const InitList& column_headers) {
@@ -100,8 +106,11 @@ private:
         size_t offset = 0;
         result.reserve(column_headers.size());
         for(auto& column : column_headers) {
-            result.push_back(ColumnInfo { column.type, column.column_name, column.size_bytes, offset });
-            offset += column.size_bytes;
+            size_t column_size = 
+                column.type == String ? 
+                column.size_characters * sizeof(CharType) : get_type_size(column.type);
+            result.push_back(ColumnInfo { column.type, column.column_name, column_size, offset });
+            offset += column_size;
         }
         return result;
     }
