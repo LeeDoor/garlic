@@ -35,7 +35,6 @@ public:
     : row_size_bytes_{calculate_row_size(begin, end)}
     , header_{create_column_header(begin, end)}
     , content_{row_size_bytes_}
-
     {}
 
     size_t create_empty_row() {
@@ -113,25 +112,33 @@ private:
 
     template<IteratorOf<PublicColumnInfo> Iter>
     static size_t calculate_row_size(Iter begin, Iter end) {
-        return std::accumulate(begin, end, 0, 
+        auto row_size = std::accumulate(begin, end, 0, 
             [](size_t lhs, const PublicColumnInfo& rhs) {
                 size_t column_size = 
                 rhs.type == String ? 
                 rhs.size_characters * sizeof(CharType) : get_type_size(rhs.type);
                 return lhs + column_size; 
             });
+        if(row_size == 0)
+            throw std::logic_error("Cannot create a table with 0 row size");
+        return row_size;
     }
+
     template<IteratorOf<PublicColumnInfo> Iter>
     static std::vector<ColumnInfo> create_column_header(Iter begin, Iter end) {
         std::vector<ColumnInfo> result;
         size_t offset = 0;
         result.reserve(std::distance(begin, end));
+        std::unordered_set<std::string> taken_col_names;
         for(; begin != end; ++begin) {
             auto& column = *begin;
             size_t column_size = 
                 column.type == String ? 
                 column.size_characters * sizeof(CharType) : get_type_size(column.type);
-            result.push_back(ColumnInfo { column.type, column.column_name, column_size, offset });
+            if(taken_col_names.contains(column.name))
+                throw std::logic_error("Cannot have two columns with same names");
+            taken_col_names.insert(column.name);
+            result.push_back(ColumnInfo { column.type, column.name, column_size, offset });
             offset += column_size;
         }
         return result;

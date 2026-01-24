@@ -5,7 +5,7 @@ namespace garlic {
 
 struct ColumnInfo {
     CellType type;
-    std::string column_name;
+    std::string name;
     size_t size_bytes;
     size_t offset;
 };

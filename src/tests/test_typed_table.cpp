@@ -2,8 +2,8 @@
 
 namespace garlic {
 
-TEST(test_typed_table, initialization) {
-    EXPECT_NO_THROW(TypedTable tt {});
+TEST(test_typed_table, initEmpty_shouldThrow) {
+    EXPECT_THROW(TypedTable tt {}, std::logic_error);
 }
 
 TEST(test_typed_table, initWithColumns) {
