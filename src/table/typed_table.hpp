@@ -9,12 +9,38 @@ static std::string ERROR_COLUMN_ID_TOO_BIG = "incoming column id is more than co
 static std::string ERROR_DATA_TYPE_MISMATCH = "trying to read/write wrong type of data";
 static std::string ERROR_DATA_SIZE_MISMATCH = "trying to read/write data with wrong size";
 
-class TypedTable {
-    using InitList = std::initializer_list<PublicColumnInfo>;
-public:
-    TypedTable(InitList column_headers);
+template<typename Iter, typename T>
+concept IteratorOf = requires(Iter iter) {
+    requires std::input_iterator<Iter>;
+    requires std::is_same_v<std::iter_value_t<Iter>, T>;
+};
 
-    size_t create_empty_row();
+template<typename Container, typename T>
+concept IterableContainer = requires(Container c) {
+    { c.begin() } -> IteratorOf<T>;
+    { c.end() } -> IteratorOf<T>;
+};
+
+class TypedTable {
+public:
+    TypedTable(std::initializer_list<PublicColumnInfo> container) 
+    : TypedTable(container.begin(), container.end()) {}
+
+    template<IterableContainer<PublicColumnInfo> Container>
+    TypedTable(const Container& container) 
+    : TypedTable(container.begin(), container.end()) {}
+
+    template<IteratorOf<PublicColumnInfo> Iter>
+    TypedTable(Iter begin, Iter end)
+    : row_size_bytes_{calculate_row_size(begin, end)}
+    , header_{create_column_header(begin, end)}
+    , content_{row_size_bytes_}
+
+    {}
+
+    size_t create_empty_row() {
+        return content_.create_empty_row();
+    }
 
     template<typename T> 
     requires std::is_arithmetic_v<T>
@@ -85,8 +111,31 @@ private:
     template<typename T> requires std::is_same_v<T, FloatType> 
     static CellType get_cell_type() { return CellType::Float; }
 
-    static size_t calculate_row_size(const InitList& headers);
-    static std::vector<ColumnInfo> create_column_header(const InitList& column_headers);
+    template<IteratorOf<PublicColumnInfo> Iter>
+    static size_t calculate_row_size(Iter begin, Iter end) {
+        return std::accumulate(begin, end, 0, 
+            [](size_t lhs, const PublicColumnInfo& rhs) {
+                size_t column_size = 
+                rhs.type == String ? 
+                rhs.size_characters * sizeof(CharType) : get_type_size(rhs.type);
+                return lhs + column_size; 
+            });
+    }
+    template<IteratorOf<PublicColumnInfo> Iter>
+    static std::vector<ColumnInfo> create_column_header(Iter begin, Iter end) {
+        std::vector<ColumnInfo> result;
+        size_t offset = 0;
+        result.reserve(std::distance(begin, end));
+        for(; begin != end; ++begin) {
+            auto& column = *begin;
+            size_t column_size = 
+                column.type == String ? 
+                column.size_characters * sizeof(CharType) : get_type_size(column.type);
+            result.push_back(ColumnInfo { column.type, column.column_name, column_size, offset });
+            offset += column_size;
+        }
+        return result;
+    }
 
     size_t row_size_bytes_;
     std::vector<ColumnInfo> header_;

@@ -1,6 +1,6 @@
 #include "byte_matrix.hpp"
 
-using namespace garlic;
+namespace garlic {
 
 TEST(test_table_content, empty_initialization) {
     ByteMatrix tc(0);
@@ -116,4 +116,6 @@ TEST(test_table_content, intnfloatRowSize_offsetOverflow_strictGuarantee) {
     EXPECT_THROW(tc.get_value(0, 1, 4), std::logic_error);
 
     EXPECT_EQ(tc.get_value(0, 0, sizeof(int)), ByteArray(sizeof(int), 0x00));
+}
+
 }
