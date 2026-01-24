@@ -1,9 +1,9 @@
-#include "table_content.hpp"
+#include "byte_matrix.hpp"
 
 using namespace garlic;
 
 TEST(test_table_content, empty_initialization) {
-    TableContent tc(0);
+    ByteMatrix tc(0);
 
     ASSERT_THROW(tc.set_value(0, 0, {}), std::logic_error);
     ASSERT_THROW(tc.set_value(1, 0, {}), std::logic_error);
@@ -15,20 +15,20 @@ TEST(test_table_content, empty_initialization) {
     ASSERT_THROW(tc.get_value(0, 0, 4), std::logic_error);
 }
 TEST(test_table_content, emptySetArgs_shouldThrow) {
-    TableContent tc(1);
+    ByteMatrix tc(1);
     
     ASSERT_THROW(tc.set_value(0, 0, {}), std::logic_error);
 }
 TEST(test_table_content, byteRowSize_shouldBeZeroByDefault) {
     for(int tc_size : { 1, 20, 4000 }) {
-        TableContent tc(tc_size);
+        ByteMatrix tc(tc_size);
         ASSERT_NO_THROW(tc.create_empty_row());
         
         ASSERT_EQ(tc.get_value(0, 0, 1), ByteArray{ 0x00 });
     }
 }
 TEST(test_table_content, byteRowSize_shouldSetAndGetSuccess) {
-    TableContent tc(1);
+    ByteMatrix tc(1);
 
     ASSERT_NO_THROW(tc.create_empty_row());
     ASSERT_NO_THROW(tc.set_value(0, 0, { 0xFF }));
@@ -36,7 +36,7 @@ TEST(test_table_content, byteRowSize_shouldSetAndGetSuccess) {
     ASSERT_EQ(tc.get_value(0, 0, 1), ByteArray{ 0xFF });
 }
 TEST(test_table_content, byteRowSize_overflowing_shouldThrow) {
-    TableContent tc(1);
+    ByteMatrix tc(1);
     ASSERT_NO_THROW(tc.create_empty_row());
 
     ASSERT_THROW(tc.set_value(1, 0, {0xFF}), std::logic_error);
@@ -60,7 +60,7 @@ TEST(test_table_content, testValues_are_same_size_as_int_and_float) {
 }
 
 TEST(test_table_content, intnfloatRowSize_SuccessSetGet) {
-    TableContent tc(sizeof(int) + sizeof(float));
+    ByteMatrix tc(sizeof(int) + sizeof(float));
     tc.create_empty_row();
     tc.create_empty_row();
 
@@ -76,7 +76,7 @@ TEST(test_table_content, intnfloatRowSize_SuccessSetGet) {
 }
 
 TEST(test_table_content, intnfloatRowSize_twistedOffset_Success) {
-    TableContent tc(sizeof(int) + sizeof(float));
+    ByteMatrix tc(sizeof(int) + sizeof(float));
     tc.create_empty_row();
     tc.create_empty_row();
 
@@ -99,7 +99,7 @@ TEST(test_table_content, intnfloatRowSize_twistedOffset_Success) {
 }
 
 TEST(test_table_content, intnfloatRowSize_offsetOverflow_shouldThrow) {
-    TableContent tc(sizeof(int));
+    ByteMatrix tc(sizeof(int));
     tc.create_empty_row();
     tc.create_empty_row();
 
@@ -108,7 +108,7 @@ TEST(test_table_content, intnfloatRowSize_offsetOverflow_shouldThrow) {
 }
 
 TEST(test_table_content, intnfloatRowSize_offsetOverflow_strictGuarantee) {
-    TableContent tc(sizeof(int));
+    ByteMatrix tc(sizeof(int));
     tc.create_empty_row();
     tc.create_empty_row();
 

@@ -2,9 +2,9 @@
 
 namespace garlic {
 
-class TableContent {
+class ByteMatrix {
 public:
-    TableContent(size_t row_size_bytes);
+    ByteMatrix(size_t row_size_bytes);
 
     size_t create_empty_row();
     void set_value(size_t row_id, size_t offset, ByteArray value);

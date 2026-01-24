@@ -6,7 +6,9 @@ set(DEPENDENCIES
     table
 )
 
-add_executable(tests test_table_content.cpp)
+add_executable(tests 
+    test_byte_matrix.cpp
+)
 target_link_libraries(tests PUBLIC
     ${GENERAL_LINK_LIBRARIES}
     ${DEPENDENCIES}

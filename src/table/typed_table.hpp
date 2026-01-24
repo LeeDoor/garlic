@@ -1,7 +1,7 @@
 #pragma once
 #include "column_info.hpp"
 #include "public_column_info.hpp"
-#include "table_content.hpp"
+#include "byte_matrix.hpp"
 
 namespace garlic {
 
@@ -9,10 +9,10 @@ static std::string ERROR_COLUMN_ID_TOO_BIG = "incoming column id is more than co
 static std::string ERROR_DATA_TYPE_MISMATCH = "trying to read/write wrong type of data";
 static std::string ERROR_DATA_SIZE_MISMATCH = "trying to read/write data with wrong size";
 
-class Table {
+class TypedTable {
     using InitList = std::initializer_list<PublicColumnInfo>;
 public:
-    Table(InitList column_headers);
+    TypedTable(InitList column_headers);
 
     size_t create_empty_row();
 
@@ -90,7 +90,7 @@ private:
 
     size_t row_size_bytes_;
     std::vector<ColumnInfo> header_;
-    TableContent content_;
+    ByteMatrix content_;
 };
 
 }
