@@ -6,7 +6,7 @@ set(DEPENDENCIES
     table
 )
 
-add_executable(tests 
+add_executable(tests_exe
     test_byte_matrix.cpp
 )
 target_link_libraries(tests PUBLIC
@@ -18,4 +18,4 @@ target_include_directories(tests PUBLIC
     ${DEPENDENCIES}
 )
 
-add_test(NAME test COMMAND tests)
+add_test(NAME run_all_tests COMMAND tests_exe)
