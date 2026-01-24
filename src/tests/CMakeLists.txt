@@ -7,12 +7,12 @@ set(DEPENDENCIES
 )
 
 add_executable(tests test_table_content.cpp)
-target_include_directories(tests PUBLIC 
-    ${GENERAL_INCLUDE_DIRECTORIES}
-    ${DEPENDENCIES}
-)
 target_link_libraries(tests PUBLIC
     ${GENERAL_LINK_LIBRARIES}
+    ${DEPENDENCIES}
+)
+target_include_directories(tests PUBLIC 
+    ${GENERAL_INCLUDE_DIRECTORIES}
     ${DEPENDENCIES}
 )
 

@@ -1,3 +1,3 @@
 #pragma once
 #include <bits/stdc++.h>
-using ByteArray = std::vector<std::byte>;
+using ByteArray = std::vector<unsigned char>;
