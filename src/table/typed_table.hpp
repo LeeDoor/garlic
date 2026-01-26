@@ -42,7 +42,7 @@ public:
     }
 
     template<typename T> 
-    requires std::is_arithmetic_v<T>
+    requires std::is_arithmetic_v<T> && IsColumnType<T>
     void set_value(size_t row, size_t column, T value) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
@@ -52,15 +52,15 @@ public:
             throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
 
         size_t row_offset = header_[column].offset;
-        ByteArray value_bytes;
-        value_bytes.resize(sizeof(T));
-        std::memcpy(value_bytes.data(), &value, sizeof(T));
-        return content_.set_value(row, row_offset, value_bytes);
+        auto byte_represent = ByteSpan{ reinterpret_cast<const Byte*>(&value), sizeof(T) };
+        return content_.set_value(row, row_offset, byte_represent);
     }
 
-    template<typename T>
-    requires std::is_same_v<T, StringType>
-    void set_value(size_t row, size_t column, const T& value) {
+    void set_value(size_t row, size_t column, const char value[]) {
+        return set_value(row, column, std::string(value));
+    }
+    
+    void set_value(size_t row, size_t column, const StringType& value) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
         if(header_[column].type != String) 
@@ -69,14 +69,12 @@ public:
             throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
 
         size_t row_offset = header_[column].offset;
-        ByteArray value_bytes;
-        value_bytes.resize(value.size());
-        std::memcpy(value_bytes.data(), value.data(), value.size());
-        return content_.set_value(row, row_offset, value_bytes);
+        auto string_byte_represent = reinterpret_cast<const Byte*>(value.data());
+        return content_.set_value(row, row_offset, ByteSpan{ string_byte_represent, value.size() });
     }
 
     template<typename T>
-    requires std::is_arithmetic_v<T>
+    requires std::is_arithmetic_v<T> && IsColumnType<T>
     T get_value(size_t row, size_t column) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
@@ -84,23 +82,27 @@ public:
             throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
 
         T out;
-        ByteArray bytes = content_.get_value(row, header_[column].offset, sizeof(T));
+        ByteSpan bytes = content_.get_value(row, header_[column].offset, sizeof(T));
         std::memcpy(&out, bytes.data(), sizeof(T));
         return out;
     }
 
     template<typename T>
     requires std::is_same_v<T, StringType>
-    StringType get_value(size_t row, size_t column) {
+    StringViewType get_value(size_t row, size_t column) {
+        return get_value<StringViewType>(row, column);
+    }
+    template<typename T>
+    requires std::is_same_v<T, StringViewType>
+    T get_value(size_t row, size_t column) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
         if(header_[column].type != String) 
             throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
 
-        ByteArray bytes = content_.get_value(row, header_[column].offset, header_[column].size_bytes);
-        StringType out(bytes.size() / sizeof(CharType), '\0');
-        std::memcpy(out.data(), bytes.data(), bytes.size());
-        return out;
+        ByteSpan bytes = content_.get_value(row, header_[column].offset, header_[column].size_bytes);
+        StringViewType str = reinterpret_cast<const char*>(bytes.data());
+        return str;
     }
 
 private:

@@ -28,7 +28,8 @@ public:
      *  @throws if value is empty.
      *  @throws if value doesn't fit in row with given offset.
      */
-    void set_value(size_t row_id, size_t offset, ByteArray value);
+    void set_value(size_t row_id, size_t offset, ByteSpan value);
+    void set_value(size_t row_id, size_t offset, ByteVector value);
     /// Reads N bytes from table at given row with given offset.
     /*!
      * @param row_id id of the row to read from (may be returned from create_empty_row).
@@ -39,11 +40,11 @@ public:
      * @throws if reading zero bytes (count == 0).
      * @returns @ref ByteArray of read bytes. assert(ByteArray.size() == count).
      */
-    ByteArray get_value(size_t row_id, size_t offset, size_t count);
+    ByteSpan get_value(size_t row_id, size_t offset, size_t count) const;
 
 private:
     size_t row_size_bytes_;
-    std::vector<ByteArray> content_;
+    std::vector<ByteVector> content_;
 };
 
 }

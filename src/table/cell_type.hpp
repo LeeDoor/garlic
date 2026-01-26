@@ -4,12 +4,18 @@ namespace garlic {
 
 using CharType = char;
 using StringType = std::basic_string<CharType>;
+using StringViewType = std::basic_string_view<const CharType>;
 using IntType = int;
 using FloatType = float;
 
 enum CellType {
     String, Int, Float
 };
+template<typename T>
+concept IsColumnType = 
+    std::is_same_v<T, StringType>
+    || std::is_same_v<T, IntType> 
+    || std::is_same_v<T, FloatType>;
 
 template<CellType cell>
 constexpr size_t get_type_size() {

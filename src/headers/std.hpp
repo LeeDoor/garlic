@@ -1,3 +1,5 @@
 #pragma once
 #include <bits/stdc++.h>
-using ByteArray = std::vector<unsigned char>;
+using Byte = unsigned char;
+using ByteVector = std::vector<Byte>;
+using ByteSpan = std::span<const Byte>;

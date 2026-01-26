@@ -8,11 +8,15 @@ ByteMatrix::ByteMatrix(size_t row_size_bytes)
 {}
 
 size_t ByteMatrix::create_empty_row() {
-    content_.push_back(ByteArray(row_size_bytes_));
+    content_.push_back(ByteVector(row_size_bytes_));
     return content_.size() - 1;
 }
 
-void ByteMatrix::set_value(size_t row_id, size_t offset, ByteArray value) {
+void ByteMatrix::set_value(size_t row_id, size_t offset, ByteVector value) {
+    return set_value(row_id, offset, ByteSpan{ value.data(), value.size() });
+}
+
+void ByteMatrix::set_value(size_t row_id, size_t offset, ByteSpan value) {
     if(value.empty())
         throw std::logic_error("trying to set an empty value");
     if(offset + value.size() > row_size_bytes_)
@@ -22,13 +26,12 @@ void ByteMatrix::set_value(size_t row_id, size_t offset, ByteArray value) {
     std::memcpy(content_[row_id].data() + offset, value.data(), value.size());
 }
 
-ByteArray ByteMatrix::get_value(size_t row_id, size_t offset, size_t count) {
+ByteSpan ByteMatrix::get_value(size_t row_id, size_t offset, size_t count) const {
     if(count == 0)
         throw std::logic_error("trying to read an empty byte array");
     if(offset + count > row_size_bytes_)
         throw std::logic_error("requested to read data more than available in row");
-    ByteArray result(count);
-    std::memcpy(result.data(), content_[row_id].data() + offset, count);
+    const ByteSpan result(content_[row_id].begin() + offset, count);
     return result;
 }
 
