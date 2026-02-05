@@ -9,38 +9,56 @@ static std::string ERROR_COLUMN_ID_TOO_BIG = "incoming column id is more than co
 static std::string ERROR_DATA_TYPE_MISMATCH = "trying to read/write wrong type of data";
 static std::string ERROR_DATA_SIZE_MISMATCH = "trying to read/write data with wrong size";
 
+/// Check if Iter is an iterator with type T inside.
 template<typename Iter, typename T>
 concept IteratorOf = requires(Iter iter) {
     requires std::input_iterator<Iter>;
     requires std::is_same_v<std::iter_value_t<Iter>, T>;
 };
 
+/// Check if Container gives access to begin() and end() iterator objects,
+/// which are @ref IteratorOf objects.
 template<typename Container, typename T>
 concept IterableContainer = requires(Container c) {
     { c.begin() } -> IteratorOf<T>;
     { c.end() } -> IteratorOf<T>;
 };
 
+/// Type-based table.
+/*!
+ * Uses @ref ByteMatrix as a container to store data in row manner.
+ * Limits user to manage cells verifying data types and byte sizes.
+ */
 class TypedTable {
 public:
+    /// Testing override for initializer list. Unpreferrable in project.
     TypedTable(std::initializer_list<PublicColumnInfo> container) 
     : TypedTable(container.begin(), container.end()) {}
 
+    /// Override for iterable containers.
     template<IterableContainer<PublicColumnInfo> Container>
     TypedTable(const Container& container) 
     : TypedTable(container.begin(), container.end()) {}
 
+    /// Requires any iterable container iterators with info about columns.
     template<IteratorOf<PublicColumnInfo> Iter>
     TypedTable(Iter begin, Iter end)
-    : row_size_bytes_{calculate_row_size(begin, end)}
+    : row_size_bytes_{calculate_row_bytes(begin, end)}
     , header_{create_column_header(begin, end)}
     , content_{row_size_bytes_}
     {}
 
+    /// Creates empty row. You can't access a row without creating it.
     size_t create_empty_row() {
         return content_.create_empty_row();
     }
 
+    /// Sets some value T to given row at given column. Overload for numbers.
+    /*! @param row index of row that needs a change.
+     *  @param column index of cell in row (NOT byte position).
+     *  @param value given value with arithmetic type, which should match selected column type.
+     *  @throws std::logic_error if column is too big; if type mismatches; if row is too big.
+     */
     template<typename T> 
     requires std::is_arithmetic_v<T> && IsColumnType<T>
     void set_value(size_t row, size_t column, T value) {
@@ -48,18 +66,24 @@ public:
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
         if(header_[column].type != get_cell_type<T>())
             throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
-        if(header_[column].size_bytes != sizeof(value))
-            throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
 
         size_t row_offset = header_[column].offset;
         auto byte_represent = ByteSpan{ reinterpret_cast<const Byte*>(&value), sizeof(T) };
         return content_.set_value(row, row_offset, byte_represent);
     }
 
+    /// Overload for const char[]. Used for tests.
     void set_value(size_t row, size_t column, const char value[]) {
         return set_value(row, column, std::string(value));
     }
     
+    /// Overload for the String type. 
+    /*! @param row index of row that needs a change.
+     *  @param column index of cell in row (NOT byte position).
+     *  @param value string value to set. Should have same string size, as required, or less.
+     *  @throws std::logic_error if column is too big; if column type is not string; if string
+     *  size mismatches; if row is too big.
+     */
     void set_value(size_t row, size_t column, const StringType& value) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
@@ -73,6 +97,12 @@ public:
         return content_.set_value(row, row_offset, ByteSpan{ string_byte_represent, value.size() });
     }
 
+    /// Overload for numbers. Returns value at given position.
+    /*! @param row index of row to change.
+     *  @param cell index in row to change.
+     *  @throws std::logic_error if column is too big; if row is too big;
+     *  if type T mismatches with actual type.
+     */
     template<typename T>
     requires std::is_arithmetic_v<T> && IsColumnType<T>
     T get_value(size_t row, size_t column) {
@@ -87,11 +117,20 @@ public:
         return out;
     }
 
+    /// Overload for strings.
+    /*! If @ref StringType is passed as a parameter, function still returns @ref StringViewType. */
     template<typename T>
     requires std::is_same_v<T, StringType>
     StringViewType get_value(size_t row, size_t column) {
         return get_value<StringViewType>(row, column);
     }
+    /// Overload for strings.
+    /*! To avoid copying, getting string proceeds with std::string_view. If used String as T instead,
+     * other function overload is called and StringView still used.
+     * @param row index of row to change.
+     * @param cell index in row to change.
+     * @throws std::logic_error if row is too big; if column is too big.
+     */
     template<typename T>
     requires std::is_same_v<T, StringViewType>
     T get_value(size_t row, size_t column) {
@@ -106,14 +145,17 @@ public:
     }
 
 private:
+    /// Static function to get @ref CellType enum value from integer type.
     template<typename T> requires std::is_same_v<T, IntType> 
     static CellType get_cell_type() { return CellType::Int; }
 
+    /// Static function to get @ref CellType enum value from float type.
     template<typename T> requires std::is_same_v<T, FloatType> 
     static CellType get_cell_type() { return CellType::Float; }
 
+    /// Calculates the amount of bytes in a row.
     template<IteratorOf<PublicColumnInfo> Iter>
-    static size_t calculate_row_size(Iter begin, Iter end) {
+    static size_t calculate_row_bytes(Iter begin, Iter end) {
         auto row_size = std::accumulate(begin, end, 0, 
             [](size_t lhs, const PublicColumnInfo& rhs) {
                 size_t column_size = 
@@ -126,6 +168,7 @@ private:
         return row_size;
     }
 
+    /// Initializes the vector of ColumnInfo based on PublicColumnInfo container.
     template<IteratorOf<PublicColumnInfo> Iter>
     static std::vector<ColumnInfo> create_column_header(Iter begin, Iter end) {
         std::vector<ColumnInfo> result;
