@@ -5,32 +5,30 @@ namespace garlic {
 
 class CellStringValue : public CellValue {
 public:
-    CellStringValue(ConditionResolverPtr resolver, StringViewType value)
-    : CellValue(resolver)
-    , value_{ value }
+    CellStringValue(StringViewType value)
+    : value_{ value }
     {}
 
     StringViewType get_string() override { return value_; }
 
-    bool compare(CellValuePtr other, BinaryOp op) override {
-        int comp = std::strncmp
+    bool compare(CellValuePtr other, BinaryOperation op) override {
+        int comp = std::strncmp(value_.data(), other->get_string().data(), value_.size());
         switch(op) {
         case Equals:
-            return std::abs(get_float() - other->get_float()) < e;
+            return comp == 0;
         case Gt:
-            return get_float() > other->get_float();
+            return comp > 0;
         case Ge:
-            return get_float() >= other->get_float();
+            return comp >= 0;
         case Ls:
-            return get_float() < other->get_float();
+            return comp < 0;
         case Le:
-            return get_float() <= other->get_float();
+            return comp <= 0;
           break;
         };
     }
 
 protected:
-    std::shared_ptr<ConditionResolver> resolver_;
     StringViewType value_;
 };
    

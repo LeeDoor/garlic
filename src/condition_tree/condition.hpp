@@ -3,10 +3,9 @@
 
 namespace garlic {
 
-template<typename ConditionResolver>
 class Condition {
 protected:
-    using ExpressionPtr = std::unique_ptr<Expression<ConditionResolver>>;
+    using ExpressionPtr = std::unique_ptr<Expression>;
 public:
     virtual bool resolve() = 0;
 
@@ -17,7 +16,7 @@ protected:
     : resolver_{resolver} 
     {}
 
-    std::shared_ptr<ConditionResolver> resolver_;
+    ResolverPtr resolver_;
 };
 
 }

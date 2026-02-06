@@ -10,7 +10,7 @@ public:
     {}
 
     IntType get_int() override { return value_; }
-    bool compare(CellValuePtr other, BinaryOp op) override {
+    bool compare(CellValuePtr other, BinaryOperation op) override {
         switch(op) {
         case Equals:
             return get_int() == other->get_int();
@@ -22,7 +22,8 @@ public:
             return get_int() < other->get_int();
         case Le:
             return get_int() <= other->get_int();
-          break;
+        default:
+            throw std::logic_error("Not implemented binary operator in CellIntValue");
         };
     }
 

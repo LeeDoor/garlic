@@ -11,19 +11,22 @@ public:
 
     FloatType get_float() override { return value_; }
 
-    bool compare(CellValuePtr other, BinaryOp op) override {
-        FloatType e = std::numeric_limits<FloatType>::epsilon();
+    bool compare(CellValuePtr other, BinaryOperation op) override {
+        auto equals = [this, other] {
+            FloatType e = std::numeric_limits<FloatType>::epsilon();
+            return std::abs(get_float() - other->get_float()) < e;
+        };
         switch(op) {
         case Equals:
-            return std::abs(get_float() - other->get_float()) < e;
+            return equals();
         case Gt:
-            return get_float() > other->get_float();
+            return !equals() && get_float() > other->get_float();
         case Ge:
-            return get_float() >= other->get_float();
+            return equals() && get_float() >= other->get_float();
         case Ls:
-            return get_float() < other->get_float();
+            return !equals() && get_float() < other->get_float();
         case Le:
-            return get_float() <= other->get_float();
+            return equals() && get_float() <= other->get_float();
           break;
         };
     }

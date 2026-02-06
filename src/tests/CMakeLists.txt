@@ -10,6 +10,7 @@ set(DEPENDENCIES
 add_executable(${TEST_EXECUTABLE_NAME} 
     test_byte_matrix.cpp
     test_typed_table.cpp
+    test_cell_value.cpp
 )
 target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
     ${GENERAL_LINK_LIBRARIES}
@@ -18,6 +19,7 @@ target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
 target_include_directories(${TEST_EXECUTABLE_NAME} PUBLIC 
     ${GENERAL_INCLUDE_DIRECTORIES}
     ${DEPENDENCIES}
+    ../condition_tree
 )
 
 add_test(NAME run_all_tests COMMAND ${TEST_EXECUTABLE_NAME})

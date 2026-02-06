@@ -3,36 +3,25 @@
 
 namespace garlic {
 
-template<IConditionResolver Resolver>
-class EqualsCondition : public Condition<Resolver> {
-    using Parent = Condition<Resolver>;
+class CompareCondition : public Condition {
 public:
-    EqualsCondition(Parent::ExpressionPtr lhs, Parent::ExpressionPtr rhs, Parent::ResolverPtr resolver)
-    : expr_left_ { std::move(lhs) }
+    CompareCondition(ResolverPtr resolver, ExpressionPtr lhs, ExpressionPtr rhs, BinaryOperation op)
+    : Condition(  resolver )
+    , expr_left_ { std::move(lhs) }
     , expr_right_{ std::move(rhs) }
-    , resolver_  { resolver }
+    , operator_  { op }
     {}
 
     bool resolve() override {
-        CellType type = expr_left_->get_type();
-        switch(type) {
-        case String:
-            return 0 == std::strncmp(
-                    expr_left_->get_string(), 
-                    expr_right_->get_string(), 
-                    resolver_->get_cell_size());
-        case Int:
-            return expr_left_->get_int() == expr_right_->get_int();
-        case Float:
-            return expr_left_->get_float() == expr_right_->get_float();
-          break;
-        }
+        auto lhs = expr_left_->get_value(),
+             rhs = expr_right_->get_value();
+        return lhs->compare(rhs, operator_);
     }
 
 private:
-    Parent::ConditionResolver resolver_;
-    Parent::ExpressionPtr expr_left_;
-    Parent::ExpressionPtr expr_right_;
+    ExpressionPtr expr_left_;
+    ExpressionPtr expr_right_;
+    BinaryOperation operator_;
 };
 
 }
