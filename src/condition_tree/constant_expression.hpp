@@ -14,7 +14,7 @@ public:
     , value_(std::move(value))
     {}
 
-    CellValuePtr get_value() override {
+    CellValuePtr get_value() const override {
         return std::make_shared<CellValueType>(value_);
     }
 

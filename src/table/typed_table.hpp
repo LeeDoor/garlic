@@ -48,6 +48,17 @@ public:
     , content_{row_size_bytes_}
     {}
 
+    /// TODO
+    size_t get_column_number_by_name(const std::string& column_name) {
+        auto find_result = 
+            std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
+                return ci.name == column_name;
+            });
+        if(find_result == header_.end()) 
+            throw std::logic_error("trying to get id of incorrect column name");
+        return std::distance(header_.begin(), find_result);
+    }
+
     /// Creates empty row. You can't access a row without creating it.
     size_t create_empty_row() {
         return content_.create_empty_row();

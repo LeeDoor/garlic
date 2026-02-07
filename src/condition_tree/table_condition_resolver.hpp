@@ -12,21 +12,22 @@ public:
     , row_id_{ init_row_id }
     {}
 
-    IntType get_int_value(size_t column) const override {
+    IntType get_int_value(ColumnType column) const override {
         return get_cell_value<IntType>(column);   
     }
-    FloatType get_float_value(size_t column) const override { 
+    FloatType get_float_value(ColumnType column) const override { 
         return get_cell_value<FloatType>(column);   
     }
-    StringViewType get_string_value(size_t column) const override { 
+    StringViewType get_string_value(ColumnType column) const override { 
         return get_cell_value<StringViewType>(column);   
     }
     void set_row_id(size_t new_row_id) override { row_id_ = new_row_id; }
 
 private:
     template<IsReadonlyColumnType T>
-    T get_cell_value(size_t column) const {
-        return table_->get_value<T>(row_id_, column);
+    T get_cell_value(ColumnType column) const {
+        auto col_id = table_->get_column_number_by_name(column);
+        return table_->get_value<T>(row_id_, col_id);
     }
 
     TablePtr table_;

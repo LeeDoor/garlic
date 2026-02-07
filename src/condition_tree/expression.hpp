@@ -12,9 +12,9 @@ protected:
 public:
     virtual ~Expression() = default;
 
-    virtual CellValuePtr get_value() = 0;
+    virtual CellValuePtr get_value() const = 0;
 
-    virtual CellType get_type() {
+    virtual CellType get_type() const {
         return cell_type_;
     }
 protected:
