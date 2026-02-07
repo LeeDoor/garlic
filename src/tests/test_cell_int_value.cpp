@@ -3,12 +3,6 @@
 
 namespace garlic {
 using CellValuePtr = std::shared_ptr<CellValue>;
-#if 1
-std::ostream& operator<<(std::ostream& os, CellValuePtr cell) {
-    os << cell->get_int();
-    return os;
-}
-#endif
 
 TEST(test_cell_int_value, initialization) {
     CellValuePtr a5 = std::make_shared<CellIntValue>(5);

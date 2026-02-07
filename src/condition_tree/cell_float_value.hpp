@@ -16,13 +16,13 @@ public:
         return fl_equals(other);
     }
     bool le(CellValuePtr other) override {
-        return fl_equals(other) && get_float() <= other->get_float();
+        return fl_equals(other) || get_float() <= other->get_float();
     }
     bool lt(CellValuePtr other) override {
         return !fl_equals(other) && get_float() < other->get_float();
     }
     bool ge(CellValuePtr other) override {
-        return fl_equals(other) && get_float() >= other->get_float();
+        return fl_equals(other) || get_float() >= other->get_float();
     }
     bool gt(CellValuePtr other) override {
         return !fl_equals(other) && get_float() > other->get_float();
