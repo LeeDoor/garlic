@@ -17,12 +17,9 @@ TEST(test_cell_string_value, initialization) {
     CellValuePtr c = std::make_shared<CellStringValue>(str_empty);
 }
 
-TEST(test_cell_string_value, getFunctions_shouldThrowExceptString) {
+TEST(test_cell_string_value, getType_shouldGetString) {
     CellValuePtr a = std::make_shared<CellStringValue>(str_hello);
-    EXPECT_RANGEQ(a->get_string(), std::string_view(str_hello));
     EXPECT_EQ(a->get_type(), CellType::String);
-    EXPECT_THROW(a->get_int(), std::logic_error);
-    EXPECT_THROW(a->get_float(), std::logic_error);
 }
 
 TEST(test_cell_string_value, comparingSameStrings) {

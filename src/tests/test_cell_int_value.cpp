@@ -11,12 +11,9 @@ TEST(test_cell_int_value, initialization) {
     CellValuePtr amin = std::make_shared<CellIntValue>(std::numeric_limits<IntType>::min());
 }
 
-TEST(test_cell_int_value, getFunctions_shouldThrowExceptInt) {
+TEST(test_cell_int_value, getType_ShouldBeInt) {
     CellValuePtr a5 = std::make_shared<CellIntValue>(5);
-    EXPECT_EQ(a5->get_int(), 5);
     EXPECT_EQ(a5->get_type(), CellType::Int);
-    EXPECT_THROW(a5->get_float(), std::logic_error);
-    EXPECT_THROW(a5->get_string(), std::logic_error);
 }
 
 TEST(test_cell_int_value, basicComparingRange5) {

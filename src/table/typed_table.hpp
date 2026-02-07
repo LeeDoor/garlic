@@ -59,8 +59,8 @@ public:
      *  @param value given value with arithmetic type, which should match selected column type.
      *  @throws std::logic_error if column is too big; if type mismatches; if row is too big.
      */
-    template<typename T> 
-    requires std::is_arithmetic_v<T> && IsColumnType<T>
+    template<IsColumnType T> 
+    requires std::is_arithmetic_v<T>
     void set_value(size_t row, size_t column, T value) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
@@ -103,8 +103,8 @@ public:
      *  @throws std::logic_error if column is too big; if row is too big;
      *  if type T mismatches with actual type.
      */
-    template<typename T>
-    requires std::is_arithmetic_v<T> && IsColumnType<T>
+    template<IsColumnType T>
+    requires std::is_arithmetic_v<T>
     T get_value(size_t row, size_t column) {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);

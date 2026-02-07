@@ -10,18 +10,21 @@ protected:
     using CellValuePtr = std::shared_ptr<CellValue>;
     using ResolverPtr = std::shared_ptr<ConditionResolver>;
 public:
+    virtual ~Expression() = default;
+
     virtual CellValuePtr get_value() = 0;
 
     virtual CellType get_type() {
         return cell_type_;
     }
 protected:
-    Expression(std::shared_ptr<ConditionResolver> resolver)
-    : resolver_{resolver} 
+    Expression(CellType type, ResolverPtr resolver)
+    : cell_type_{ type }
+    , resolver_{ resolver } 
     {}
 
-    std::shared_ptr<ConditionResolver> resolver_;
     CellType cell_type_;
+    ResolverPtr resolver_;
 };
 
 }

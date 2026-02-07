@@ -13,6 +13,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_cell_int_value.cpp
     test_cell_float_value.cpp
     test_cell_string_value.cpp
+    test_constant_expression.cpp
 )
 target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
     ${GENERAL_LINK_LIBRARIES}
@@ -22,6 +23,7 @@ target_include_directories(${TEST_EXECUTABLE_NAME} PUBLIC
     ${GENERAL_INCLUDE_DIRECTORIES}
     ${DEPENDENCIES}
     ../condition_tree
+    mocks
 )
 
 add_test(NAME run_all_tests COMMAND ${TEST_EXECUTABLE_NAME})

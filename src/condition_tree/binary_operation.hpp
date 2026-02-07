@@ -2,6 +2,6 @@
 
 namespace garlic {
 
-enum BinaryOperation { Equals, Gt, Ge, Ls, Le };
+enum BinaryOperation { Equals, Gt, Ge, Lt, Le };
 
 }

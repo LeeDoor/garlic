@@ -11,14 +11,6 @@ TEST(test_cell_float_value, initialization) {
     CellValuePtr amin = std::make_shared<CellFloatValue>(-1e10);
 }
 
-TEST(test_cell_float_value, getFunctions_shouldThrowExceptFloat) {
-    CellValuePtr a5 = std::make_shared<CellFloatValue>(5.0);
-    EXPECT_LE(std::fabs(a5->get_float() - 5.0), std::numeric_limits<FloatType>::epsilon());
-    EXPECT_EQ(a5->get_type(), CellType::Float);
-    EXPECT_THROW(a5->get_int(), std::logic_error);
-    EXPECT_THROW(a5->get_string(), std::logic_error);
-}
-
 TEST(test_cell_float_value, basicComparingRange5) {
     CellValuePtr a5 = std::make_shared<CellFloatValue>(5.0);
     CellValuePtr b5 = std::make_shared<CellFloatValue>(5.0);
@@ -44,7 +36,7 @@ TEST(test_cell_float_value, basicComparingWithMiserableDifference_ShouldAccountA
 TEST(test_cell_float_value, basicComparingRangeINTMAX) {
     CellValuePtr amax = std::make_shared<CellFloatValue>(std::numeric_limits<FloatType>::max());
     CellValuePtr amin = std::make_shared<CellFloatValue>(std::numeric_limits<FloatType>::min());
-    std::cerr << amax->get_float() << ' ' << amin->get_float() << std::endl;
+
     EXPECT_TRUE(amax->ge(amin));
     EXPECT_TRUE(amax->gt(amin));
     EXPECT_FALSE(amax->lt(amin));

@@ -17,6 +17,12 @@ concept IsColumnType =
     || std::is_same_v<T, IntType> 
     || std::is_same_v<T, FloatType>;
 
+template<typename T>
+concept IsReadonlyColumnType = 
+    std::is_same_v<T, StringViewType>
+    || std::is_same_v<T, IntType> 
+    || std::is_same_v<T, FloatType>;
+
 template<CellType cell>
 constexpr size_t get_type_size() {
     if constexpr (cell == CellType::Int) {
