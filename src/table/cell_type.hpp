@@ -4,7 +4,7 @@ namespace garlic {
 
 using CharType = char;
 using StringType = std::basic_string<CharType>;
-using StringViewType = std::basic_string_view<const CharType>;
+using StringViewType = const std::basic_string_view<CharType>;
 using IntType = int;
 using FloatType = float;
 

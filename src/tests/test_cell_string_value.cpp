@@ -8,8 +8,8 @@ using CellValuePtr = std::shared_ptr<CellValue>;
 
 STR(hello)
 STR(world)
-std::string str_empty_ = "";
-std::string_view str_empty = str_empty_;
+StringType str_empty_ = "";
+StringViewType str_empty = str_empty_;
 
 TEST(test_cell_string_value, initialization) {
     CellValuePtr a = std::make_shared<CellStringValue>(str_hello);
@@ -25,7 +25,7 @@ TEST(test_cell_string_value, getFunctions_shouldThrowExceptString) {
     EXPECT_THROW(a->get_float(), std::logic_error);
 }
 
-TEST(test_cell_string_value, basicComparingRange5) {
+TEST(test_cell_string_value, comparingSameStrings) {
     CellValuePtr a = std::make_shared<CellStringValue>(str_hello);
     CellValuePtr b = std::make_shared<CellStringValue>(str_hello);
 
@@ -36,9 +36,9 @@ TEST(test_cell_string_value, basicComparingRange5) {
     EXPECT_FALSE(a->lt(b));
 }
 
-TEST(test_cell_string_value, basicComparingRangeINTMAX) {
-    CellValuePtr amax = std::make_shared<CellStringValue>(str_hello);
-    CellValuePtr amin = std::make_shared<CellStringValue>(str_world);
+TEST(test_cell_string_value, basicComparingHelloAndWord) {
+    CellValuePtr amin = std::make_shared<CellStringValue>(str_hello);
+    CellValuePtr amax = std::make_shared<CellStringValue>(str_world);
 
     EXPECT_TRUE(amax->gt(amin));
     EXPECT_TRUE(amax->ge(amin));
@@ -47,24 +47,26 @@ TEST(test_cell_string_value, basicComparingRangeINTMAX) {
     EXPECT_FALSE(amax->equals(amin));
 }
 
-TEST(test_cell_string_value, basicComparingRange10) {
+TEST(test_cell_string_value, SameLettersDifferentSize) {
     std::string 
         str_AAA = "AAA",
         str_A = "A";
     CellValuePtr AAA = std::make_shared<CellStringValue>(str_AAA);
     CellValuePtr A = std::make_shared<CellStringValue>(str_A);
+    
+    std::cerr << std::strcmp(str_AAA.data(), str_A.data()) << std::endl;
 
     EXPECT_FALSE(AAA->equals(A));
     EXPECT_FALSE(A->equals(AAA));
-    EXPECT_TRUE(A->ge(AAA));
-    EXPECT_TRUE(A->gt(AAA));
-    EXPECT_FALSE(AAA->ge(A));
-    EXPECT_FALSE(AAA->gt(A));
+    EXPECT_TRUE(A->le(AAA));
+    EXPECT_TRUE(A->lt(AAA));
+    EXPECT_FALSE(AAA->le(A));
+    EXPECT_FALSE(AAA->lt(A));
 
-    EXPECT_FALSE(A->le(AAA));
-    EXPECT_FALSE(A->lt(AAA));
-    EXPECT_TRUE(AAA->le(A));
-    EXPECT_TRUE(AAA->lt(A));
+    EXPECT_FALSE(A->ge(AAA));
+    EXPECT_FALSE(A->gt(AAA));
+    EXPECT_TRUE(AAA->ge(A));
+    EXPECT_TRUE(AAA->gt(A));
 }
 
 }

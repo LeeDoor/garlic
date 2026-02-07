@@ -30,12 +30,22 @@ public:
 
 private:
     int get_cmp(CellValuePtr other) { 
-        return std::strncmp(value_.data(), other->get_string().data(), value_.size()); 
+        size_t our_size = value_.size();
+        size_t other_size = other->get_string().size();
+        size_t mins = std::min(our_size, other_size);
+        size_t maxs = std::max(our_size, other_size);
+        int cmp = std::strncmp(value_.data(), other->get_string().data(), mins); 
+        if(cmp != 0) {
+            return cmp;
+        }
+        if(mins == maxs) return cmp;
+        else if (our_size == mins) return -1;
+        else return 1;
     }
 protected:
     StringViewType value_;
 };
-   
+
 }
 
 
