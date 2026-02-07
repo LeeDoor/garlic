@@ -12,6 +12,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_typed_table.cpp
     test_cell_int_value.cpp
     test_cell_float_value.cpp
+    test_cell_string_value.cpp
 )
 target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
     ${GENERAL_LINK_LIBRARIES}

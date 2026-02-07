@@ -35,7 +35,7 @@ TEST(test_cell_int_value, basicComparingRangeINTMAX) {
     CellValuePtr amin = std::make_shared<CellIntValue>(std::numeric_limits<IntType>::min());
 
     EXPECT_TRUE(amax->ge(amin));
-    EXPECT_TRUE(amax->ge(amin));
+    EXPECT_TRUE(amax->gt(amin));
     EXPECT_FALSE(amax->lt(amin));
     EXPECT_FALSE(amax->le(amin));
     EXPECT_FALSE(amax->equals(amin));
@@ -49,7 +49,7 @@ TEST(test_cell_int_value, basicComparingRange10) {
 
     EXPECT_FALSE(a4->equals(a0));
     EXPECT_TRUE(a4->ge(a0));
-    EXPECT_TRUE(a4->ge(a0));
+    EXPECT_TRUE(a4->gt(a0));
     EXPECT_FALSE(a4->le(a0));
     EXPECT_FALSE(a4->lt(a0));
 
@@ -63,7 +63,7 @@ TEST(test_cell_int_value, basicComparingRange10) {
     EXPECT_FALSE(a4->le(an7));
     EXPECT_FALSE(a4->lt(an7));
     EXPECT_TRUE(a4->ge(an7));
-    EXPECT_TRUE(a4->ge(an7));
+    EXPECT_TRUE(a4->gt(an7));
 }
 
 }
