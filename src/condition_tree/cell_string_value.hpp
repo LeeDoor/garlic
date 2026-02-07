@@ -6,28 +6,32 @@ namespace garlic {
 class CellStringValue : public CellValue {
 public:
     CellStringValue(StringViewType value)
-    : value_{ value }
+    : CellValue(String)
+    , value_{ value }
     {}
 
     StringViewType get_string() override { return value_; }
 
-    bool compare(CellValuePtr other, BinaryOperation op) override {
-        int comp = std::strncmp(value_.data(), other->get_string().data(), value_.size());
-        switch(op) {
-        case Equals:
-            return comp == 0;
-        case Gt:
-            return comp > 0;
-        case Ge:
-            return comp >= 0;
-        case Ls:
-            return comp < 0;
-        case Le:
-            return comp <= 0;
-          break;
-        };
-    }
+    bool equals(CellValuePtr other) override {
+        return get_cmp(other) == 0;
+	}
+    bool le(CellValuePtr other) override {
+        return get_cmp(other) <= 0;
+	}
+    bool lt(CellValuePtr other) override {
+        return get_cmp(other) < 0;
+	}
+    bool ge(CellValuePtr other) override {
+        return get_cmp(other) >= 0;
+	}
+    bool gt(CellValuePtr other) override {
+        return get_cmp(other) > 0;
+	}
 
+private:
+    int get_cmp(CellValuePtr other) { 
+        return std::strncmp(value_.data(), other->get_string().data(), value_.size()); 
+    }
 protected:
     StringViewType value_;
 };
