@@ -49,6 +49,8 @@ public:
     {}
 
     /// Returns index of the column with given name.
+    /*! @throws std::logic_error if no such column in table.
+     */
     size_t get_column_number_by_name(const std::string& column_name) {
         auto find_result = 
             std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
@@ -57,6 +59,12 @@ public:
         if(find_result == header_.end()) 
             throw std::logic_error("trying to get id of incorrect column name");
         return std::distance(header_.begin(), find_result);
+    }
+
+    CellType get_column_type(size_t column) const {
+        if(column >= header_.size())
+            throw std::logic_error("trying to get column type with invalid column");
+        return header_[column].type;
     }
 
     /// Creates empty row. You can't access a row without creating it.
@@ -116,7 +124,7 @@ public:
      */
     template<IsColumnType T>
     requires std::is_arithmetic_v<T>
-    T get_value(size_t row, size_t column) {
+    T get_value(size_t row, size_t column) const {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
         if(header_[column].type != get_cell_type<T>()) 
@@ -132,7 +140,7 @@ public:
     /*! If @ref StringType is passed as a parameter, function still returns @ref StringViewType. */
     template<typename T>
     requires std::is_same_v<T, StringType>
-    StringViewType get_value(size_t row, size_t column) {
+    StringViewType get_value(size_t row, size_t column) const {
         return get_value<StringViewType>(row, column);
     }
     /// Overload for strings.
@@ -144,7 +152,7 @@ public:
      */
     template<typename T>
     requires std::is_same_v<T, StringViewType>
-    T get_value(size_t row, size_t column) {
+    T get_value(size_t row, size_t column) const {
         if(column >= header_.size()) 
             throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
         if(header_[column].type != String) 

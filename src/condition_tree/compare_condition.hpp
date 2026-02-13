@@ -6,16 +6,15 @@ namespace garlic {
 
 class CompareCondition : public Condition {
 public:
-    CompareCondition(ResolverPtr resolver, ExpressionPtr lhs, ExpressionPtr rhs, BinaryOperation op)
-    : Condition(  resolver )
-    , expr_left_ { std::move(lhs) }
+    CompareCondition(ExpressionPtr lhs, ExpressionPtr rhs, BinaryOperation op)
+    : expr_left_ { std::move(lhs) }
     , expr_right_{ std::move(rhs) }
     , operator_  { op }
     {}
 
-    bool resolve() override {
-        auto lhs = expr_left_->get_value(),
-             rhs = expr_right_->get_value();
+    bool resolve(TableValueGathererPtr gatherer) override {
+        auto lhs = expr_left_->get_value(gatherer),
+             rhs = expr_right_->get_value(gatherer);
         switch(operator_) {
         case Equals:
             return lhs->equals(rhs);

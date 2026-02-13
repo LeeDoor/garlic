@@ -9,12 +9,12 @@ namespace garlic {
 template<typename ValueType, typename CellValueType, CellType EnumType>
 class ConstantExpression : public Expression {
 public:
-    explicit ConstantExpression(ResolverPtr resolver, ValueType value) 
-    : Expression(EnumType, resolver)
+    explicit ConstantExpression(ValueType value) 
+    : Expression(EnumType)
     , value_(std::move(value))
     {}
 
-    CellValuePtr get_value() const override {
+    CellValuePtr get_value(TableValueGathererPtr) const override {
         return std::make_shared<CellValueType>(value_);
     }
 
