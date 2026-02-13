@@ -221,4 +221,21 @@ TEST(test_typed_table, getColumnNumberByName_withRows) {
     EXPECT_EQ(tt.get_column_number_by_name("height"), 2);
 }
 
+TEST(test_typed_table, testConstQualifier_shouldCompile) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { Float, "weight", 0 },
+    };
+    tt.create_empty_row();
+    tt.set_value(0, 1, 5.5f);
+    tt.set_value(0, 0, "Value");
+
+    const TypedTable& tt2 = tt;
+
+    EXPECT_EQ(tt2.get_column_number_by_name("Name"), 0);
+    EXPECT_EQ(tt2.get_column_type(0), String);
+    EXPECT_FLOAT_EQ(tt2.get_value<FloatType>(0, 1), 5.5);
+    EXPECT_EQ(tt2.get_value<StringType>(0, 0), "Value");
+}
+
 }

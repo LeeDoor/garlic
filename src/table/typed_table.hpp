@@ -51,7 +51,7 @@ public:
     /// Returns index of the column with given name.
     /*! @throws std::logic_error if no such column in table.
      */
-    size_t get_column_number_by_name(const std::string& column_name) {
+    size_t get_column_number_by_name(const std::string& column_name) const {
         auto find_result = 
             std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
                 return ci.name == column_name;
