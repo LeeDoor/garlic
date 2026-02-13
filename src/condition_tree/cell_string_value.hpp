@@ -10,26 +10,26 @@ public:
     , value_{ value }
     {}
 
-    StringViewType get_string() { return value_; }
+    StringViewType get_string() const { return value_; }
 
-    bool equals(CellValuePtr other) override {
+    bool equals(CellValuePtr other) const override {
         return get_cmp(other) == 0;
 	}
-    bool le(CellValuePtr other) override {
+    bool le(CellValuePtr other) const override {
         return get_cmp(other) <= 0;
 	}
-    bool lt(CellValuePtr other) override {
+    bool lt(CellValuePtr other) const override {
         return get_cmp(other) < 0;
 	}
-    bool ge(CellValuePtr other) override {
+    bool ge(CellValuePtr other) const override {
         return get_cmp(other) >= 0;
 	}
-    bool gt(CellValuePtr other) override {
+    bool gt(CellValuePtr other) const override {
         return get_cmp(other) > 0;
 	}
 
 private:
-    int get_cmp(CellValuePtr other) { 
+    int get_cmp(CellValuePtr other) const { 
         auto str_ptr = std::dynamic_pointer_cast<CellStringValue>(other);
         if(str_ptr == nullptr) 
             throw std::logic_error("Trying to compare CellStringValue with other type");

@@ -20,34 +20,34 @@ public:
      *  @returns true if this's value and other's value are equal.
      *  @throws std::logic_error if trying to compare different types.
      */
-    virtual bool equals(CellValuePtr other) = 0;
+    virtual bool equals(CellValuePtr other) const = 0;
     /// Less or Equal operator <= 
     /*! @param rhs comparement object
      *  @returns true if this's value is less than or equal to other's value.
      *  @throws std::logic_error if trying to compare different types.
      */
-    virtual bool le(CellValuePtr other) = 0;
+    virtual bool le(CellValuePtr other) const = 0;
     /// Less Than operator <
     /*! @param rhs comparement object
      *  @returns true if this's value is less than other's value.
      *  @throws std::logic_error if trying to compare different types.
      */
-    virtual bool lt(CellValuePtr other) = 0;
+    virtual bool lt(CellValuePtr other) const = 0;
     /// Greater or Equal operator >=
     /*! @param rhs comparement object
      *  @returns true if this's value is more than or equal to other's value.
      *  @throws std::logic_error if trying to compare different types.
      */
-    virtual bool ge(CellValuePtr other) = 0;
+    virtual bool ge(CellValuePtr other) const = 0;
     /// Greater Than operator >
     /*! @param rhs comparement object
      *  @returns true if this's value is more than other's value.
      *  @throws std::logic_error if trying to compare different types.
      */
-    virtual bool gt(CellValuePtr other) = 0;
+    virtual bool gt(CellValuePtr other) const = 0;
 
     /// Get the enum type of underlying object.
-    CellType get_type() { return cell_type_; }
+    CellType get_type() const { return cell_type_; }
 
 protected:
     CellValue(CellType cell_type) : cell_type_{ cell_type } {}

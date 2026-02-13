@@ -49,8 +49,7 @@ public:
     {}
 
     /// Returns index of the column with given name.
-    /*! @throws std::logic_error if no such column in table.
-     */
+    /*! @throws std::logic_error if no such column in table. */
     size_t get_column_number_by_name(const std::string& column_name) const {
         auto find_result = 
             std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
@@ -61,6 +60,8 @@ public:
         return std::distance(header_.begin(), find_result);
     }
 
+    /// Returns @ref CellType type of column with given id.
+    /*! @throws std::logic_error if column parameter is invalid. */
     CellType get_column_type(size_t column) const {
         if(column >= header_.size())
             throw std::logic_error("trying to get column type with invalid column");

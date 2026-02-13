@@ -221,6 +221,22 @@ TEST(test_typed_table, getColumnNumberByName_withRows) {
     EXPECT_EQ(tt.get_column_number_by_name("height"), 2);
 }
 
+TEST(test_typed_table, getColumnType) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { Int, "Age", 0 },
+        { Float, "height", 0 },
+    };
+
+    tt.create_empty_row();
+    tt.create_empty_row();
+
+    EXPECT_EQ(tt.get_column_type(0), String);
+    EXPECT_EQ(tt.get_column_type(1), Int);
+    EXPECT_EQ(tt.get_column_type(2), Float);
+    EXPECT_THROW(tt.get_column_type(3), std::logic_error);
+}
+
 TEST(test_typed_table, testConstQualifier_shouldCompile) {
     TypedTable tt = {
         { String, "Name", 10 },

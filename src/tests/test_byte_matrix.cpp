@@ -6,7 +6,7 @@ bool operator== (const ByteSpan& lhs, const ByteVector& rhs) {
 
 namespace garlic {
 
-TEST(test_table_content, empty_initialization) {
+TEST(test_byte_matrix, empty_initialization) {
     ByteMatrix tc(0);
 
     ASSERT_THROW(tc.set_value(0, 0, ByteVector{}), std::logic_error);
@@ -18,12 +18,12 @@ TEST(test_table_content, empty_initialization) {
     ASSERT_THROW(tc.get_value(0, 1, 1), std::logic_error);
     ASSERT_THROW(tc.get_value(0, 0, 4), std::logic_error);
 }
-TEST(test_table_content, emptySetArgs_shouldThrow) {
+TEST(test_byte_matrix, emptySetArgs_shouldThrow) {
     ByteMatrix tc(1);
     
     ASSERT_THROW(tc.set_value(0, 0, ByteVector{}), std::logic_error);
 }
-TEST(test_table_content, byteRowSize_shouldBeZeroByDefault) {
+TEST(test_byte_matrix, byteRowSize_shouldBeZeroByDefault) {
     for(int tc_size : { 1, 20, 4000 }) {
         ByteMatrix tc(tc_size);
         ASSERT_NO_THROW(tc.create_empty_row());
@@ -31,7 +31,7 @@ TEST(test_table_content, byteRowSize_shouldBeZeroByDefault) {
         ASSERT_TRUE(std::ranges::equal(tc.get_value(0, 0, 1), ByteVector{ 0x00 }));
     }
 }
-TEST(test_table_content, byteRowSize_shouldSetAndGetSuccess) {
+TEST(test_byte_matrix, byteRowSize_shouldSetAndGetSuccess) {
     ByteMatrix tc(1);
 
     ASSERT_NO_THROW(tc.create_empty_row());
@@ -39,7 +39,7 @@ TEST(test_table_content, byteRowSize_shouldSetAndGetSuccess) {
 
     ASSERT_TRUE(std::ranges::equal(tc.get_value(0, 0, 1), ByteVector{ 0xFF }));
 }
-TEST(test_table_content, byteRowSize_overflowing_shouldThrow) {
+TEST(test_byte_matrix, byteRowSize_overflowing_shouldThrow) {
     ByteMatrix tc(1);
     ASSERT_NO_THROW(tc.create_empty_row());
 
@@ -56,14 +56,14 @@ std::array<ByteVector, 4> test_values = {
     ByteVector{ 0x40, 0x2d, 0xf8, 0x4d }  // 2.71828
 };
 
-TEST(test_table_content, testValues_are_same_size_as_int_and_float) {
+TEST(test_byte_matrix, testValues_are_same_size_as_int_and_float) {
     EXPECT_EQ(test_values[0].size(), sizeof(int));
     EXPECT_EQ(test_values[1].size(), sizeof(int));
     EXPECT_EQ(test_values[2].size(), sizeof(float));
     EXPECT_EQ(test_values[3].size(), sizeof(float));
 }
 
-TEST(test_table_content, intnfloatRowSize_SuccessSetGet) {
+TEST(test_byte_matrix, intnfloatRowSize_SuccessSetGet) {
     ByteMatrix tc(sizeof(int) + sizeof(float));
     tc.create_empty_row();
     tc.create_empty_row();
@@ -79,7 +79,7 @@ TEST(test_table_content, intnfloatRowSize_SuccessSetGet) {
     EXPECT_RANGEQ(tc.get_value(1, sizeof(int), sizeof(float)), test_values[3]);
 }
 
-TEST(test_table_content, intnfloatRowSize_twistedOffset_Success) {
+TEST(test_byte_matrix, intnfloatRowSize_twistedOffset_Success) {
     ByteMatrix tc(sizeof(int) + sizeof(float));
     tc.create_empty_row();
     tc.create_empty_row();
@@ -102,7 +102,7 @@ TEST(test_table_content, intnfloatRowSize_twistedOffset_Success) {
     EXPECT_RANGEQ(tc.get_value(0, 0, sizeof(int) + sizeof(float)), res);
 }
 
-TEST(test_table_content, intnfloatRowSize_offsetOverflow_shouldThrow) {
+TEST(test_byte_matrix, intnfloatRowSize_offsetOverflow_shouldThrow) {
     ByteMatrix tc(sizeof(int));
     tc.create_empty_row();
     tc.create_empty_row();
@@ -111,7 +111,7 @@ TEST(test_table_content, intnfloatRowSize_offsetOverflow_shouldThrow) {
     EXPECT_THROW(tc.get_value(0, 1, sizeof(int)), std::logic_error);
 }
 
-TEST(test_table_content, intnfloatRowSize_offsetOverflow_strictGuarantee) {
+TEST(test_byte_matrix, intnfloatRowSize_offsetOverflow_strictGuarantee) {
     ByteMatrix tc(sizeof(int));
     tc.create_empty_row();
     tc.create_empty_row();
@@ -120,6 +120,16 @@ TEST(test_table_content, intnfloatRowSize_offsetOverflow_strictGuarantee) {
     EXPECT_THROW(tc.get_value(0, 1, 4), std::logic_error);
 
     EXPECT_RANGEQ(tc.get_value(0, 0, sizeof(int)), ByteVector(sizeof(int), 0x00));
+}
+
+TEST(test_byte_matrix, constQualifier_shouldCompile) {
+    ByteMatrix tc(sizeof(int));
+    tc.create_empty_row();
+    tc.create_empty_row();
+
+    const ByteMatrix& bm = tc;
+
+    std::ignore = bm.get_value(0, 0, 1);
 }
 
 }

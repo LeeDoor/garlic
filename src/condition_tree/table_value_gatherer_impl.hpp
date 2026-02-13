@@ -1,9 +1,10 @@
 #pragma once
-
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
+#include "cell_string_value.hpp"
 #include "table_value_gatherer.hpp"
 #include "typed_table.hpp"
+
 namespace garlic {
 
 class TableValueGathererImpl : public TableValueGatherer {
@@ -18,7 +19,7 @@ public:
         CellType type = table_->get_column_type(column_number);
         switch(type) {
         case String:
-            return std::make_shared<CellIntValue>(
+            return std::make_shared<CellStringValue>(
                 table_->get_value<StringType>(row_number_, column_number)
             );
         case Int:
@@ -29,6 +30,8 @@ public:
             return std::make_shared<CellFloatValue>(
                 table_->get_value<FloatType>(row_number_, column_number)
             );
+        default:
+            throw std::logic_error("get_table_value value type not implemented");
         }
     }
 
