@@ -10,13 +10,7 @@ public:
     virtual bool resolve() = 0;
 
 protected:
-    using ResolverPtr = std::shared_ptr<ConditionResolver>;
-
-    Condition(std::shared_ptr<ConditionResolver> resolver)
-    : resolver_{resolver} 
-    {}
-
-    ResolverPtr resolver_;
+    Condition() {}
 };
 
 }

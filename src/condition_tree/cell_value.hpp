@@ -1,6 +1,5 @@
 #pragma once
 #include "cell_type.hpp"
-#include "condition_resolver.hpp"
 
 namespace garlic {
 
@@ -13,7 +12,6 @@ const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function 
 class CellValue {
 protected:
     using CellValuePtr = std::shared_ptr<CellValue>;
-    using ConditionResolverPtr = std::shared_ptr<ConditionResolver>;
 public:
     virtual ~CellValue() = default;
 

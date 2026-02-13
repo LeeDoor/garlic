@@ -192,5 +192,33 @@ TEST(test_typed_table, tableWithStrings_ReadWriteMoreCharactersThanGiven_ShouldT
     EXPECT_THROW(tt.set_value(0, 1, std::string(151, 'A')), std::logic_error);
 }
 
+TEST(test_typed_table, getColumnNumberByName) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { String, "Surname", 150 },
+        { Float, "height", 0 },
+    };
+
+    EXPECT_EQ(tt.get_column_number_by_name("Name"), 0);
+    EXPECT_EQ(tt.get_column_number_by_name("Surname"), 1);
+    EXPECT_THROW(tt.get_column_number_by_name("surname"), std::logic_error); // Case-sensitive
+    EXPECT_EQ(tt.get_column_number_by_name("height"), 2);
 }
 
+TEST(test_typed_table, getColumnNumberByName_withRows) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { String, "Surname", 150 },
+        { Float, "height", 0 },
+    };
+
+    tt.create_empty_row();
+    tt.create_empty_row();
+
+    EXPECT_EQ(tt.get_column_number_by_name("Name"), 0);
+    EXPECT_EQ(tt.get_column_number_by_name("Surname"), 1);
+    EXPECT_THROW(tt.get_column_number_by_name("surname"), std::logic_error); // Case-sensitive
+    EXPECT_EQ(tt.get_column_number_by_name("height"), 2);
+}
+
+}

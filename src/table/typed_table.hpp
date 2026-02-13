@@ -48,7 +48,7 @@ public:
     , content_{row_size_bytes_}
     {}
 
-    /// TODO
+    /// Returns index of the column with given name.
     size_t get_column_number_by_name(const std::string& column_name) {
         auto find_result = 
             std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
