@@ -160,6 +160,21 @@ TEST(test_typed_table, initedTable_missIntToFloat_throwsWithoutChanges) {
     EXPECT_EQ(tt.get_value<IntType>(0, 1), INT_MAX - 1);
 }
 
+TEST(test_typed_table, rowIdTooBig_shouldThrowLogic) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { Int, "Age", 0 },
+        { Float, "Weight", 0 },
+    };
+    tt.create_empty_row();
+    tt.create_empty_row();
+
+    EXPECT_THROW(tt.get_value<StringViewType>(2, 0), std::logic_error);
+    EXPECT_THROW(tt.get_value<FloatType>(5, 2), std::logic_error);
+    EXPECT_THROW(tt.set_value(2, 0, "Some value"), std::logic_error);
+    EXPECT_THROW(tt.set_value(5, 2, 5.2f), std::logic_error);
+}
+
 TEST(test_typed_table, initedTable_ReadingWithWrongType_shouldThrow) {
     TypedTable tt = {
         { String, "Name", 10 },

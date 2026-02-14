@@ -31,6 +31,8 @@ ByteSpan ByteMatrix::get_value(size_t row_id, size_t offset, size_t count) const
         throw std::logic_error("trying to read an empty byte array");
     if(offset + count > row_size_bytes_)
         throw std::logic_error("requested to read data more than available in row");
+    if(row_id >= content_.size())
+        throw std::logic_error("row_id{" + std::to_string(row_id) + "} is more than rows count{" + std::to_string(content_.size()) + "}");
     const ByteSpan result(content_[row_id].begin() + offset, count);
     return result;
 }

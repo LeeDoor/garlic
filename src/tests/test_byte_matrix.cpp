@@ -45,6 +45,9 @@ TEST(test_byte_matrix, byteRowSize_overflowing_shouldThrow) {
 
     ASSERT_THROW(tc.set_value(1, 0, {0xFF}), std::logic_error);
     ASSERT_THROW(tc.set_value(0, 1, {0xDD}), std::logic_error);
+    ASSERT_THROW(tc.set_value(3, 0, {0xDD}), std::logic_error);
+    ASSERT_THROW(tc.get_value(1, 0, 1), std::logic_error);
+    ASSERT_THROW(tc.get_value(3, 0, 1), std::logic_error);
     ASSERT_THROW(tc.get_value(0, 0, 2), std::logic_error);
     ASSERT_THROW(tc.get_value(0, 1, 3), std::logic_error);
 }
