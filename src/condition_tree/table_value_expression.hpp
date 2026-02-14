@@ -5,9 +5,8 @@ namespace garlic {
 
 class TableValueExpression : public Expression {
 public:
-    TableValueExpression(CellType type, std::string column_name)
-    : Expression( type )
-    , column_name_{ column_name }
+    TableValueExpression(std::string column_name)
+    : column_name_{ column_name }
     {} 
 
     CellValuePtr get_value(TableValueGathererPtr gatherer) const override {

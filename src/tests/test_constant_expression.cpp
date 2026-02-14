@@ -16,7 +16,6 @@ TEST(test_constant_expression, IntBasicMethodKit) {
     auto value2 = expr_int2->get_value(gatherer_mock);
     auto value3 = expr_int3->get_value(gatherer_mock);
 
-    EXPECT_EQ(expr_int1->get_type(), CellType::Int);
     EXPECT_EQ(value1->get_type(), CellType::Int);
     EXPECT_TRUE(value1->equals(value2));
     EXPECT_FALSE(value1->equals(value3));
@@ -31,7 +30,6 @@ TEST(test_constant_expression, FloatBasicMethodKit) {
     auto value2 = expr_float2->get_value(gatherer_mock);
     auto value3 = expr_float3->get_value(gatherer_mock);
 
-    EXPECT_EQ(expr_float1->get_type(), CellType::Float);
     EXPECT_EQ(value1->get_type(), CellType::Float);
     EXPECT_TRUE(value1->equals(value2));
     EXPECT_FALSE(value1->equals(value3));
@@ -47,7 +45,6 @@ TEST(test_constant_expression, StringBasicMethodKit) {
     auto value2 = expr_string2->get_value(gatherer_mock);
     auto value3 = expr_string3->get_value(gatherer_mock);
 
-    EXPECT_EQ(expr_string1->get_type(), CellType::String);
     EXPECT_EQ(value1->get_type(), CellType::String);
     EXPECT_TRUE(value1->equals(value2));
     EXPECT_FALSE(value1->equals(value3));

@@ -6,12 +6,11 @@
 
 namespace garlic {
 
-template<typename ValueType, typename CellValueType, CellType EnumType>
+template<typename ValueType, typename CellValueType>
 class ConstantExpression : public Expression {
 public:
     explicit ConstantExpression(ValueType value) 
-    : Expression(EnumType)
-    , value_(std::move(value))
+    : value_(std::move(value))
     {}
 
     CellValuePtr get_value(TableValueGathererPtr) const override {
@@ -22,8 +21,8 @@ protected:
     ValueType value_;
 };
 
-using IntConstExpr = ConstantExpression<IntType, CellIntValue, Int>;
-using FloatConstExpr = ConstantExpression<FloatType, CellFloatValue, Float>;
-using StringConstExpr = ConstantExpression<StringViewType, CellStringValue, String>;
+using IntConstExpr = ConstantExpression<IntType, CellIntValue>;
+using FloatConstExpr = ConstantExpression<FloatType, CellFloatValue>;
+using StringConstExpr = ConstantExpression<StringViewType, CellStringValue>;
 
 }
