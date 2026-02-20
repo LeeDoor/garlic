@@ -16,6 +16,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_constant_expression.cpp
     test_table_value_gatherer.cpp
     test_table_value_expression.cpp
+    test_compare_condition.cpp
 )
 target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
     ${GENERAL_LINK_LIBRARIES}

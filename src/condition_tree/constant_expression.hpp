@@ -1,12 +1,9 @@
 #pragma once
-#include "cell_float_value.hpp"
-#include "cell_int_value.hpp"
-#include "cell_string_value.hpp"
 #include "expression.hpp"
 
 namespace garlic {
 
-template<typename ValueType, typename CellValueType>
+template<typename ValueType>
 class ConstantExpression : public Expression {
 public:
     explicit ConstantExpression(ValueType value) 
@@ -14,15 +11,15 @@ public:
     {}
 
     CellValuePtr get_value(TableValueGathererPtr) const override {
-        return std::make_shared<CellValueType>(value_);
+        return std::make_shared<get_cell_type<ValueType>::Type>(value_);
     }
 
 protected:
     ValueType value_;
 };
 
-using IntConstExpr = ConstantExpression<IntType, CellIntValue>;
-using FloatConstExpr = ConstantExpression<FloatType, CellFloatValue>;
-using StringConstExpr = ConstantExpression<StringViewType, CellStringValue>;
+using IntConstExpr = ConstantExpression<IntType>;
+using FloatConstExpr = ConstantExpression<FloatType>;
+using StringConstExpr = ConstantExpression<StringViewType>;
 
 }

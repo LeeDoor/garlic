@@ -49,6 +49,9 @@ protected:
     StringViewType value_;
 };
 
+template<>
+struct get_cell_type<StringType> {
+    using Type = CellStringValue;
+};
+
 }
-
-

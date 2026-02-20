@@ -26,6 +26,8 @@ public:
             return lhs->lt(rhs);
         case Le:
             return lhs->le(rhs);
+        default:
+            throw std::logic_error("CompareCondition::resolve(gatherer) binary operator not implemented");
         }
     }
 

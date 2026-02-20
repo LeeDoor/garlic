@@ -39,5 +39,9 @@ protected:
     IntType value_;
 };
 
+template<>
+struct get_cell_type<IntType> {
+    using Type = CellIntValue;
+};
 
 }
