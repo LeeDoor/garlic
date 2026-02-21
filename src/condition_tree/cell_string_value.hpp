@@ -50,7 +50,7 @@ protected:
 };
 
 template<>
-struct get_cell_type<StringType> {
+struct get_cell_type<StringViewType> {
     using Type = CellStringValue;
 };
 

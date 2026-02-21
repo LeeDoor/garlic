@@ -55,7 +55,7 @@ protected:
     CellType cell_type_;
 };
 
-template<IsColumnType T>
+template<IsReadonlyColumnType T>
 struct get_cell_type;
 
 
