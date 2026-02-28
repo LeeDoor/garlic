@@ -2,19 +2,16 @@
 #include "cell_type.hpp"
 
 namespace garlic {
+using namespace std::literals;
 using CellValuePtr = std::shared_ptr<CellValue>;
 
-#define STR(name) std::string str_##name##_ = #name; std::string_view str_##name = str_##name##_;
-
-STR(hello)
-STR(world)
-StringType str_empty_ = "";
-StringViewType str_empty = str_empty_;
+auto str_hello = "Hello"sv;
+auto str_world = "World"sv;
 
 TEST(test_cell_string_value, initialization) {
     CellValuePtr a = std::make_shared<CellStringValue>(str_hello);
     CellValuePtr b = std::make_shared<CellStringValue>(str_world);
-    CellValuePtr c = std::make_shared<CellStringValue>(str_empty);
+    CellValuePtr c = std::make_shared<CellStringValue>(""sv);
 }
 
 TEST(test_cell_string_value, getType_shouldGetString) {
@@ -45,14 +42,9 @@ TEST(test_cell_string_value, basicComparingHelloAndWord) {
 }
 
 TEST(test_cell_string_value, SameLettersDifferentSize) {
-    std::string 
-        str_AAA = "AAA",
-        str_A = "A";
-    CellValuePtr AAA = std::make_shared<CellStringValue>(str_AAA);
-    CellValuePtr A = std::make_shared<CellStringValue>(str_A);
+    CellValuePtr AAA = std::make_shared<CellStringValue>("AAA"sv);
+    CellValuePtr A = std::make_shared<CellStringValue>("A"sv);
     
-    std::cerr << std::strcmp(str_AAA.data(), str_A.data()) << std::endl;
-
     EXPECT_FALSE(AAA->equals(A));
     EXPECT_FALSE(A->equals(AAA));
     EXPECT_TRUE(A->le(AAA));

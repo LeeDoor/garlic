@@ -11,8 +11,9 @@ using FloatType = float;
 enum CellType {
     String, Int, Float
 };
+
 template<typename T>
-concept IsColumnType = 
+concept IsStoringColumnType = 
     std::is_same_v<T, StringType>
     || std::is_same_v<T, IntType> 
     || std::is_same_v<T, FloatType>;
@@ -22,6 +23,9 @@ concept IsReadonlyColumnType =
     std::is_same_v<T, StringViewType>
     || std::is_same_v<T, IntType> 
     || std::is_same_v<T, FloatType>;
+
+template<typename T>
+concept IsAnyColumnType = IsStoringColumnType<T> || IsReadonlyColumnType<T>;
 
 template<CellType cell>
 constexpr size_t get_type_size() {

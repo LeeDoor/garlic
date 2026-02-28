@@ -36,10 +36,10 @@ TEST(test_constant_expression, FloatBasicMethodKit) {
 }
 
 TEST(test_constant_expression, StringBasicMethodKit) {
-    std::string str_hello = "Hello", str_world = "World";
-    ExpressionPtr expr_string1 = std::make_shared<StringConstExpr>(str_hello);
-    ExpressionPtr expr_string2 = std::make_shared<StringConstExpr>(str_hello);
-    ExpressionPtr expr_string3 = std::make_shared<StringConstExpr>(str_world);
+    using namespace std::literals;
+    ExpressionPtr expr_string1 = std::make_shared<StringConstExpr>("Hello"s);
+    ExpressionPtr expr_string2 = std::make_shared<StringConstExpr>("Hello"s);
+    ExpressionPtr expr_string3 = std::make_shared<StringConstExpr>("World"s);
 
     auto value1 = expr_string1->get_value(gatherer_mock);
     auto value2 = expr_string2->get_value(gatherer_mock);

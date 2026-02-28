@@ -44,10 +44,5 @@ protected:
     FloatType value_;
 };
 
-template<>
-struct get_cell_type<FloatType> {
-    using Type = CellFloatValue;
-};
-
 }
 

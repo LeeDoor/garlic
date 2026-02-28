@@ -55,8 +55,4 @@ protected:
     CellType cell_type_;
 };
 
-template<IsReadonlyColumnType T>
-struct get_cell_type;
-
-
 }
