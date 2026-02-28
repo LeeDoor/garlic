@@ -1,11 +1,11 @@
 #pragma once
-#include "cell_type.hpp"
+#include "column_info.hpp"
 
 namespace garlic {
 
 struct PublicColumnInfo {
     CellType type;
-    std::string name;
+    ColumnNameType name;
     size_t size_characters;
 };
 

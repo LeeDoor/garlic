@@ -1,4 +1,4 @@
-exe=src/batadase
+exe=src/garlic
 cd ..
 mkdir build
 cd build

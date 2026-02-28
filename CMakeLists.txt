@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.1)
-project(batadase)
+project(garlic)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)

@@ -1,3 +1,3 @@
-exe=src/batadase
+exe=src/garlic
 cd ../build/
 ./$exe

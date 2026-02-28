@@ -43,9 +43,10 @@ public:
     /// Requires any iterable container iterators with info about columns.
     template<IteratorOf<PublicColumnInfo> Iter>
     TypedTable(Iter begin, Iter end)
-    : row_size_bytes_{calculate_row_bytes(begin, end)}
-    , header_{create_column_header(begin, end)}
-    , content_{row_size_bytes_}
+    : row_size_bytes_{ calculate_row_bytes(begin, end) }
+    , header_{ create_column_header(begin, end) }
+    , column_name_to_idx_{ hash_column_names(begin, end) }
+    , content_{ row_size_bytes_ }
     {}
 
     /// Returns index of the column with given name.
@@ -195,22 +196,33 @@ private:
         size_t offset = 0;
         result.reserve(std::distance(begin, end));
         std::unordered_set<std::string> taken_col_names;
-        for(; begin != end; ++begin) {
-            auto& column = *begin;
+        std::for_each(begin, end, [&] (auto& column) {
             size_t column_size = 
                 column.type == String ? 
                 column.size_characters * sizeof(CharType) : get_type_size(column.type);
             if(taken_col_names.contains(column.name))
                 throw std::logic_error("Cannot have two columns with same names");
             taken_col_names.insert(column.name);
-            result.push_back(ColumnInfo { column.type, column.name, column_size, offset });
+            result.push_back(ColumnInfo{ column.type, column.name, column_size, offset });
             offset += column_size;
-        }
+        });
+        return result;
+    }
+
+    /// Ties column name hash with it's index in the @ref header_.
+    template<IteratorOf<PublicColumnInfo> Iter>
+    static std::unordered_map<ColumnNameType, size_t> hash_column_names(Iter begin, Iter end) {
+        std::unordered_map<ColumnNameType, size_t> result;
+        size_t idx = 0;
+        std::for_each(begin, end, [&](auto& column) {
+            result[column.name] = idx++;
+        });
         return result;
     }
 
     size_t row_size_bytes_;
     std::vector<ColumnInfo> header_;
+    std::unordered_map<ColumnNameType, size_t> column_name_to_idx_;
     ByteMatrix content_;
 };
 

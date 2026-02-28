@@ -2,6 +2,7 @@
 #include "cell_type.hpp"
 
 namespace garlic {
+using ColumnNameType = StringType;
 
 struct ColumnInfo {
     CellType type;
