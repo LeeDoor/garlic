@@ -6,13 +6,13 @@ namespace garlic {
 
 class Condition {
 protected:
+    using ConditionPtr = std::unique_ptr<Condition>;
     using ExpressionPtr = std::unique_ptr<Expression>;
     using TableValueGathererPtr = std::shared_ptr<TableValueGatherer>;
 public:
-    virtual bool resolve(TableValueGathererPtr gatherer) = 0;
+    virtual ~Condition() = default;
 
-protected:
-    Condition() {}
+    virtual bool resolve(TableValueGathererPtr gatherer) const = 0;
 };
 
 }

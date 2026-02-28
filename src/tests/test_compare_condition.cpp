@@ -18,12 +18,12 @@ public:
 
 protected:
     template<typename T>
-    std::unique_ptr<T> deep_copy(std::unique_ptr<T>& ptr) {
+    std::unique_ptr<T> unique_cpy(std::unique_ptr<T>& ptr) {
         return std::make_unique<T>(*ptr);
     }
 
     template<IsStoringColumnType T> 
-    ConditionPtr create_condition(const T& lhs, const T& rhs, BinaryOperation op) {
+    ConditionPtr create_condition(const T& lhs, const T& rhs, BinaryOperator op) {
         auto lhs_expr = std::make_unique<ConstantExpression<T>>(std::move(lhs));
         auto rhs_expr = std::make_unique<ConstantExpression<T>>(std::move(rhs));
         return std::make_shared<CompareCondition>(std::move(lhs_expr), std::move(rhs_expr), op);

@@ -1,18 +1,18 @@
 #pragma once
 #include "condition.hpp"
-#include "binary_operation.hpp"
+#include "binary_operator.hpp"
 
 namespace garlic {
 
 class CompareCondition : public Condition {
 public:
-    CompareCondition(ExpressionPtr lhs, ExpressionPtr rhs, BinaryOperation op)
+    CompareCondition(ExpressionPtr lhs, ExpressionPtr rhs, BinaryOperator op)
     : expr_left_ { std::move(lhs) }
     , expr_right_{ std::move(rhs) }
     , operator_  { op }
     {}
 
-    bool resolve(TableValueGathererPtr gatherer) override {
+    bool resolve(TableValueGathererPtr gatherer) const override {
         auto lhs = expr_left_->get_value(gatherer),
              rhs = expr_right_->get_value(gatherer);
         switch(operator_) {
@@ -34,7 +34,7 @@ public:
 private:
     ExpressionPtr expr_left_;
     ExpressionPtr expr_right_;
-    BinaryOperation operator_;
+    BinaryOperator operator_;
 };
 
 }
