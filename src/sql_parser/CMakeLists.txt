@@ -6,9 +6,9 @@ flex_target(LEXER "lexer.l" "${GEN_DIR}/lexer.yy.c" DEFINES_FILE "${GEN_DIR}/lex
 bison_target(PARSER "parser.y" "${GEN_DIR}/parser.tab.c" DEFINES_FILE "${GEN_DIR}/parser.tab.h")
 
 add_flex_bison_dependency(LEXER PARSER)
-add_library(${CMAKE_PROJECT_NAME} PUBLIC 
+add_library(sql_parser 
     ${GEN_DIR}/lexer.yy.c
     ${GEN_DIR}/parser.tab.c
 )
 
-
+add_executable(test_sql_parser ${GEN_DIR}/lexer.yy.c ${GEN_DIR}/parser.tab.c test_main.c)
