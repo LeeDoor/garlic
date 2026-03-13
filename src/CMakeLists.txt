@@ -7,11 +7,13 @@ set(GENERAL_INCLUDE_DIRECTORIES
 
 set(DEPENDENCIES 
     table
+    sql_parser
 )
 
 foreach(DEP ${DEPENDENCIES})
     add_subdirectory(${DEP})
 endforeach()
+
 add_subdirectory(tests)
 
 add_executable(${CMAKE_PROJECT_NAME} main.cpp)
