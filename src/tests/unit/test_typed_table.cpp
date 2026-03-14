@@ -269,4 +269,33 @@ TEST(test_typed_table, testConstQualifier_shouldCompile) {
     EXPECT_EQ(tt2.get_value<StringType>(0, 0), "Value");
 }
 
+TEST(test_typed_table, overwriteStringWithShorterValue_shouldClearTailBytes) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+    };
+    tt.create_empty_row();
+
+    tt.set_value(0, 0, "abcdefghij");
+    tt.set_value(0, 0, "xy");
+
+    EXPECT_EQ(tt.get_value<StringType>(0, 0), "xy");
+}
+
+TEST(test_typed_table, fullWidthStringRead_shouldNotBleedIntoNextColumns) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { Int, "Age", 0 },
+        { Int, "Score", 0 },
+    };
+    tt.create_empty_row();
+
+    tt.set_value(0, 0, "1234567890");
+    tt.set_value(0, 1, -1);
+    tt.set_value(0, 2, -1);
+
+    StringViewType name = tt.get_value<StringType>(0, 0);
+    EXPECT_EQ(name.size(), 10);
+    EXPECT_EQ(name, "1234567890");
+}
+
 }
