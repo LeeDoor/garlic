@@ -14,7 +14,7 @@
 %}
 
 int "0"|(("+"|"-")?[1-9][0-9]*)
-blank [ \t]
+blank [ \t\n]
 
 %{
   #define YY_USER_ACTION  loc.columns (yyleng);
@@ -27,27 +27,29 @@ blank [ \t]
   loc.step ();
 %}
 
-{blank}+   { loc.step (); }
-\n        { return yy::parser::make_EOL(loc); }
+"SELECT"{blank} { return yy::parser::make_SELECT(loc); }
 
+";"  { return yy::parser::make_SEMICOLON(loc); }
 "-"  { return yy::parser::make_MINUS(loc); }
 "+"  { return yy::parser::make_PLUS(loc); }
 "*"  { return yy::parser::make_MUL(loc); }
 "/"  { return yy::parser::make_DIV(loc); }
 "("  { return yy::parser::make_LPAREN(loc); }
 ")"  { return yy::parser::make_RPAREN(loc); }
-"==" { return yy::parser::make_ISEQ(loc); }
+"=" { return yy::parser::make_ISEQ(loc); }
 ">=" { return yy::parser::make_MOREEQ(loc); }
 "<=" { return yy::parser::make_LESSEQ(loc); }
 ">"  { return yy::parser::make_MORE(loc); }
 "<"  { return yy::parser::make_LESS(loc); }
+
 {int} { return make_NUMBER (yytext, loc); }
+
+{blank} { }
 
 .    {
          throw yy::parser::syntax_error
            (loc, "invalid character: " + std::string(yytext));
      }
-
 <<EOF>>    return yy::parser::make_YYEOF (loc);
 
 %%
