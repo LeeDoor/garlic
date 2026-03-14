@@ -10,10 +10,13 @@
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_NUMBER (const std::string &s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_FLOAT(const std::string &s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_INTEGER(const std::string &s, const yy::parser::location_type& loc);
 %}
 
-int "0"|(("+"|"-")?[1-9][0-9]*)
+EXP ([Ee][-+]?[0-9]+)
+float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
+int "0"|([1-9][0-9]*{EXP}?)
 blank [ \t\n]
 
 %{
@@ -36,13 +39,15 @@ blank [ \t\n]
 "/"  { return yy::parser::make_DIV(loc); }
 "("  { return yy::parser::make_LPAREN(loc); }
 ")"  { return yy::parser::make_RPAREN(loc); }
-"=" { return yy::parser::make_ISEQ(loc); }
+"|"  { return yy::parser::make_ABS(loc); }
+"="  { return yy::parser::make_ISEQ(loc); }
 ">=" { return yy::parser::make_MOREEQ(loc); }
 "<=" { return yy::parser::make_LESSEQ(loc); }
 ">"  { return yy::parser::make_MORE(loc); }
 "<"  { return yy::parser::make_LESS(loc); }
 
-{int} { return make_NUMBER (yytext, loc); }
+{int} { return make_INTEGER(yytext, loc); }
+{float} { return make_FLOAT(yytext, loc); }
 
 {blank} { }
 
@@ -54,12 +59,20 @@ blank [ \t\n]
 
 %%
 
-yy::parser::symbol_type make_NUMBER(const std::string &s, const yy::parser::location_type& loc) {
+yy::parser::symbol_type make_FLOAT(const std::string &s, const yy::parser::location_type& loc) {
     errno = 0;
-    long n = strtol (s.c_str(), NULL, 10);
-    if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
-        throw yy::parser::syntax_error (loc, "integer is out of range: " + s);
-    return yy::parser::make_NUMBER ((int) n, loc);
+    char* end;
+    float n = strtof(s.c_str(), &end);
+    if (errno == ERANGE)
+        throw yy::parser::syntax_error (loc, "failed to convert " + s + " to float");
+    return yy::parser::make_FLOAT(n, loc);
+}
+yy::parser::symbol_type make_INTEGER(const std::string &s, const yy::parser::location_type& loc) {
+    errno = 0;
+    int n = std::stoi(s.c_str());
+    if (errno == ERANGE)
+        throw yy::parser::syntax_error (loc, "failed to convert " + s + " to int");
+    return yy::parser::make_INTEGER(n, loc);
 }
 void driver::scan_begin() {
     yy_flex_debug = debug_mode_;
