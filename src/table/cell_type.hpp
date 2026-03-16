@@ -7,6 +7,8 @@ using StringType = std::basic_string<CharType>;
 using StringViewType = const std::basic_string_view<CharType>;
 using IntType = int;
 using FloatType = float;
+template<typename T>
+using ArrayType = std::vector<T>;
 
 enum CellType {
     String, Int, Float

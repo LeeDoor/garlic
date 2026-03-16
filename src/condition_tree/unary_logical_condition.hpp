@@ -10,7 +10,7 @@ protected:
 public:
     virtual ~UnaryLogicalCondition() = default;
 
-    UnaryLogicalCondition(ConditionPtr condition, UnaryLogicalOperator op)
+    UnaryLogicalCondition(Condition::Ptr condition, UnaryLogicalOperator op)
     : cond_{ std::move(condition) }
     , op_{ op }
     {}
@@ -26,7 +26,7 @@ public:
     }
 
 protected:
-    ConditionPtr cond_;
+    Condition::Ptr cond_;
     UnaryLogicalOperator op_;
 };
 

@@ -19,8 +19,11 @@ add_library(sql_parser
     driver.cpp
     value.cpp
 )
-target_include_directories(sql_parser PUBLIC ${GEN_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(sql_parser PUBLIC ${GENERAL_LINK_LIBRARIES})
+set(INCLUDE_DIRS ../condition_tree ../table ${GENERAL_INCLUDE_DIRECTORIES} ${GEN_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+set(LINK_LIBS ${GENERAL_LINK_LIBRARIES})
+
+target_include_directories(sql_parser PUBLIC ${INCLUDE_DIRS})
+target_link_libraries(sql_parser PUBLIC ${LINK_LIBS})
 
 add_executable(test_sql_parser 
     ${GEN_DIR}/lexer.yy.cpp 
@@ -29,5 +32,5 @@ add_executable(test_sql_parser
     test_main.cpp
     value.cpp
 )
-target_include_directories(test_sql_parser PUBLIC ${GEN_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(test_sql_parser PUBLIC ${GENERAL_LINK_LIBRARIES})
+target_include_directories(test_sql_parser PUBLIC ${INCLUDE_DIRS})
+target_link_libraries(test_sql_parser PUBLIC ${LINK_LIBS})

@@ -10,7 +10,7 @@ protected:
 public:
     virtual ~BinaryLogicalCondition() = default;
 
-    BinaryLogicalCondition(ConditionPtr lhs, ConditionPtr rhs, BinaryLogicalOperator op)
+    BinaryLogicalCondition(Condition::Ptr lhs, Condition::Ptr rhs, BinaryLogicalOperator op)
     : lhs_{ std::move(lhs) }
     , rhs_{ std::move(rhs) }
     , op_{ op }
@@ -31,8 +31,8 @@ public:
     }
 
 protected:
-    ConditionPtr lhs_;
-    ConditionPtr rhs_;
+    Condition::Ptr lhs_;
+    Condition::Ptr rhs_;
     BinaryLogicalOperator op_;
 };
 
