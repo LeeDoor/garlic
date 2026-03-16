@@ -6,6 +6,8 @@
 
 YY_DECL;
 
+namespace garlic::sql_parser {
+
 class driver
 {
 public:
@@ -21,3 +23,5 @@ private:
     yy::location location_;
     bool debug_mode_;
 };
+
+}

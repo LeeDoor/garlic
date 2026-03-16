@@ -1,6 +1,8 @@
 #include "value.hpp"
 #include <cmath>
 
+namespace garlic::sql_parser {
+
 Value::Value(int val)
     : intval_{val}
     , type_{INT}
@@ -65,4 +67,5 @@ std::ostream& operator<<(std::ostream& os, const Value& value) {
             break;
     }
     return os;
+}
 }

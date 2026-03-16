@@ -2,6 +2,8 @@
 #include <compare>
 #include <ostream>
 
+namespace garlic::sql_parser {
+
 class Value {
 public:
     enum Type { INT, FLOAT };
@@ -32,3 +34,5 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const Value& value);
+
+}

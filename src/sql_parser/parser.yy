@@ -8,7 +8,8 @@
 
 %code requires {
     #include "value.hpp"
-    class driver;
+    namespace garlic::sql_parser { class driver; }
+    using namespace garlic::sql_parser;
 }
 
 %param { driver& drv }
