@@ -42,6 +42,7 @@
     ;
 %token
     ISEQ    
+    NOTEQ    
     MOREEQ  
     LESSEQ  
     MORE    
@@ -57,7 +58,7 @@
 %token <float> FLOAT "float"
 %token <int> INTEGER "integer"
 %nterm <bool> comp
-%nterm <bool> query /* For now its bool; later will be more complex */
+%nterm <Value> query
 %nterm <Value> expr 
 %nterm <Value> value 
 %printer { yyo << $$; } <*>;
@@ -69,7 +70,8 @@ queries: /**/
     | queries SEMICOLON
     ;
 
-query: SELECT comp { $$ = $2; }
+query: SELECT comp { $$ = static_cast<int>($2); }
+     | SELECT expr { $$ = $2; }
      ;
 
 comp: comp LOGICAND comp { $$ = $1 && $3; }
@@ -79,9 +81,9 @@ comp: comp LOGICAND comp { $$ = $1 && $3; }
     | expr MOREEQ expr { $$ = $1 >= $3; }
     | expr LESSEQ expr { $$ = $1 <= $3; }
     | expr ISEQ expr { $$ = $1 == $3; }
+    | expr NOTEQ expr { $$ = $1 != $3; }
     | expr MORE expr { $$ = $1 > $3; }
     | expr LESS expr { $$ = $1 < $3; }
-    | expr %prec IS_VALUE_NONZERO { $$ = $1 != 0; }
    ;
 
 expr: value { $$ = $1; }
@@ -114,10 +116,7 @@ value: INTEGER { $$ = $1; }
 %left MUL DIV REMDIV;
 %left UMINUS;
 
-%precedence IS_VALUE_NONZERO; 
-%precedence RPAREN;
-
 %%
 void yy::parser::error (const location_type& l, const std::string& m) {
-  std::cerr << l << ": " << m << '\n';
+  std::cerr << "[PARSING_ERROR] " << l << ": " << m << '\n';
 }

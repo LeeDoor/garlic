@@ -1,0 +1,8 @@
+SELECT 1 != 2;
+SELECT 2 != 2;
+SELECT 7.5 != 7.25;
+SELECT 7.5 != 7.5;
+SELECT 5 % 2 != 0;
+SELECT 1 != 1 OR 2 != 3;
+SELECT 1 != 2 AND 2 != 2;
+SELECT (1 != 2 OR 2 != 2) AND 3 != 3;

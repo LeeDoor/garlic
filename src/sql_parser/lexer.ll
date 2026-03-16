@@ -4,12 +4,14 @@
 # include <cstdlib>
 # include <cstring> 
 # include <string>
+# include <format>
 # include "driver.hpp"
 # include "parser.tab.hpp"
 %}
 
 %option noyywrap nounput noinput batch debug
 %{
+    #include <sstream>
     yy::parser::symbol_type make_FLOAT(const std::string &s, const yy::parser::location_type& loc);
     yy::parser::symbol_type make_INTEGER(const std::string &s, const yy::parser::location_type& loc);
 %}
@@ -20,7 +22,23 @@ int "0"|([1-9][0-9]*{EXP}?)
 blank [ \t\n]
 
 %{
-  #define YY_USER_ACTION  loc.columns (yyleng);
+    #define YY_USER_ACTION  loc.columns (yyleng);
+
+    namespace ll {
+    class lexing_error : public std::runtime_error {
+    public:
+        lexing_error(const yy::location& loc, std::string msg)
+        : std::runtime_error{ format_string(loc, msg) }
+        {}
+
+    private:
+        static std::string format_string(const yy::location& l, std::string msg) {
+            std::stringstream ss;
+            ss << "[LEXING_ERROR] " << l << ":" << msg << std::endl;
+            return ss.str();
+        }
+    };
+    }
 %}
 
 %%
@@ -43,23 +61,23 @@ blank [ \t\n]
 "|"  { return yy::parser::make_ABS(loc); }
 
 "="  { return yy::parser::make_ISEQ(loc); }
+"!="  { return yy::parser::make_NOTEQ(loc); }
 ">=" { return yy::parser::make_MOREEQ(loc); }
 "<=" { return yy::parser::make_LESSEQ(loc); }
 ">"  { return yy::parser::make_MORE(loc); }
 "<"  { return yy::parser::make_LESS(loc); }
 
-"&&"  { return yy::parser::make_LOGICAND(loc); }
-"||"  { return yy::parser::make_LOGICOR(loc); }
+"AND"  { return yy::parser::make_LOGICAND(loc); }
+"OR"  { return yy::parser::make_LOGICOR(loc); }
 "!"  { return yy::parser::make_NOT(loc); }
 
 {int} { return make_INTEGER(yytext, loc); }
 {float} { return make_FLOAT(yytext, loc); }
 
-{blank} { }
+{blank}+ { }
 
 .    {
-         throw yy::parser::syntax_error
-           (loc, "invalid character: " + std::string(yytext));
+        throw ll::lexing_error(loc, "invalid character: " + std::string(yytext));
      }
 <<EOF>>    return yy::parser::make_YYEOF (loc);
 
@@ -70,14 +88,14 @@ yy::parser::symbol_type make_FLOAT(const std::string &s, const yy::parser::locat
     char* end;
     float n = strtof(s.c_str(), &end);
     if (errno == ERANGE)
-        throw yy::parser::syntax_error (loc, "failed to convert " + s + " to float");
+        throw ll::lexing_error(loc, "failed to convert " + s + " to float");
     return yy::parser::make_FLOAT(n, loc);
 }
 yy::parser::symbol_type make_INTEGER(const std::string &s, const yy::parser::location_type& loc) {
     errno = 0;
     int n = std::stoi(s.c_str());
     if (errno == ERANGE)
-        throw yy::parser::syntax_error (loc, "failed to convert " + s + " to int");
+        throw ll::lexing_error(loc, "failed to convert " + s + " to int");
     return yy::parser::make_INTEGER(n, loc);
 }
 void driver::scan_begin() {

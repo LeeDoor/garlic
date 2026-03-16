@@ -2,12 +2,20 @@ import os
 import sys
 import subprocess
 import difflib
+import re
 from pathlib import Path
 from typing import List, Tuple, Optional
 
+def test_file_sort_key(path: Path) -> Tuple[int, str]:
+    name = path.stem
+    match = re.match(r"^(\d+)", name)
+    if match:
+        return (int(match.group(1)), name)
+    return (sys.maxsize, name)
+
 def find_test_pairs() -> List[Tuple[Path, Path]]:
     script_dir = Path(__file__).parent
-    i_files = sorted(script_dir.glob("*.dat"))
+    i_files = sorted(script_dir.glob("*.dat"), key=test_file_sort_key)
     pairs = []
 
     for i_file in i_files:
