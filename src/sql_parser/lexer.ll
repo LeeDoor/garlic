@@ -1,17 +1,10 @@
 %{ 
-# include <cerrno>
-# include <climits>
-# include <cstdlib>
-# include <cstring> 
-# include <string>
-# include <format>
-# include "driver.hpp"
-# include "parser.tab.hpp"
+#include "driver.hpp"
+#include "parser.tab.hpp"
 %}
 
 %option noyywrap nounput noinput batch debug
 %{
-    #include <sstream>
     yy::parser::symbol_type make_FLOAT(const std::string &s, const yy::parser::location_type& loc);
     yy::parser::symbol_type make_INTEGER(const std::string &s, const yy::parser::location_type& loc);
 %}
@@ -61,7 +54,7 @@ blank [ \t\n]
 "|"  { return yy::parser::make_ABS(loc); }
 
 "="  { return yy::parser::make_ISEQ(loc); }
-"!="  { return yy::parser::make_NOTEQ(loc); }
+"!=" { return yy::parser::make_NOTEQ(loc); }
 ">=" { return yy::parser::make_MOREEQ(loc); }
 "<=" { return yy::parser::make_LESSEQ(loc); }
 ">"  { return yy::parser::make_MORE(loc); }

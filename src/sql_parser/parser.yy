@@ -7,9 +7,7 @@
 %define parse.assert
 
 %code requires {
-    #include <iostream>
     #include "value.hpp"
-
     class driver;
 }
 

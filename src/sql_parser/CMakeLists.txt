@@ -20,6 +20,7 @@ add_library(sql_parser
     value.cpp
 )
 target_include_directories(sql_parser PUBLIC ${GEN_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(sql_parser PUBLIC ${GENERAL_LINK_LIBRARIES})
 
 add_executable(test_sql_parser 
     ${GEN_DIR}/lexer.yy.cpp 
@@ -29,3 +30,4 @@ add_executable(test_sql_parser
     value.cpp
 )
 target_include_directories(test_sql_parser PUBLIC ${GEN_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(test_sql_parser PUBLIC ${GENERAL_LINK_LIBRARIES})
