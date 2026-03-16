@@ -30,6 +30,8 @@ public:
      */
     void set_value(size_t row_id, size_t offset, ByteSpan value);
     void set_value(size_t row_id, size_t offset, ByteVector value);
+    /// Same as set_value, but filling with zeros.
+    void clear_value(size_t row_id, size_t offset, size_t count);
     /// Reads N bytes from table at given row with given offset.
     /*!
      * @param row_id id of the row to read from (may be returned from create_empty_row).
