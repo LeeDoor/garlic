@@ -1,0 +1,8 @@
+SELECT (10 + 5) % 4 = 3;
+SELECT 2 + 9 % 4 = 3;
+SELECT (2 + 9) % 4 = 3;
+SELECT 20 % 6 * 3 = 6;
+SELECT 20 % (6 * 3) = 2;
+SELECT |-17 % 5| = 2;
+SELECT 5 * 7 % 6 + 2 = 7;
+SELECT 5 * (7 % 6 + 2) = 15;

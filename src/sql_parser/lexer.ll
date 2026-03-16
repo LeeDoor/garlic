@@ -37,9 +37,11 @@ blank [ \t\n]
 "+"  { return yy::parser::make_PLUS(loc); }
 "*"  { return yy::parser::make_MUL(loc); }
 "/"  { return yy::parser::make_DIV(loc); }
+"%"  { return yy::parser::make_REMDIV(loc); }
 "("  { return yy::parser::make_LPAREN(loc); }
 ")"  { return yy::parser::make_RPAREN(loc); }
 "|"  { return yy::parser::make_ABS(loc); }
+
 "="  { return yy::parser::make_ISEQ(loc); }
 ">=" { return yy::parser::make_MOREEQ(loc); }
 "<=" { return yy::parser::make_LESSEQ(loc); }

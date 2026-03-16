@@ -35,6 +35,7 @@
     PLUS    
     MUL     
     DIV     
+    REMDIV
     LPAREN  
     RPAREN  
     ABS
@@ -88,6 +89,9 @@ expr: value { $$ = $1; }
    | LPAREN expr RPAREN  { $$ = $2; }
    | ABS expr ABS { $$ = $2.abs(); }
    | MINUS expr %prec UMINUS { $$ = $2 * -1; }
+   | expr REMDIV expr { 
+        $$ = $1 % $3; 
+    }
    ;
 
 value: INTEGER { $$ = $1; }
@@ -95,7 +99,7 @@ value: INTEGER { $$ = $1; }
      ;
 
 %left PLUS MINUS;
-%left MUL DIV;
+%left MUL DIV REMDIV;
 %left UMINUS;
 %%
 void yy::parser::error (const location_type& l, const std::string& m) {

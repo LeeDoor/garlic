@@ -1,4 +1,5 @@
 #include "value.hpp"
+#include <cmath>
 
 Value::Value(int val)
     : intval_{val}
@@ -11,42 +12,23 @@ Value::Value(float val)
 Value::Value()
     : Value(0)
 {}
+#define VALUE_OPERATOR(operation) \
+Value Value::operator operation(Value other) const { \
+    if(get_type() == INT && other.get_type() == INT) { \
+        return Value{ to_int() operation other.to_int() }; \
+    }\
+    return Value{ to_float() operation other.to_float() };\
+}
+VALUE_OPERATOR(+)
+VALUE_OPERATOR(-)
+VALUE_OPERATOR(*)
+VALUE_OPERATOR(/)
 
-Value Value::operator+(Value other) {
+Value Value::operator%(Value other) const {
     if(get_type() == INT && other.get_type() == INT) {
-        intval_ += other.to_int();
-        return *this;
+        return Value{ to_int() % other.to_int() }; 
     }
-    floatval_ = to_float() + other.to_float();
-    type_ = FLOAT;
-    return *this;
-}
-Value& Value::operator-(Value other) {
-    if(get_type() == INT && other.get_type() == INT) {
-        intval_ -= other.to_int();
-        return *this;
-    }
-    floatval_ = to_float() - other.to_float();
-    type_ = FLOAT;
-    return *this;
-}
-Value& Value::operator*(Value other) {
-    if(get_type() == INT && other.get_type() == INT) {
-        intval_ *= other.to_int();
-        return *this;
-    }
-    floatval_ = to_float() * other.to_float();
-    type_ = FLOAT;
-    return *this;
-}
-Value& Value::operator/(Value other) {
-    if(get_type() == INT && other.get_type() == INT) {
-        intval_ /= other.to_int();
-        return *this;
-    }
-    floatval_ = to_float() / other.to_float();
-    type_ = FLOAT;
-    return *this;
+    return Value{ std::fmod(to_float(), other.to_float()) };
 }
 
 Value::Type Value::get_type() const { return type_; }

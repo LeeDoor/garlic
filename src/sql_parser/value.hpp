@@ -10,16 +10,19 @@ public:
     Value(float val);
     Value();
 
-    Value operator+(Value other);
-    Value& operator-(Value other);
-    Value& operator*(Value other);
-    Value& operator/(Value other);
+    Value operator+(Value other) const;
+    Value operator-(Value other) const;
+    Value operator*(Value other) const;
+    Value operator/(Value other) const;
+    Value operator%(Value other) const;
+
     Type get_type() const;
     int to_int() const;
     float to_float() const;
     std::partial_ordering operator<=>(const Value& other) const;
     bool operator==(const Value& other) const;
     Value abs() const;
+
 private:
     union {
         int intval_;
