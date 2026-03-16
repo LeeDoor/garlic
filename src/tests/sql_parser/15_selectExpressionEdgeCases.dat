@@ -1,0 +1,6 @@
+SELECT -(2 + 3) * 4;
+SELECT |-(2 + 3) * 4|;
+SELECT 5 % 2.0 + 1.25;
+SELECT 2 + 3 * 4 % 5;
+SELECT (2 + 3) * (4 % 5);
+SELECT 3.0E1 + 2;

@@ -67,8 +67,8 @@ blank [ \t\n]
 ">"  { return yy::parser::make_MORE(loc); }
 "<"  { return yy::parser::make_LESS(loc); }
 
-"AND"  { return yy::parser::make_LOGICAND(loc); }
-"OR"  { return yy::parser::make_LOGICOR(loc); }
+"AND"{blank}  { return yy::parser::make_LOGICAND(loc); }
+"OR"{blank}  { return yy::parser::make_LOGICOR(loc); }
 "!"  { return yy::parser::make_NOT(loc); }
 
 {int} { return make_INTEGER(yytext, loc); }

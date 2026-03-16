@@ -13,7 +13,7 @@ def test_file_sort_key(path: Path) -> Tuple[int, str]:
         return (int(match.group(1)), name)
     return (sys.maxsize, name)
 
-def find_test_pairs() -> List[Tuple[Path, Path]]:
+def find_regular_test_pairs() -> List[Tuple[Path, Path]]:
     script_dir = Path(__file__).parent
     i_files = sorted(script_dir.glob("*.dat"), key=test_file_sort_key)
     pairs = []
@@ -24,6 +24,12 @@ def find_test_pairs() -> List[Tuple[Path, Path]]:
             pairs.append((i_file, e_file))
 
     return pairs
+
+def find_error_tests(directory_name: str) -> List[Path]:
+    script_dir = Path(__file__).parent / directory_name
+    if not script_dir.exists():
+        return []
+    return sorted(script_dir.glob("*.dat"), key=test_file_sort_key)
 
 def read_file_content(file_path: Path, max_lines: Optional[int] = None) -> str:
     with open(file_path, 'r') as f:
@@ -46,20 +52,21 @@ def read_file_content_with_line_numbers(file_path: Path) -> str:
             lines.append(f"{i:3d}: {line.rstrip('\n')}")
         return '\n'.join(lines)
 
-def run_executable(executable: str, input_content: str) -> str:
+def run_executable(executable: str, input_content: str) -> subprocess.CompletedProcess:
     try:
-        result = subprocess.run(
-                [executable],
-                input=input_content,
-                capture_output=True,
-                text=True,
-                check=True
-                )
-        return result.stdout
-    except subprocess.CalledProcessError as e:
-        return f"Error: Process failed with code {e.returncode}\n{e.stderr}"
+        return subprocess.run(
+            [executable],
+            input=input_content,
+            capture_output=True,
+            text=True,
+            check=False
+        )
     except FileNotFoundError:
-        return f"Error: Executable '{executable}' not found"
+        class MissingExecutable:
+            returncode = 127
+            stdout = ""
+            stderr = f"Error: Executable '{executable}' not found"
+        return MissingExecutable()
 
 def get_diff(actual: str, expected: str, width: int = 10) -> str:
     actual_lines = actual.splitlines()
@@ -109,9 +116,10 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
     input_content_full = read_file_content(input_file)
     input_content_preview = read_file_content(input_file, max_input_lines)
     expected_output_with_numbers = read_file_content_with_line_numbers(expected_file)
-    actual_output = run_executable(executable, input_content_full)
+    process = run_executable(executable, input_content_full)
+    actual_output = process.stdout
 
-    if actual_output == read_file_content(expected_file):
+    if process.returncode == 0 and actual_output == read_file_content(expected_file):
         return True
 
     print(f"test name: {test_name}")
@@ -121,11 +129,37 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
     actual_lines = actual_output.splitlines()
     numbered_actual = '\n'.join([f"{i+1:3d}: {line}" for i, line in enumerate(actual_lines)])
     print(numbered_actual)
+    if process.stderr:
+        print("===STDERR===")
+        print(process.stderr)
+    print(f"===RETURN CODE===\n{process.returncode}")
     print("===EXPECTED (with line numbers)===")
     print(expected_output_with_numbers)
     print("===DIFFERENCE===")
     print(get_diff(actual_output, read_file_content(expected_file)))
 
+    return False
+
+def run_error_prefix_test(executable: str, input_file: Path, required_prefix: str, max_input_lines: int = 10) -> bool:
+    test_name = input_file.stem
+    input_content_full = read_file_content(input_file)
+    input_content_preview = read_file_content(input_file, max_input_lines)
+    process = run_executable(executable, input_content_full)
+
+    stdout = process.stdout.lstrip()
+    stderr = process.stderr.lstrip()
+    if stdout.startswith(required_prefix) or stderr.startswith(required_prefix):
+        return True
+
+    print(f"test name: {test_name}")
+    print("===INPUT===")
+    print(input_content_preview)
+    print(f"===EXPECTED PREFIX===\n{required_prefix}")
+    print("===STDOUT===")
+    print(process.stdout)
+    print("===STDERR===")
+    print(process.stderr)
+    print(f"===RETURN CODE===\n{process.returncode}")
     return False
 
 def main():
@@ -135,18 +169,32 @@ def main():
 
     executable = sys.argv[1]
 
-    test_pairs = find_test_pairs()
+    test_pairs = find_regular_test_pairs()
+    lexing_error_tests = find_error_tests("LEXING_ERROR")
+    syntax_error_tests = find_error_tests("SYNTAX_ERROR")
 
-    if not test_pairs:
+    if not test_pairs and not lexing_error_tests and not syntax_error_tests:
         script_dir = Path(__file__).parent
-        print(f"No test pairs (*.i and *.e) found in {script_dir}")
+        print(f"No test files found in {script_dir}")
         sys.exit(0)
 
-    print(f"Found {len(test_pairs)} test(s)")
+    print(f"Found {len(test_pairs)} regular test(s), {len(lexing_error_tests)} lexing error test(s), {len(syntax_error_tests)} syntax error test(s)")
 
     for i, (input_file, expected_file) in enumerate(test_pairs, 1):
-        print(f"Running test {i}: {input_file.name}")
+        print(f"Running regular test {i}: {input_file.name}")
         if not run_test(executable, input_file, expected_file):
+            print(f"\nTest failed: {input_file.stem}")
+            sys.exit(1)
+
+    for i, input_file in enumerate(lexing_error_tests, 1):
+        print(f"Running lexing error test {i}: {input_file.name}")
+        if not run_error_prefix_test(executable, input_file, "[LEXING_ERROR]"):
+            print(f"\nTest failed: {input_file.stem}")
+            sys.exit(1)
+
+    for i, input_file in enumerate(syntax_error_tests, 1):
+        print(f"Running syntax error test {i}: {input_file.name}")
+        if not run_error_prefix_test(executable, input_file, "[SYNTAX_ERROR]"):
             print(f"\nTest failed: {input_file.stem}")
             sys.exit(1)
 

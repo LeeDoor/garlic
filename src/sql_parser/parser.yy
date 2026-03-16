@@ -118,5 +118,5 @@ value: INTEGER { $$ = $1; }
 
 %%
 void yy::parser::error (const location_type& l, const std::string& m) {
-  std::cerr << "[PARSING_ERROR] " << l << ": " << m << '\n';
+  std::cerr << "[SYNTAX_ERROR] " << l << ": " << m << '\n';
 }
