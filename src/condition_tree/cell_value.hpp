@@ -49,7 +49,7 @@ public:
     /// Get the enum type of underlying object.
     CellType get_type() const { return cell_type_; }
 
-    /// Convert underlying value to string.
+    /// Print value to std::ostream.
     virtual void format(std::ostream& os) const = 0;
 protected:
     CellValue(CellType cell_type) : cell_type_{ cell_type } {}

@@ -14,7 +14,7 @@ public:
     {}
     StringQueryResult(){}
 
-    StringType format() const override {
+    StringViewType format() const override {
         return result_str_;   
     }
 private:

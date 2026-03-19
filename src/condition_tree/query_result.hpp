@@ -9,7 +9,7 @@ public:
     using Ptr = std::shared_ptr<QueryResult>;
     virtual ~QueryResult() = default;
 
-    virtual StringType format() const = 0;
+    virtual StringViewType format() const = 0;
 };
 
 }
