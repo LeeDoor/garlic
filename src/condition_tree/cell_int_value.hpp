@@ -27,6 +27,9 @@ public:
     bool gt(CellValuePtr other) const override {
         return get_int() > to_int(other);
     }
+    void format(std::ostream& os) const override {
+	os << value_;
+    }
 
 private:
     IntType to_int(CellValuePtr other) const {

@@ -13,37 +13,40 @@ public:
     StringViewType get_string() const { return value_; }
 
     bool equals(CellValuePtr other) const override {
-        return get_cmp(other) == 0;
-	}
+	return get_cmp(other) == 0;
+    }
     bool le(CellValuePtr other) const override {
-        return get_cmp(other) <= 0;
-	}
+	return get_cmp(other) <= 0;
+    }
     bool lt(CellValuePtr other) const override {
-        return get_cmp(other) < 0;
-	}
+	return get_cmp(other) < 0;
+    }
     bool ge(CellValuePtr other) const override {
-        return get_cmp(other) >= 0;
-	}
+	return get_cmp(other) >= 0;
+    }
     bool gt(CellValuePtr other) const override {
-        return get_cmp(other) > 0;
-	}
+	return get_cmp(other) > 0;
+    }
+    void format(std::ostream& os) const override {
+	os << value_;
+    }
 
 private:
     int get_cmp(CellValuePtr other) const { 
-        auto str_ptr = std::dynamic_pointer_cast<CellStringValue>(other);
-        if(str_ptr == nullptr) 
-            throw std::logic_error("Trying to compare CellStringValue with other type");
-        size_t our_size = value_.size();
-        size_t other_size = str_ptr->get_string().size();
-        size_t mins = std::min(our_size, other_size);
-        size_t maxs = std::max(our_size, other_size);
-        int cmp = std::strncmp(value_.data(), str_ptr->get_string().data(), mins); 
-        if(cmp != 0) {
-            return cmp;
-        }
-        if(mins == maxs) return cmp;
-        else if (our_size == mins) return -1;
-        else return 1;
+	auto str_ptr = std::dynamic_pointer_cast<CellStringValue>(other);
+	if(str_ptr == nullptr) 
+	    throw std::logic_error("Trying to compare CellStringValue with other type");
+	size_t our_size = value_.size();
+	size_t other_size = str_ptr->get_string().size();
+	size_t mins = std::min(our_size, other_size);
+	size_t maxs = std::max(our_size, other_size);
+	int cmp = std::strncmp(value_.data(), str_ptr->get_string().data(), mins); 
+	if(cmp != 0) {
+	    return cmp;
+	}
+	if(mins == maxs) return cmp;
+	else if (our_size == mins) return -1;
+	else return 1;
     }
 protected:
     StringViewType value_;

@@ -27,7 +27,9 @@ public:
     bool gt(CellValuePtr other) const override {
         return !fl_equals(other) && get_float() > to_float(other);
     }
-
+    void format(std::ostream& os) const override {
+	os << value_;
+    }
 private:
     FloatType to_float(CellValuePtr other) const {
         auto float_ptr = std::dynamic_pointer_cast<CellFloatValue>(other);

@@ -9,6 +9,7 @@ protected:
     using CellValuePtr = std::shared_ptr<CellValue>;
     using TableValueGathererPtr = std::shared_ptr<TableValueGatherer>;
 public:
+    using Ptr = std::unique_ptr<Expression>;
     virtual ~Expression() = default;
 
     virtual CellValuePtr get_value(TableValueGathererPtr gatherer) const = 0;

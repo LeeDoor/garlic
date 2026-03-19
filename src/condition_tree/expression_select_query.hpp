@@ -1,7 +1,7 @@
 #pragma once
 #include "cell_type.hpp"
-#include "condition.hpp"
 #include "query.hpp"
+#include "expression.hpp"
 #include "string_query_result.hpp"
 
 namespace garlic {
@@ -9,22 +9,22 @@ namespace garlic {
 using RequiredColumns = ArrayType<StringType>;
 
 class ExpressionSelectQuery : public Query {
-protected:
-    using UnreferencedSelectQueryPtr = std::shared_ptr<ExpressionSelectQuery>;
 public:
     virtual ~ExpressionSelectQuery() = default;
     
-    ExpressionSelectQuery(Condition::Ptr condition)
-    : condition_{ std::move(condition) }
+    ExpressionSelectQuery(Expression::Ptr expr)
+    : expression_ { std::move(expr) }
     {}
 
     QueryResult::Ptr resolve(TableValueGatherer::Ptr gatherer) override {
-	auto result = condition_->resolve(gatherer);
-	return std::make_unique<StringQueryResult>(static_cast<int>(result));
+	auto result = expression_->get_value(gatherer);
+	std::stringstream ss;
+	result->format(ss);
+	return std::make_unique<StringQueryResult>(ss.str());
     }
 
 private:
-    Condition::Ptr condition_;
+    Expression::Ptr expression_;
 };
 
 }

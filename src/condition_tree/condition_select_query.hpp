@@ -8,13 +8,11 @@ namespace garlic {
 
 using RequiredColumns = ArrayType<StringType>;
 
-class ExpressionSelectQuery : public Query {
-protected:
-    using UnreferencedSelectQueryPtr = std::shared_ptr<ExpressionSelectQuery>;
+class ConditionSelectQuery : public Query {
 public:
-    virtual ~ExpressionSelectQuery() = default;
+    virtual ~ConditionSelectQuery() = default;
     
-    ExpressionSelectQuery(Condition::Ptr condition)
+    ConditionSelectQuery(Condition::Ptr condition)
     : condition_{ std::move(condition) }
     {}
 

@@ -20,9 +20,7 @@ public:
 private:
     template<IsAnyColumnType T>
     static std::string form_string(const T& res) {
-	std::stringstream ss;
-	ss << res;
-	return ss.str();
+	return std::to_string(res);
     }
 
     std::string result_str_;
