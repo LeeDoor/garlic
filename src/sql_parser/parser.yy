@@ -8,7 +8,6 @@
 
 %code requires {
     #include "value.hpp"
-    #include "unreferenced_select_query.hpp"
 
     namespace garlic::sql_parser { class driver; }
     using namespace garlic::sql_parser;
