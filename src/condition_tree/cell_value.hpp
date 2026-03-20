@@ -21,6 +21,7 @@ public:
      *  @throws std::logic_error if trying to compare uncomparable types.
      */
     virtual bool equals(sptr<CellValue> other) const = 0;
+    virtual bool ne(sptr<CellValue> other) const { return !equals(other); }
     /// Less or Equal operator <= 
     /*! @param rhs comparement object
      *  @returns true if this's value is less than or equal to other's value.

@@ -105,7 +105,7 @@ comp: comp LOGICAND comp { $$ = std::make_unique<BinaryLogicalCondition>(std::mo
     | expr MOREEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Ge); }
     | expr LESSEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Le); }
     | expr ISEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Equals); }
-    | expr NOTEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Equals); }
+    | expr NOTEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Ne); }
     | expr MORE expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Gt); }
     | expr LESS expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Lt); }
    ;
