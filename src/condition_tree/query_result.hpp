@@ -4,8 +4,6 @@
 namespace garlic {
 
 class QueryResult {
-protected:
-
 public:
     virtual ~QueryResult() = default;
 

@@ -4,9 +4,6 @@
 namespace garlic {
 
 class Condition {
-protected:
-
-
 public:
     virtual ~Condition() = default;
 

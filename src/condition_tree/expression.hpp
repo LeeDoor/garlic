@@ -5,8 +5,6 @@
 namespace garlic {
 
 class Expression {
-protected:
-
 public:
     virtual ~Expression() = default;
 

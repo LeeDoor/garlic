@@ -16,6 +16,8 @@ public:
     virtual sptr<CellValue> mul(sptr<CellValue> other) const = 0;
     virtual sptr<CellValue> div(sptr<CellValue> other) const = 0;
     virtual sptr<CellValue> remdiv(sptr<CellValue> other) const = 0;
+    virtual sptr<CellValue> abs() const = 0;
+    virtual sptr<CellValue> neg() const = 0;
 };
 
 }

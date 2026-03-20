@@ -25,6 +25,8 @@ public:
     sptr<CellValue> mul(sptr<CellValue> other) const override;
     sptr<CellValue> div(sptr<CellValue> other) const override;
     sptr<CellValue> remdiv(sptr<CellValue> other) const override;
+    sptr<CellValue> abs() const override;
+    sptr<CellValue> neg() const override;
 
 protected:
     IntType value_;

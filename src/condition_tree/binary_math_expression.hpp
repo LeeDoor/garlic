@@ -1,0 +1,20 @@
+#pragma once
+#include "expression.hpp"
+
+namespace garlic {
+
+enum BinaryMathOperator { ADD, SUB, DIV, MUL, REMDIV };
+class CellAcceptMathOp;
+
+class BinaryMathExpression : public Expression {
+public:
+    BinaryMathExpression(sptr<Expression> lhs, sptr<Expression> rhs, BinaryMathOperator op);
+
+    sptr<CellValue> get_value(sptr<TableValueGatherer> gatherer) const override;
+
+private:
+    sptr<Expression> lhs_, rhs_;
+    BinaryMathOperator op_;
+};
+
+}

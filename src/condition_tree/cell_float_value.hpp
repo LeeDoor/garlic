@@ -22,10 +22,13 @@ public:
     sptr<CellValue> mul(sptr<CellValue> other) const override;
     sptr<CellValue> div(sptr<CellValue> other) const override;
     sptr<CellValue> remdiv(sptr<CellValue> other) const override;
+    sptr<CellValue> abs() const override;
+    sptr<CellValue> neg() const override;
 
 private:
     static FloatType number_to_float(sptr<CellValue> other);
     bool fl_equals(sptr<CellValue> other) const;
+
 protected:
     FloatType value_;
 };

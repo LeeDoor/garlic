@@ -1,9 +1,15 @@
-#include "math_expression.hpp"
+#include "binary_math_expression.hpp"
 #include "cell_accept_math_op.hpp"
 
 namespace garlic {
 
-sptr<CellValue> MathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
+BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression> rhs, BinaryMathOperator op)
+: lhs_{ lhs }
+, rhs_{ rhs }
+, op_ { op }
+{}
+
+sptr<CellValue> BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
     sptr<CellAcceptMathOp> 
 	lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(lhs_->get_value(gatherer)),
 	rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(rhs_->get_value(gatherer));
@@ -21,6 +27,7 @@ sptr<CellValue> MathExpression::get_value(sptr<TableValueGatherer> gatherer) con
     case REMDIV:
 	return lhs->remdiv(rhs);
     }
+    throw std::logic_error("Unary math operator not implemented in unary math expression");
 }
 
 }

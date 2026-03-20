@@ -48,6 +48,12 @@ sptr<CellValue> CellFloatValue::remdiv(sptr<CellValue> other) const {
     FloatType new_value = std::fmod(get_float(), number_to_float(other));
     return std::make_shared<CellFloatValue>(new_value);
 }
+sptr<CellValue> CellFloatValue::abs() const {
+    return std::make_shared<CellFloatValue>(std::fabs(value_));
+}
+sptr<CellValue> CellFloatValue::neg() const {
+    return std::make_shared<CellFloatValue>(value_ * -1.0f);
+}
 
 void CellFloatValue::format(std::ostream& os) const {
     os << value_;

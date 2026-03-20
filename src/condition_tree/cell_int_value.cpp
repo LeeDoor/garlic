@@ -70,6 +70,13 @@ sptr<CellValue> CellIntValue::remdiv(sptr<CellValue> other) const {
     }
     return std::make_shared<CellFloatValue>(value_)->remdiv(other);
 }
+sptr<CellValue> CellIntValue::abs() const {
+    return std::make_shared<CellIntValue>(std::abs(value_));
+}
+sptr<CellValue> CellIntValue::neg() const {
+    return std::make_shared<CellIntValue>(value_ * -1);
+}
+
 void CellIntValue::format(std::ostream& os) const {
     os << value_;
 }

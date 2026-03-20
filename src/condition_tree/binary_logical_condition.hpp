@@ -5,8 +5,6 @@
 namespace garlic {
 
 class BinaryLogicalCondition : public Condition {
-protected:
-
 public:
     BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
 
