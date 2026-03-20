@@ -10,9 +10,8 @@ const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function 
  *  Child should implement comparing operations with other object.
  */
 class CellValue {
-protected:
-    using CellValuePtr = std::shared_ptr<CellValue>;
 public:
+    using CellValuePtr = std::shared_ptr<CellValue>;
     virtual ~CellValue() = default;
 
     /// Equals operator ==

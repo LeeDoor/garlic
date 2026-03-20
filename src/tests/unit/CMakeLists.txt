@@ -2,6 +2,7 @@ set(TEST_EXECUTABLE_NAME unit_test)
 set(GENERAL_LINK_LIBRARIES ${GENERAL_LINK_LIBRARIES} pch_gtest)
 set(DEPENDENCIES 
     table
+    condition_tree
 )
 
 add_executable(${TEST_EXECUTABLE_NAME} 

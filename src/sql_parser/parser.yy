@@ -106,7 +106,7 @@ expr: value { $$ = $1; }
    ;
 
 value: INTEGER { $$ = $1; }
-     | FLOAT   { $$ = $1; } 
+     | FLOAT   { $$ = $1; }
      ;
 
 %left LOGICOR;

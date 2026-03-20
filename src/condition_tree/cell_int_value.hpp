@@ -1,42 +1,46 @@
 #pragma once
-#include "cell_value.hpp"
+#include "cell_accept_math_op.hpp"
+#include "get_cell_type.hpp"
 
 namespace garlic {
 
-class CellIntValue : public CellValue {
+class CellFloatValue;
+
+class CellIntValue : public CellAcceptMathOp {
 public:
-    CellIntValue(IntType value)
-    : CellValue(Int)
-    , value_{ value }
-    {}
+    CellIntValue(IntType value);
 
-    IntType get_int() const { return value_; }
+    IntType operator
+    IntType get_int() const;
+    FloatType get_float() const;
 
-    bool equals(CellValuePtr other) const override {
-        return get_int() == to_int(other);
-    }
-    bool le(CellValuePtr other) const override {
-        return get_int() <= to_int(other);
-    }
-    bool lt(CellValuePtr other) const override {
-        return get_int() < to_int(other);
-    }
-    bool ge(CellValuePtr other) const override {
-        return get_int() >= to_int(other);
-    }
-    bool gt(CellValuePtr other) const override {
-        return get_int() > to_int(other);
-    }
-    void format(std::ostream& os) const override {
-	os << value_;
-    }
+    bool equals(CellValuePtr other) const override;
+    bool le(CellValuePtr other) const override;
+    bool lt(CellValuePtr other) const override;
+    bool ge(CellValuePtr other) const override;
+    bool gt(CellValuePtr other) const override;
+    void format(std::ostream& os) const override;
+
+    CellValuePtr add(CellValuePtr other) const override;
+    CellValuePtr sub(CellValuePtr other) const override;
+    CellValuePtr mul(CellValuePtr other) const override;
+    CellValuePtr div(CellValuePtr other) const override;
 
 private:
-    IntType to_int(CellValuePtr other) const {
-        auto int_ptr = std::dynamic_pointer_cast<CellIntValue>(other);
-        if(int_ptr == nullptr) throw std::logic_error("Comparing CellIntValue with other type");
-        return int_ptr->get_int();
+    template<typename CellValueType> 
+    requires std::is_base_of_v<CellValue, CellValueType>
+    static bool is_type(CellValuePtr other) {
+        return std::dynamic_pointer_cast<CellValueType>(other) != nullptr;
     }
+    template<IsAnyColumnType T> 
+    static T to_type_ptr(CellValuePtr other) {
+        auto ptr = std::dynamic_pointer_cast<get_cell_type<T>::Type>(other);
+    }
+    static bool is_int(CellValuePtr other);
+    static IntType to_int(CellValuePtr other);
+    static bool is_float(CellValuePtr other);
+    static FloatType to_float(CellValuePtr other);
+    std::unique_ptr<CellFloatValue> as_float() const;
 
 protected:
     IntType value_;
