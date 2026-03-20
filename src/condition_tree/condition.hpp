@@ -1,5 +1,4 @@
 #pragma once
-#include "expression.hpp"
 #include "table_value_gatherer.hpp"
 
 namespace garlic {
@@ -15,4 +14,3 @@ public:
 };
 
 }
-

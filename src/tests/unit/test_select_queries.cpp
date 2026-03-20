@@ -1,5 +1,6 @@
 #include "condition_select_query.hpp"
 #include "expression_select_query.hpp"
+#include "query_result.hpp"
 #include "constant_expression.hpp"
 #include "condition_mock.hpp"
 #include "table_value_gatherer_mock.hpp"

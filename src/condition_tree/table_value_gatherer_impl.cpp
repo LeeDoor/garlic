@@ -2,6 +2,7 @@
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
 #include "cell_string_value.hpp"
+#include "typed_table.hpp"
 
 namespace garlic {
 

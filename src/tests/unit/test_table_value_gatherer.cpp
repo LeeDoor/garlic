@@ -1,4 +1,6 @@
 #include "table_value_gatherer_impl.hpp"
+#include "typed_table.hpp"
+#include "public_column_info.hpp"
 #include "cell_string_value.hpp"
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"

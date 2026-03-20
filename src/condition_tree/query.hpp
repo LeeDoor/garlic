@@ -1,8 +1,8 @@
 #pragma once
-#include "query_result.hpp"
-#include "table_value_gatherer.hpp"
 
 namespace garlic {
+class QueryResult;
+class TableValueGatherer;
 
 class Query {
 public:

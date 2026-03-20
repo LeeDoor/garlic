@@ -1,8 +1,8 @@
 #pragma once
 #include "table_value_gatherer.hpp"
-#include "typed_table.hpp"
 
 namespace garlic {
+class TypedTable;
 
 class TableValueGathererImpl : public TableValueGatherer {
 public:

@@ -1,4 +1,5 @@
 #include "compare_condition.hpp"
+#include "expression.hpp"
 
 namespace garlic {
 

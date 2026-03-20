@@ -1,7 +1,7 @@
 #pragma once
-#include "cell_value.hpp"
 
 namespace garlic {
+class CellValue;
 
 class TableValueGatherer {
 public:

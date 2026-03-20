@@ -3,6 +3,7 @@
 #include "binary_operator.hpp"
 
 namespace garlic {
+class Expression;
 
 class CompareCondition : public Condition {
 public:

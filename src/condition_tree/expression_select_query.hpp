@@ -1,11 +1,8 @@
 #pragma once
-#include "cell_type.hpp"
 #include "query.hpp"
 #include "expression.hpp"
 
 namespace garlic {
-
-using RequiredColumns = ArrayType<StringType>;
 
 class ExpressionSelectQuery : public Query {
 public:
