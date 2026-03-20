@@ -5,7 +5,7 @@ namespace garlic {
 
 class TableValueGathererMock : public TableValueGatherer {
 public:
-    MOCK_METHOD(CellValuePtr, get_table_value, (const std::string& column_name), (override));
+    MOCK_METHOD(sptr<CellValue>, get_table_value, (const std::string& column_name), (override));
 
 };
 

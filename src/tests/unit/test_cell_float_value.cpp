@@ -2,18 +2,17 @@
 #include "cell_type.hpp"
 
 namespace garlic {
-using CellValuePtr = std::shared_ptr<CellValue>;
 
 TEST(test_cell_float_value, initialization) {
-    CellValuePtr a5 = std::make_shared<CellFloatValue>(5.0);
-    CellValuePtr b5 = std::make_shared<CellFloatValue>(5.0);
-    CellValuePtr amax = std::make_shared<CellFloatValue>(1e10);
-    CellValuePtr amin = std::make_shared<CellFloatValue>(-1e10);
+    sptr<CellValue> a5 = std::make_shared<CellFloatValue>(5.0);
+    sptr<CellValue> b5 = std::make_shared<CellFloatValue>(5.0);
+    sptr<CellValue> amax = std::make_shared<CellFloatValue>(1e10);
+    sptr<CellValue> amin = std::make_shared<CellFloatValue>(-1e10);
 }
 
 TEST(test_cell_float_value, basicComparingRange5) {
-    CellValuePtr a5 = std::make_shared<CellFloatValue>(5.0);
-    CellValuePtr b5 = std::make_shared<CellFloatValue>(5.0);
+    sptr<CellValue> a5 = std::make_shared<CellFloatValue>(5.0);
+    sptr<CellValue> b5 = std::make_shared<CellFloatValue>(5.0);
 
     EXPECT_TRUE(a5->equals(b5));
     EXPECT_TRUE(a5->ge(b5));
@@ -23,8 +22,8 @@ TEST(test_cell_float_value, basicComparingRange5) {
 }
 
 TEST(test_cell_float_value, basicComparingWithMiserableDifference_ShouldAccountAsSame) {
-    CellValuePtr a5 = std::make_shared<CellFloatValue>(5.0 - 1e-17);
-    CellValuePtr b5 = std::make_shared<CellFloatValue>(5.0);
+    sptr<CellValue> a5 = std::make_shared<CellFloatValue>(5.0 - 1e-17);
+    sptr<CellValue> b5 = std::make_shared<CellFloatValue>(5.0);
 
     EXPECT_TRUE(a5->equals(b5));
     EXPECT_TRUE(a5->ge(b5));
@@ -34,8 +33,8 @@ TEST(test_cell_float_value, basicComparingWithMiserableDifference_ShouldAccountA
 }
 
 TEST(test_cell_float_value, basicComparingRangeINTMAX) {
-    CellValuePtr amax = std::make_shared<CellFloatValue>(std::numeric_limits<FloatType>::max());
-    CellValuePtr amin = std::make_shared<CellFloatValue>(std::numeric_limits<FloatType>::min());
+    sptr<CellValue> amax = std::make_shared<CellFloatValue>(std::numeric_limits<FloatType>::max());
+    sptr<CellValue> amin = std::make_shared<CellFloatValue>(std::numeric_limits<FloatType>::min());
 
     EXPECT_TRUE(amax->ge(amin));
     EXPECT_TRUE(amax->gt(amin));
@@ -45,10 +44,10 @@ TEST(test_cell_float_value, basicComparingRangeINTMAX) {
 }
 
 TEST(test_cell_float_value, basicComparingRange10) {
-    CellValuePtr a4 = std::make_shared<CellFloatValue>(4.5);
-    CellValuePtr a0 = std::make_shared<CellFloatValue>(0.1);
-    CellValuePtr a5 = std::make_shared<CellFloatValue>(5.2);
-    CellValuePtr an7 = std::make_shared<CellFloatValue>(-7.5);
+    sptr<CellValue> a4 = std::make_shared<CellFloatValue>(4.5);
+    sptr<CellValue> a0 = std::make_shared<CellFloatValue>(0.1);
+    sptr<CellValue> a5 = std::make_shared<CellFloatValue>(5.2);
+    sptr<CellValue> an7 = std::make_shared<CellFloatValue>(-7.5);
 
     EXPECT_FALSE(a4->equals(a0));
     EXPECT_TRUE(a4->ge(a0));

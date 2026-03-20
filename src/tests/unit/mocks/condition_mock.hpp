@@ -9,7 +9,7 @@ public:
         EXPECT_CALL(*this, resolve(::testing::_)).WillRepeatedly(Return(val));
     }
 
-    MOCK_METHOD(bool, resolve, (TableValueGathererPtr gatherer), (const, override));
+    MOCK_METHOD(bool, resolve, (sptr<TableValueGatherer> gatherer), (const, override));
 };
 
 }

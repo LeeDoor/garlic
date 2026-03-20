@@ -17,14 +17,11 @@ std::ostream& operator<<(std::ostream& os, UnaryLogicalOperator op) {
 
 class TestUnaryLogicalCondition : public ::testing::Test {
 protected:
-    using UnaryLogicalConditionShared = std::shared_ptr<UnaryLogicalCondition>;
-public:
-protected:
     static const int TABLE_SIZE = 2;
-    std::shared_ptr<testing::StrictMock<TableValueGathererMock>> gatherer 
+    sptr<testing::StrictMock<TableValueGathererMock>> gatherer
         = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
 
-    std::unique_ptr<UnaryLogicalCondition> create(bool condition, UnaryLogicalOperator op) {
+    uptr<UnaryLogicalCondition> create(bool condition, UnaryLogicalOperator op) {
         return std::make_unique<UnaryLogicalCondition>(
             std::make_unique<ConditionMock>(condition),
             op
@@ -67,4 +64,3 @@ TEST_F(TestUnaryLogicalCondition, Operators) {
 }
 
 }
-

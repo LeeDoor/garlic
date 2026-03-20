@@ -12,10 +12,8 @@ public:
     {}
 
 protected:
-    using GathererPtr = std::shared_ptr<TableValueGathererMock>;
-
-    GathererPtr gatherer_;
-    std::shared_ptr<CellIntValue> test_int_value_;
+    sptr<TableValueGathererMock> gatherer_;
+    sptr<CellIntValue> test_int_value_;
 };
 
 TEST_F(TestValueExpressionFixture, init) {

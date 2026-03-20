@@ -9,12 +9,12 @@ using RequiredColumns = ArrayType<StringType>;
 
 class ConditionSelectQuery : public Query {
 public:
-    ConditionSelectQuery(Condition::Ptr condition);
+    ConditionSelectQuery(sptr<Condition> condition);
 
-    QueryResult::Ptr resolve(TableValueGatherer::Ptr gatherer) override;
+    sptr<QueryResult> resolve(sptr<TableValueGatherer> gatherer) override;
 
 private:
-    Condition::Ptr condition_;
+    sptr<Condition> condition_;
 };
 
 }

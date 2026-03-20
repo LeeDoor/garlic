@@ -13,26 +13,26 @@ CellStringValue::operator StringViewType() const {
 
 StringViewType CellStringValue::get_string() const { return value_; }
 
-bool CellStringValue::equals(CellValuePtr other) const {
+bool CellStringValue::equals(sptr<CellValue> other) const {
     return get_cmp(other) == 0;
 }
-bool CellStringValue::le(CellValuePtr other) const {
+bool CellStringValue::le(sptr<CellValue> other) const {
     return get_cmp(other) <= 0;
 }
-bool CellStringValue::lt(CellValuePtr other) const {
+bool CellStringValue::lt(sptr<CellValue> other) const {
     return get_cmp(other) < 0;
 }
-bool CellStringValue::ge(CellValuePtr other) const {
+bool CellStringValue::ge(sptr<CellValue> other) const {
     return get_cmp(other) >= 0;
 }
-bool CellStringValue::gt(CellValuePtr other) const {
+bool CellStringValue::gt(sptr<CellValue> other) const {
     return get_cmp(other) > 0;
 }
 void CellStringValue::format(std::ostream& os) const {
     os << value_;
 }
 
-int CellStringValue::get_cmp(CellValuePtr other) const { 
+int CellStringValue::get_cmp(sptr<CellValue> other) const { 
     auto str_ptr = std::dynamic_pointer_cast<CellStringValue>(other);
     if(str_ptr == nullptr) 
 	throw std::logic_error("Trying to compare CellStringValue with other type");

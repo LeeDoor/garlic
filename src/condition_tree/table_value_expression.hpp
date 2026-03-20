@@ -7,7 +7,7 @@ class TableValueExpression : public Expression {
 public:
     TableValueExpression(std::string column_name);
 
-    CellValuePtr get_value(TableValueGathererPtr gatherer) const override;
+    sptr<CellValue> get_value(sptr<TableValueGatherer> gatherer) const override;
 
 private:
     std::string column_name_;

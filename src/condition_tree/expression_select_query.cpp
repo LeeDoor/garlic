@@ -3,11 +3,11 @@
 
 namespace garlic {
 
-ExpressionSelectQuery::ExpressionSelectQuery(Expression::Ptr expr)
+ExpressionSelectQuery::ExpressionSelectQuery(sptr<Expression> expr)
 : expression_ { std::move(expr) }
 {}
 
-QueryResult::Ptr ExpressionSelectQuery::resolve(TableValueGatherer::Ptr gatherer) {
+sptr<QueryResult> ExpressionSelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
     auto result = expression_->get_value(gatherer);
     std::stringstream ss;
     result->format(ss);

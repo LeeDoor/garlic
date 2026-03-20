@@ -6,13 +6,13 @@ namespace garlic {
 
 class CompareCondition : public Condition {
 public:
-    CompareCondition(ExpressionPtr lhs, ExpressionPtr rhs, BinaryOperator op);
+    CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op);
 
-    bool resolve(TableValueGathererPtr gatherer) const override;
+    bool resolve(sptr<TableValueGatherer> gatherer) const override;
 
 private:
-    ExpressionPtr expr_left_;
-    ExpressionPtr expr_right_;
+    sptr<Expression> expr_left_;
+    sptr<Expression> expr_right_;
     BinaryOperator operator_;
 };
 

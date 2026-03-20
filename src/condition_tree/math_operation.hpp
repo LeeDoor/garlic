@@ -7,8 +7,8 @@ enum MathOperator { ADD, SUB, DIV, MUL, REMDIV };
 
 class MathOperation : public Expression {
 public:
-    CellValuePtr get_value(TableValueGathererPtr gatherer) const override {
-        CellValuePtr lhs = lhs_->get_value(gatherer),
+    sptr<CellValue> get_value(sptr<TableValueGatherer> gatherer) const override {
+        sptr<CellValue> lhs = lhs_->get_value(gatherer),
                      rhs = rhs_->get_value(gatherer);
         switch(op_) {
         case ADD:
@@ -23,7 +23,7 @@ public:
 
 private:
     MathOperator op_;
-    Expression::Ptr lhs_, rhs_;
+    sptr<Expression> lhs_, rhs_;
 };
 
 }

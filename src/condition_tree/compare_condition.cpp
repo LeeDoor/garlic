@@ -2,13 +2,13 @@
 
 namespace garlic {
 
-CompareCondition::CompareCondition(ExpressionPtr lhs, ExpressionPtr rhs, BinaryOperator op)
+CompareCondition::CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op)
 : expr_left_ { std::move(lhs) }
 , expr_right_{ std::move(rhs) }
 , operator_  { op }
 {}
 
-bool CompareCondition::resolve(TableValueGathererPtr gatherer) const {
+bool CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
     auto lhs = expr_left_->get_value(gatherer),
 	 rhs = expr_right_->get_value(gatherer);
     switch(operator_) {

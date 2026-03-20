@@ -2,13 +2,13 @@
 
 namespace garlic {
 
-BinaryLogicalCondition::BinaryLogicalCondition(Condition::Ptr lhs, Condition::Ptr rhs, BinaryLogicalOperator op)
+BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op)
 : lhs_{ std::move(lhs) }
 , rhs_{ std::move(rhs) }
 , op_{ op }
 {}
 
-bool BinaryLogicalCondition::resolve(TableValueGathererPtr gatherer) const {
+bool BinaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
     switch(op_) {
 	case And:
 	    return lhs_->resolve(gatherer) && rhs_->resolve(gatherer);

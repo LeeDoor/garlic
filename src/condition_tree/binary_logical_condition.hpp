@@ -6,15 +6,15 @@ namespace garlic {
 
 class BinaryLogicalCondition : public Condition {
 protected:
-    using LogicConditionPtr = std::shared_ptr<BinaryLogicalCondition>;
-public:
-    BinaryLogicalCondition(Condition::Ptr lhs, Condition::Ptr rhs, BinaryLogicalOperator op);
 
-    bool resolve(TableValueGathererPtr gatherer) const override;
+public:
+    BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
+
+    bool resolve(sptr<TableValueGatherer> gatherer) const override;
 
 protected:
-    Condition::Ptr lhs_;
-    Condition::Ptr rhs_;
+    sptr<Condition> lhs_;
+    sptr<Condition> rhs_;
     BinaryLogicalOperator op_;
 };
 

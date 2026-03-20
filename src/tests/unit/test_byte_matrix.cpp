@@ -1,6 +1,6 @@
 #include "byte_matrix.hpp"
 
-bool operator== (const ByteSpan& lhs, const ByteVector& rhs) {
+bool operator== (const garlic::ByteSpan& lhs, const garlic::ByteVector& rhs) {
     return std::ranges::equal(lhs, rhs);
 }
 

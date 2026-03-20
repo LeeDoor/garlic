@@ -6,10 +6,9 @@ namespace garlic {
 
 class Query {
 public:
-   using Ptr = std::shared_ptr<Query>;
-   virtual ~Query() = default;
+    virtual ~Query() = default;
 
-    virtual QueryResult::Ptr resolve(TableValueGatherer::Ptr gatherer) = 0;
+    virtual sptr<QueryResult> resolve(sptr<TableValueGatherer> gatherer) = 0;
 };
 
 }

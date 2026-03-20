@@ -23,13 +23,12 @@ std::ostream& operator<<(std::ostream& os, BinaryLogicalOperator op) {
 
 class TestBinaryLogicalCondition : public ::testing::Test {
 protected:
-    using BinaryLogicalConditionShared = std::shared_ptr<BinaryLogicalCondition>;
 public:
 protected:
     static const int TABLE_SIZE = 4;
-    std::shared_ptr<testing::StrictMock<TableValueGathererMock>> gatherer 
+    sptr<testing::StrictMock<TableValueGathererMock>> gatherer
         = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
-    std::unique_ptr<BinaryLogicalCondition> create(bool lhs, bool rhs, BinaryLogicalOperator op) {
+    uptr<BinaryLogicalCondition> create(bool lhs, bool rhs, BinaryLogicalOperator op) {
         return std::make_unique<BinaryLogicalCondition>(
             std::make_unique<ConditionMock>(lhs),
             std::make_unique<ConditionMock>(rhs),

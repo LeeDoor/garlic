@@ -14,51 +14,51 @@ CellIntValue::operator IntType() const {
 IntType CellIntValue::get_int() const { return value_; }
 FloatType CellIntValue::get_float() const { return static_cast<FloatType>(get_int()); }
 
-bool CellIntValue::equals(CellValuePtr other) const {
+bool CellIntValue::equals(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other))
         return get_int() == to_type<IntType>(other);
     return make_copy<CellFloatValue>(value_)->equals(other);
 }
-bool CellIntValue::le(CellValuePtr other) const {
+bool CellIntValue::le(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other))
         return get_int() <= to_type<IntType>(other);
     return make_copy<CellFloatValue>(value_)->le(other);
 }
-bool CellIntValue::lt(CellValuePtr other) const {
+bool CellIntValue::lt(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other))
         return get_int() < to_type<IntType>(other);
     return make_copy<CellFloatValue>(value_)->lt(other);
 }
-bool CellIntValue::ge(CellValuePtr other) const {
+bool CellIntValue::ge(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other))
         return get_int() >= to_type<IntType>(other);
     return make_copy<CellFloatValue>(value_)->ge(other);
 }
-bool CellIntValue::gt(CellValuePtr other) const {
+bool CellIntValue::gt(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other))
         return get_int() > to_type<IntType>(other);
     return make_copy<CellFloatValue>(value_)->gt(other);
 }
 
-CellIntValue::CellValuePtr CellIntValue::add(CellValuePtr other) const {
+sptr<CellValue> CellIntValue::add(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other)) {
         return make_copy<CellIntValue>(value_ + to_type<IntType>(other));
     }
     return make_copy<CellFloatValue>(value_ + to_type<FloatType>(other));
 }
-CellIntValue::CellValuePtr CellIntValue::sub(CellValuePtr other) const {
+sptr<CellValue> CellIntValue::sub(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other)) {
         return make_copy<CellIntValue>(value_ - to_type<IntType>(other));
     }
     return make_copy<CellFloatValue>(value_ - to_type<FloatType>(other));
 }
-CellIntValue::CellValuePtr CellIntValue::mul(CellValuePtr other) const {
+sptr<CellValue> CellIntValue::mul(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other)) {
         return make_copy<CellIntValue>(value_ * to_type<IntType>(other));
     }
     return make_copy<CellFloatValue>(value_ * to_type<FloatType>(other));
 }
-CellIntValue::CellValuePtr CellIntValue::div(CellValuePtr other) const {
+sptr<CellValue> CellIntValue::div(sptr<CellValue> other) const {
     if(is_type<CellIntValue>(other)) {
         return make_copy<CellIntValue>(value_ / to_type<IntType>(other));
     }

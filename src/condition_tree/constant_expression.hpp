@@ -14,7 +14,7 @@ public:
     : value_(std::move(value))
     {}
 
-    CellValuePtr get_value(TableValueGathererPtr) const override {
+    sptr<CellValue> get_value(sptr<TableValueGatherer>) const override {
         return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);
     }
 

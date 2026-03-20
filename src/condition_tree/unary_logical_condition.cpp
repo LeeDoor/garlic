@@ -2,12 +2,12 @@
 
 namespace garlic {
 
-UnaryLogicalCondition::UnaryLogicalCondition(Condition::Ptr condition, UnaryLogicalOperator op)
+UnaryLogicalCondition::UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op)
 : cond_{ std::move(condition) }
 , op_{ op }
 {}
 
-bool UnaryLogicalCondition::resolve(TableValueGathererPtr gatherer) const {
+bool UnaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
     switch(op_) {
     case IsTrue:
 	return cond_->resolve(gatherer);

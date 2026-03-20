@@ -11,10 +11,10 @@ protected:
 public:
     virtual ~CellAcceptMathOp() = default;
 
-    virtual CellValuePtr add(CellValuePtr other) const = 0;
-    virtual CellValuePtr sub(CellValuePtr other) const = 0;
-    virtual CellValuePtr mul(CellValuePtr other) const = 0;
-    virtual CellValuePtr div(CellValuePtr other) const = 0;
+    virtual sptr<CellValue> add(sptr<CellValue> other) const = 0;
+    virtual sptr<CellValue> sub(sptr<CellValue> other) const = 0;
+    virtual sptr<CellValue> mul(sptr<CellValue> other) const = 0;
+    virtual sptr<CellValue> div(sptr<CellValue> other) const = 0;
     
 };
 

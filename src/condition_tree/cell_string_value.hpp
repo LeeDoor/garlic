@@ -10,15 +10,15 @@ public:
     explicit operator StringViewType() const;
 
     StringViewType get_string() const;
-    bool equals(CellValuePtr other) const override;
-    bool le(CellValuePtr other) const override;
-    bool lt(CellValuePtr other) const override;
-    bool ge(CellValuePtr other) const override;
-    bool gt(CellValuePtr other) const override;
+    bool equals(sptr<CellValue> other) const override;
+    bool le(sptr<CellValue> other) const override;
+    bool lt(sptr<CellValue> other) const override;
+    bool ge(sptr<CellValue> other) const override;
+    bool gt(sptr<CellValue> other) const override;
     void format(std::ostream& os) const override;
 
 private:
-    int get_cmp(CellValuePtr other) const;
+    int get_cmp(sptr<CellValue> other) const;
 
 protected:
     StringViewType value_;

@@ -13,8 +13,6 @@ const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function 
  */
 class CellValue {
 public:
-    using CellValuePtr = std::shared_ptr<CellValue>;
-
     virtual ~CellValue() = default;
 
     /// Equals operator ==
@@ -22,31 +20,31 @@ public:
      *  @returns true if this's value and other's value are equal.
      *  @throws std::logic_error if trying to compare uncomparable types.
      */
-    virtual bool equals(CellValuePtr other) const = 0;
+    virtual bool equals(sptr<CellValue> other) const = 0;
     /// Less or Equal operator <= 
     /*! @param rhs comparement object
      *  @returns true if this's value is less than or equal to other's value.
      *  @throws std::logic_error if trying to compare uncomparable types.
      */
-    virtual bool le(CellValuePtr other) const = 0;
+    virtual bool le(sptr<CellValue> other) const = 0;
     /// Less Than operator <
     /*! @param rhs comparement object
      *  @returns true if this's value is less than other's value.
      *  @throws std::logic_error if trying to compare uncomparable types.
      */
-    virtual bool lt(CellValuePtr other) const = 0;
+    virtual bool lt(sptr<CellValue> other) const = 0;
     /// Greater or Equal operator >=
     /*! @param rhs comparement object
      *  @returns true if this's value is more than or equal to other's value.
      *  @throws std::logic_error if trying to compare uncomparable types.
      */
-    virtual bool ge(CellValuePtr other) const = 0;
+    virtual bool ge(sptr<CellValue> other) const = 0;
     /// Greater Than operator >
     /*! @param rhs comparement object
      *  @returns true if this's value is more than other's value.
      *  @throws std::logic_error if trying to compare uncomparable types.
      */
-    virtual bool gt(CellValuePtr other) const = 0;
+    virtual bool gt(sptr<CellValue> other) const = 0;
 
     /// Get the enum type of underlying object.
     CellType get_type() const { return cell_type_; }
@@ -58,12 +56,12 @@ protected:
     
     template<typename CellValueType> 
     requires std::is_base_of_v<CellValue, CellValueType>
-    static bool is_type(CellValuePtr other) {
+    static bool is_type(sptr<CellValue> other) {
         return as_casted_ptr<CellValueType>(other) != nullptr;
     }
 
     template<IsAnyColumnType T> 
-    static T to_type(CellValuePtr other) {
+    static T to_type(sptr<CellValue> other) {
         auto ptr = as_casted_ptr<typename get_cell_type<T>::Type>(other);
 	if(ptr == nullptr) 
 	    throw std::logic_error("Trying to cast uncastable type");
@@ -72,13 +70,13 @@ protected:
 
     template<typename CellValueType> 
     requires std::is_base_of_v<CellValue, CellValueType>
-    static std::shared_ptr<CellValueType> as_casted_ptr(CellValuePtr other) {
+    static sptr<CellValueType> as_casted_ptr(sptr<CellValue> other) {
         return std::dynamic_pointer_cast<CellValueType>(other);
     }
     
     template<typename CellValueType> 
     requires std::is_base_of_v<CellValue, CellValueType>
-    static std::shared_ptr<CellValueType> make_copy(typename get_cell_primitive<CellValueType>::Type value) {
+    static sptr<CellValueType> make_copy(typename get_cell_primitive<CellValueType>::Type value) {
 	return std::make_shared<CellValueType>(value);
     }
 

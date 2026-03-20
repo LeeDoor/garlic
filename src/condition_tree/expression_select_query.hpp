@@ -9,12 +9,12 @@ using RequiredColumns = ArrayType<StringType>;
 
 class ExpressionSelectQuery : public Query {
 public:
-    ExpressionSelectQuery(Expression::Ptr expr);
+    ExpressionSelectQuery(sptr<Expression> expr);
 
-    QueryResult::Ptr resolve(TableValueGatherer::Ptr gatherer) override;
+    sptr<QueryResult> resolve(sptr<TableValueGatherer> gatherer) override;
 
 private:
-    Expression::Ptr expression_;
+    sptr<Expression> expression_;
 };
 
 }

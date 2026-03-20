@@ -3,11 +3,11 @@
 
 namespace garlic {
 
-ConditionSelectQuery::ConditionSelectQuery(Condition::Ptr condition)
+ConditionSelectQuery::ConditionSelectQuery(sptr<Condition> condition)
 : condition_{ std::move(condition) }
 {}
 
-QueryResult::Ptr ConditionSelectQuery::resolve(TableValueGatherer::Ptr gatherer) {
+sptr<QueryResult> ConditionSelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
     auto result = condition_->resolve(gatherer);
     return std::make_unique<StringQueryResult>(static_cast<int>(result));
 }

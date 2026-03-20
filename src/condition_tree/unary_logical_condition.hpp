@@ -5,15 +5,13 @@
 namespace garlic {
 
 class UnaryLogicalCondition : public Condition {
-protected:
-    using UnaryLogicalConditionPtr = std::shared_ptr<UnaryLogicalCondition>;
 public:
-    UnaryLogicalCondition(Condition::Ptr condition, UnaryLogicalOperator op);
+    UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
 
-    bool resolve(TableValueGathererPtr gatherer) const override;
+    bool resolve(sptr<TableValueGatherer> gatherer) const override;
 
 protected:
-    Condition::Ptr cond_;
+    sptr<Condition> cond_;
     UnaryLogicalOperator op_;
 };
 

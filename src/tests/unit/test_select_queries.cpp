@@ -10,23 +10,22 @@ namespace garlic {
 
 class ThrowingCondition : public Condition {
 public:
-    bool resolve(TableValueGathererPtr) const override {
+    bool resolve(sptr<TableValueGatherer>) const override {
         throw std::logic_error("condition resolve failed");
     }
 };
 
 class ThrowingExpression : public Expression {
 public:
-    CellValue::CellValuePtr get_value(TableValueGathererPtr) const override {
+    sptr<CellValue> get_value(sptr<TableValueGatherer>) const override {
         throw std::logic_error("expression evaluate failed");
     }
 };
 
 class TestSelectQueries : public ::testing::Test {
 protected:
-    using GathererPtr = std::shared_ptr<testing::StrictMock<TableValueGathererMock>>;
-
-    GathererPtr gatherer_ = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    sptr<testing::StrictMock<TableValueGathererMock>> gatherer_ =
+        std::make_shared<testing::StrictMock<TableValueGathererMock>>();
 
     static std::string format_float_like_query(FloatType value) {
         std::ostringstream os;

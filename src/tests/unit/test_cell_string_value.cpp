@@ -3,25 +3,24 @@
 
 namespace garlic {
 using namespace std::literals;
-using CellValuePtr = std::shared_ptr<CellValue>;
 
 auto str_hello = "Hello"sv;
 auto str_world = "World"sv;
 
 TEST(test_cell_string_value, initialization) {
-    CellValuePtr a = std::make_shared<CellStringValue>(str_hello);
-    CellValuePtr b = std::make_shared<CellStringValue>(str_world);
-    CellValuePtr c = std::make_shared<CellStringValue>(""sv);
+    sptr<CellValue> a = std::make_shared<CellStringValue>(str_hello);
+    sptr<CellValue> b = std::make_shared<CellStringValue>(str_world);
+    sptr<CellValue> c = std::make_shared<CellStringValue>(""sv);
 }
 
 TEST(test_cell_string_value, getType_shouldGetString) {
-    CellValuePtr a = std::make_shared<CellStringValue>(str_hello);
+    sptr<CellValue> a = std::make_shared<CellStringValue>(str_hello);
     EXPECT_EQ(a->get_type(), CellType::String);
 }
 
 TEST(test_cell_string_value, comparingSameStrings) {
-    CellValuePtr a = std::make_shared<CellStringValue>(str_hello);
-    CellValuePtr b = std::make_shared<CellStringValue>(str_hello);
+    sptr<CellValue> a = std::make_shared<CellStringValue>(str_hello);
+    sptr<CellValue> b = std::make_shared<CellStringValue>(str_hello);
 
     EXPECT_TRUE(a->equals(b));
     EXPECT_TRUE(a->ge(b));
@@ -31,8 +30,8 @@ TEST(test_cell_string_value, comparingSameStrings) {
 }
 
 TEST(test_cell_string_value, basicComparingHelloAndWord) {
-    CellValuePtr amin = std::make_shared<CellStringValue>(str_hello);
-    CellValuePtr amax = std::make_shared<CellStringValue>(str_world);
+    sptr<CellValue> amin = std::make_shared<CellStringValue>(str_hello);
+    sptr<CellValue> amax = std::make_shared<CellStringValue>(str_world);
 
     EXPECT_TRUE(amax->gt(amin));
     EXPECT_TRUE(amax->ge(amin));
@@ -42,8 +41,8 @@ TEST(test_cell_string_value, basicComparingHelloAndWord) {
 }
 
 TEST(test_cell_string_value, SameLettersDifferentSize) {
-    CellValuePtr AAA = std::make_shared<CellStringValue>("AAA"sv);
-    CellValuePtr A = std::make_shared<CellStringValue>("A"sv);
+    sptr<CellValue> AAA = std::make_shared<CellStringValue>("AAA"sv);
+    sptr<CellValue> A = std::make_shared<CellStringValue>("A"sv);
     
     EXPECT_FALSE(AAA->equals(A));
     EXPECT_FALSE(A->equals(AAA));

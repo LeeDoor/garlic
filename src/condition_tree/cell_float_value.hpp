@@ -10,21 +10,21 @@ public:
     explicit operator FloatType() const;
     FloatType get_float() const;
 
-    bool equals(CellValuePtr other) const override;
-    bool le(CellValuePtr other) const override;
-    bool lt(CellValuePtr other) const override;
-    bool ge(CellValuePtr other) const override;
-    bool gt(CellValuePtr other) const override;
+    bool equals(sptr<CellValue> other) const override;
+    bool le(sptr<CellValue> other) const override;
+    bool lt(sptr<CellValue> other) const override;
+    bool ge(sptr<CellValue> other) const override;
+    bool gt(sptr<CellValue> other) const override;
     void format(std::ostream& os) const override;
 
-    CellValuePtr add(CellValuePtr other) const override;
-    CellValuePtr sub(CellValuePtr other) const override;
-    CellValuePtr mul(CellValuePtr other) const override;
-    CellValuePtr div(CellValuePtr other) const override;
+    sptr<CellValue> add(sptr<CellValue> other) const override;
+    sptr<CellValue> sub(sptr<CellValue> other) const override;
+    sptr<CellValue> mul(sptr<CellValue> other) const override;
+    sptr<CellValue> div(sptr<CellValue> other) const override;
 
 private:
-    static FloatType number_to_float(CellValuePtr other);
-    bool fl_equals(CellValuePtr other) const;
+    static FloatType number_to_float(sptr<CellValue> other);
+    bool fl_equals(sptr<CellValue> other) const;
 protected:
     FloatType value_;
 };

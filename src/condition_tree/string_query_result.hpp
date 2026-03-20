@@ -5,7 +5,7 @@ namespace garlic {
 
 class StringQueryResult : public QueryResult {
 public:
-    using Ptr = std::shared_ptr<StringQueryResult>;
+
 
     StringQueryResult() = default;
     template<IsAnyColumnType T>
