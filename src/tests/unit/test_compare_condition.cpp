@@ -35,12 +35,14 @@ TEST_F(TestCompareCondition, init) {
 
 TEST_F(TestCompareCondition, intComparison) {
     sptr<Condition> condeq = create_condition(5, 12, Equals);
+    sptr<Condition> condne = create_condition(5, 12, Ne);
     sptr<Condition> condge = create_condition(5, 12, Ge);
     sptr<Condition> condgt = create_condition(5, 12, Gt);
     sptr<Condition> condle = create_condition(5, 12, Le);
     sptr<Condition> condlt = create_condition(5, 12, Lt);
 
     EXPECT_FALSE(condeq->resolve(gatherer));
+    EXPECT_TRUE(condne->resolve(gatherer));
     EXPECT_FALSE(condge->resolve(gatherer));
     EXPECT_FALSE(condgt->resolve(gatherer));
     EXPECT_TRUE(condle->resolve(gatherer));
@@ -49,6 +51,7 @@ TEST_F(TestCompareCondition, intComparison) {
 
 TEST_F(TestCompareCondition, floatComparison) {
     sptr<Condition> condeq = create_condition(5.1f, 12.2f, Equals);
+    sptr<Condition> condne = create_condition(5.1f, 12.2f, Ne);
     sptr<Condition> condge = create_condition(5.5f, 12.1f, Ge);
     sptr<Condition> condgt = create_condition(5.0f, 12.f, Gt);
     sptr<Condition> condle = create_condition(5.f, 12.f, Le);
@@ -61,6 +64,7 @@ TEST_F(TestCompareCondition, floatComparison) {
     sptr<Condition> condsamelt = create_condition(5.f, 5.f + half_ep, Lt);
 
     EXPECT_FALSE(condeq->resolve(gatherer));
+    EXPECT_TRUE(condne->resolve(gatherer));
     EXPECT_FALSE(condge->resolve(gatherer));
     EXPECT_FALSE(condgt->resolve(gatherer));
     EXPECT_TRUE(condle->resolve(gatherer));
@@ -75,12 +79,14 @@ TEST_F(TestCompareCondition, floatComparison) {
 TEST_F(TestCompareCondition, stringComparison) {
     using namespace std::literals;
     sptr<Condition> condeq = create_condition("Hello"s, "Test"s, Equals);
+    sptr<Condition> condne = create_condition("Hello"s, "Test"s, Ne);
     sptr<Condition> condle = create_condition("Hello"s, "Test"s, Le);
     sptr<Condition> condge = create_condition("Hello"s, "Test"s, Ge);
     sptr<Condition> condlt = create_condition("Hello"s, "Test"s, Lt);
     sptr<Condition> condgt = create_condition("Hello"s, "Test"s, Gt);
 
     EXPECT_FALSE(condeq->resolve(gatherer));
+    EXPECT_TRUE(condne->resolve(gatherer));
     EXPECT_TRUE(condle->resolve(gatherer));
     EXPECT_FALSE(condge->resolve(gatherer));
     EXPECT_TRUE(condlt->resolve(gatherer));

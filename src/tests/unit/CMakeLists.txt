@@ -15,6 +15,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_table_value_gatherer.cpp
     test_table_value_expression.cpp
     test_math_expression.cpp
+    test_binary_unary_math_expression.cpp
     test_select_queries.cpp
     test_compare_condition.cpp
     test_binary_logical_condition.cpp
