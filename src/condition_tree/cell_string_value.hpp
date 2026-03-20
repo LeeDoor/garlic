@@ -5,49 +5,21 @@ namespace garlic {
 
 class CellStringValue : public CellValue {
 public:
-    CellStringValue(StringViewType value)
-    : CellValue(String)
-    , value_{ value }
-    {}
+    CellStringValue(StringViewType value);
 
-    StringViewType get_string() const { return value_; }
+    explicit operator StringViewType() const;
 
-    bool equals(CellValuePtr other) const override {
-	return get_cmp(other) == 0;
-    }
-    bool le(CellValuePtr other) const override {
-	return get_cmp(other) <= 0;
-    }
-    bool lt(CellValuePtr other) const override {
-	return get_cmp(other) < 0;
-    }
-    bool ge(CellValuePtr other) const override {
-	return get_cmp(other) >= 0;
-    }
-    bool gt(CellValuePtr other) const override {
-	return get_cmp(other) > 0;
-    }
-    void format(std::ostream& os) const override {
-	os << value_;
-    }
+    StringViewType get_string() const;
+    bool equals(CellValuePtr other) const override;
+    bool le(CellValuePtr other) const override;
+    bool lt(CellValuePtr other) const override;
+    bool ge(CellValuePtr other) const override;
+    bool gt(CellValuePtr other) const override;
+    void format(std::ostream& os) const override;
 
 private:
-    int get_cmp(CellValuePtr other) const { 
-	auto str_ptr = std::dynamic_pointer_cast<CellStringValue>(other);
-	if(str_ptr == nullptr) 
-	    throw std::logic_error("Trying to compare CellStringValue with other type");
-	size_t our_size = value_.size();
-	size_t other_size = str_ptr->get_string().size();
-	size_t mins = std::min(our_size, other_size);
-	size_t maxs = std::max(our_size, other_size);
-	int cmp = std::strncmp(value_.data(), str_ptr->get_string().data(), mins); 
-	if(cmp != 0) {
-	    return cmp;
-	}
-	if(mins == maxs) return cmp;
-	else if (our_size == mins) return -1;
-	else return 1;
-    }
+    int get_cmp(CellValuePtr other) const;
+
 protected:
     StringViewType value_;
 };

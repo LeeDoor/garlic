@@ -6,6 +6,8 @@ class CellIntValue;
 class CellFloatValue : public CellAcceptMathOp {
 public:
     CellFloatValue(FloatType value);
+
+    explicit operator FloatType() const;
     FloatType get_float() const;
 
     bool equals(CellValuePtr other) const override;
@@ -21,8 +23,7 @@ public:
     CellValuePtr div(CellValuePtr other) const override;
 
 private:
-    FloatType to_float(CellValuePtr other) const;
-
+    static FloatType number_to_float(CellValuePtr other);
     bool fl_equals(CellValuePtr other) const;
 protected:
     FloatType value_;

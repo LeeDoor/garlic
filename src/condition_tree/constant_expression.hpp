@@ -1,6 +1,9 @@
 #pragma once
 #include "expression.hpp"
 #include "get_cell_type.hpp"
+#include "cell_string_value.hpp"
+#include "cell_float_value.hpp"
+#include "cell_int_value.hpp"
 
 namespace garlic {
 

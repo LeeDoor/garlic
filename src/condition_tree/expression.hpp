@@ -6,8 +6,8 @@ namespace garlic {
 
 class Expression {
 protected:
-    using CellValuePtr = std::shared_ptr<CellValue>;
     using TableValueGathererPtr = std::shared_ptr<TableValueGatherer>;
+    using CellValuePtr = std::shared_ptr<CellValue>;
 public:
     using Ptr = std::unique_ptr<Expression>;
     virtual ~Expression() = default;

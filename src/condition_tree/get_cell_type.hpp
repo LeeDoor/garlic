@@ -1,10 +1,11 @@
 #pragma once
-#include "cell_float_value.hpp"
-#include "cell_int_value.hpp"
-#include "cell_string_value.hpp"
 #include "cell_type.hpp"
 
 namespace garlic {
+
+class CellIntValue; 
+class CellFloatValue; 
+class CellStringValue;
 
 template<IsAnyColumnType T>
 struct get_cell_type;

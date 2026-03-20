@@ -17,7 +17,7 @@ public:
 
 class ThrowingExpression : public Expression {
 public:
-    CellValuePtr get_value(TableValueGathererPtr) const override {
+    CellValue::CellValuePtr get_value(TableValueGathererPtr) const override {
         throw std::logic_error("expression evaluate failed");
     }
 };
