@@ -1,4 +1,7 @@
 #include "table_value_gatherer_impl.hpp"
+#include "cell_string_value.hpp"
+#include "cell_float_value.hpp"
+#include "cell_int_value.hpp"
 
 namespace garlic {
 class TableValueGathererFixture : public ::testing::Test {

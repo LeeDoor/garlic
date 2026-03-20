@@ -6,17 +6,15 @@ namespace garlic {
 class StringQueryResult : public QueryResult {
 public:
     using Ptr = std::shared_ptr<StringQueryResult>;
-    virtual ~StringQueryResult() = default;
 
+    StringQueryResult() = default;
     template<IsAnyColumnType T>
     StringQueryResult(const T& res)
     : result_str_{ form_string(res) }
     {}
-    StringQueryResult(){}
 
-    StringViewType format() const override {
-        return result_str_;   
-    }
+    StringViewType format() const override;
+
 private:
     template<IsAnyColumnType T>
     static std::string form_string(const T& res) {
