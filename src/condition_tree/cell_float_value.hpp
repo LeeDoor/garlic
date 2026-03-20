@@ -21,6 +21,7 @@ public:
     sptr<CellValue> sub(sptr<CellValue> other) const override;
     sptr<CellValue> mul(sptr<CellValue> other) const override;
     sptr<CellValue> div(sptr<CellValue> other) const override;
+    sptr<CellValue> remdiv(sptr<CellValue> other) const override;
 
 private:
     static FloatType number_to_float(sptr<CellValue> other);

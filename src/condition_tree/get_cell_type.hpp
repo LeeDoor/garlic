@@ -1,6 +1,5 @@
 #pragma once
 #include "cell_type.hpp"
-#include "cell_int_value.hpp"
 
 namespace garlic {
 

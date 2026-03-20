@@ -73,12 +73,6 @@ protected:
     static sptr<CellValueType> as_casted_ptr(sptr<CellValue> other) {
         return std::dynamic_pointer_cast<CellValueType>(other);
     }
-    
-    template<typename CellValueType> 
-    requires std::is_base_of_v<CellValue, CellValueType>
-    static sptr<CellValueType> make_copy(typename get_cell_primitive<CellValueType>::Type value) {
-	return std::make_shared<CellValueType>(value);
-    }
 
     CellType cell_type_;
 };

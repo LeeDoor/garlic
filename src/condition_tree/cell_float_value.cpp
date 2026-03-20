@@ -44,6 +44,10 @@ sptr<CellValue> CellFloatValue::div(sptr<CellValue> other) const {
     FloatType new_value = get_float() / number_to_float(other);
     return std::make_shared<CellFloatValue>(new_value);
 }
+sptr<CellValue> CellFloatValue::remdiv(sptr<CellValue> other) const {
+    FloatType new_value = std::fmod(get_float(), number_to_float(other));
+    return std::make_shared<CellFloatValue>(new_value);
+}
 
 void CellFloatValue::format(std::ostream& os) const {
     os << value_;
