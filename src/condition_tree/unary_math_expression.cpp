@@ -14,9 +14,9 @@ sptr<CellValue> UnaryMathExpression::get_value(sptr<TableValueGatherer> gatherer
     if(!operand)
 	throw std::logic_error("Invalid math operation on operands not allowing such actions");
     switch(op_) {
-    case ABS:
+    case Abs:
 	return operand->abs();
-    case NEG:
+    case Neg:
 	return operand->neg();
       break;
     }

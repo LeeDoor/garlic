@@ -3,7 +3,7 @@
 
 namespace garlic {
 
-enum UnaryMathOperator { ABS, NEG };
+enum UnaryMathOperator { Abs, Neg };
 
 class UnaryMathExpression : public Expression {
 public:

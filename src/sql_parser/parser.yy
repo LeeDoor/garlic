@@ -109,21 +109,21 @@ comp: comp LOGICAND comp { $$ = mk<BinaryLogicalCondition>(std::move($1), std::m
     | NOT LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($3), IsFalse); }
     | expr MOREEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Ge); }
     | expr LESSEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Le); }
-    | expr ISEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Equals); }
+    | expr ISEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Eq); }
     | expr NOTEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Ne); }
     | expr MORE expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Gt); }
     | expr LESS expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Lt); }
    ;
 
 expr: value { $$ = std::move($1); }
-   | expr PLUS expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), ADD); }
-   | expr MINUS expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), SUB); }
-   | expr MUL expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), MUL); }
-   | expr DIV expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), DIV); }
-   | ABS expr ABS { $$ = mk<UnaryMathExpression>(std::move($2), ABS); }
+   | expr PLUS expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), Add); }
+   | expr MINUS expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), Sub); }
+   | expr MUL expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), Mul); }
+   | expr DIV expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), Div); }
+   | ABS expr ABS { $$ = mk<UnaryMathExpression>(std::move($2), Abs); }
    | LPAREN expr RPAREN { $$ = std::move($2); }
-   | MINUS expr %prec UMINUS { $$ = mk<UnaryMathExpression>(std::move($2), NEG);  }
-   | expr REMDIV expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), REMDIV); }
+   | MINUS expr %prec UMINUS { $$ = mk<UnaryMathExpression>(std::move($2), Neg);  }
+   | expr REMDIV expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), Remdiv); }
    ;
 
 value: INTEGER { $$ = mk<IntConstExpr>($1); }

@@ -13,7 +13,7 @@ bool CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
     auto lhs = expr_left_->get_value(gatherer),
 	 rhs = expr_right_->get_value(gatherer);
     switch(operator_) {
-    case Equals:
+    case Eq:
 	return lhs->equals(rhs);
     case Ne:
 	return lhs->ne(rhs);

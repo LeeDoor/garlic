@@ -22,11 +22,11 @@ TEST(test_binary_math_expression, intOperators) {
     auto lhs = std::make_shared<IntConstExpr>(17);
     auto rhs = std::make_shared<IntConstExpr>(5);
 
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, ADD).get_value(g)), 22);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, SUB).get_value(g)), 12);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, MUL).get_value(g)), 85);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, DIV).get_value(g)), 3);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, REMDIV).get_value(g)), 2);
+    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Add).get_value(g)), 22);
+    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Sub).get_value(g)), 12);
+    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Mul).get_value(g)), 85);
+    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Div).get_value(g)), 3);
+    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Remdiv).get_value(g)), 2);
 }
 
 TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
@@ -34,9 +34,9 @@ TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
     auto lhs = std::make_shared<IntConstExpr>(5);
     auto rhs = std::make_shared<FloatConstExpr>(2.0f);
 
-    auto add_res = BinaryMathExpression(lhs, rhs, ADD).get_value(g);
-    auto div_res = BinaryMathExpression(lhs, rhs, DIV).get_value(g);
-    auto rem_res = BinaryMathExpression(lhs, rhs, REMDIV).get_value(g);
+    auto add_res = BinaryMathExpression(lhs, rhs, Add).get_value(g);
+    auto div_res = BinaryMathExpression(lhs, rhs, Div).get_value(g);
+    auto rem_res = BinaryMathExpression(lhs, rhs, Remdiv).get_value(g);
 
     EXPECT_EQ(add_res->get_type(), Float);
     EXPECT_EQ(div_res->get_type(), Float);
@@ -51,7 +51,7 @@ TEST(test_binary_math_expression, operandWithoutMathSupportShouldThrow) {
     auto lhs = std::make_shared<StringConstExpr>("abc");
     auto rhs = std::make_shared<IntConstExpr>(2);
 
-    BinaryMathExpression expr(lhs, rhs, ADD);
+    BinaryMathExpression expr(lhs, rhs, Add);
     EXPECT_THROW(expr.get_value(g), std::logic_error);
 }
 
@@ -59,23 +59,23 @@ TEST(test_unary_math_expression, absAndNegForInt) {
     auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
     auto val = std::make_shared<IntConstExpr>(-17);
 
-    EXPECT_EQ(as_int(UnaryMathExpression(val, ABS).get_value(g)), 17);
-    EXPECT_EQ(as_int(UnaryMathExpression(val, NEG).get_value(g)), 17);
+    EXPECT_EQ(as_int(UnaryMathExpression(val, Abs).get_value(g)), 17);
+    EXPECT_EQ(as_int(UnaryMathExpression(val, Neg).get_value(g)), 17);
 }
 
 TEST(test_unary_math_expression, absAndNegForFloat) {
     auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
     auto val = std::make_shared<FloatConstExpr>(-2.5f);
 
-    EXPECT_FLOAT_EQ(as_float(UnaryMathExpression(val, ABS).get_value(g)), 2.5f);
-    EXPECT_FLOAT_EQ(as_float(UnaryMathExpression(val, NEG).get_value(g)), 2.5f);
+    EXPECT_FLOAT_EQ(as_float(UnaryMathExpression(val, Abs).get_value(g)), 2.5f);
+    EXPECT_FLOAT_EQ(as_float(UnaryMathExpression(val, Neg).get_value(g)), 2.5f);
 }
 
 TEST(test_unary_math_expression, operandWithoutMathSupportShouldThrow) {
     auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
     auto val = std::make_shared<StringConstExpr>("abc");
 
-    UnaryMathExpression expr(val, NEG);
+    UnaryMathExpression expr(val, Neg);
     EXPECT_THROW(expr.get_value(g), std::logic_error);
 }
 
@@ -84,11 +84,11 @@ TEST(test_binary_unary_math_expression, composedBigExpression) {
 
     // ((|-(1000)| + 24) * 3) % 7 = 0
     auto base = std::make_shared<IntConstExpr>(1000);
-    auto neg = std::make_shared<UnaryMathExpression>(base, NEG);
-    auto abs = std::make_shared<UnaryMathExpression>(neg, ABS);
-    auto plus = std::make_shared<BinaryMathExpression>(abs, std::make_shared<IntConstExpr>(24), ADD);
-    auto mul = std::make_shared<BinaryMathExpression>(plus, std::make_shared<IntConstExpr>(3), MUL);
-    auto rem = BinaryMathExpression(mul, std::make_shared<IntConstExpr>(7), REMDIV);
+    auto neg = std::make_shared<UnaryMathExpression>(base, Neg);
+    auto abs = std::make_shared<UnaryMathExpression>(neg, Abs);
+    auto plus = std::make_shared<BinaryMathExpression>(abs, std::make_shared<IntConstExpr>(24), Add);
+    auto mul = std::make_shared<BinaryMathExpression>(plus, std::make_shared<IntConstExpr>(3), Mul);
+    auto rem = BinaryMathExpression(mul, std::make_shared<IntConstExpr>(7), Remdiv);
 
     auto result = rem.get_value(g);
     EXPECT_EQ(result->get_type(), Int);

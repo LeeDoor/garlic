@@ -16,15 +16,15 @@ sptr<CellValue> BinaryMathExpression::get_value(sptr<TableValueGatherer> gathere
     if(!lhs || !rhs)
 	throw std::logic_error("Invalid math operation on operands not allowing such actions");
     switch(op_) {
-    case ADD:
+    case Add:
 	return lhs->add(rhs);
-    case SUB:
+    case Sub:
 	return lhs->sub(rhs);
-    case DIV:
+    case Div:
 	return lhs->div(rhs);
-    case MUL:
+    case Mul:
 	return lhs->mul(rhs);
-    case REMDIV:
+    case Remdiv:
 	return lhs->remdiv(rhs);
     }
     throw std::logic_error("Unary math operator not implemented in unary math expression");

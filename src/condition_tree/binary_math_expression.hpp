@@ -3,7 +3,7 @@
 
 namespace garlic {
 
-enum BinaryMathOperator { ADD, SUB, DIV, MUL, REMDIV };
+enum BinaryMathOperator { Add, Sub, Div, Mul, Remdiv };
 class CellAcceptMathOp;
 
 class BinaryMathExpression : public Expression {

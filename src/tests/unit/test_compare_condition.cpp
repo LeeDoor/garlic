@@ -30,11 +30,11 @@ protected:
 };
 
 TEST_F(TestCompareCondition, init) {
-    sptr<Condition> condeq = create_condition(5, 12, Equals);
+    sptr<Condition> condeq = create_condition(5, 12, Eq);
 }
 
 TEST_F(TestCompareCondition, intComparison) {
-    sptr<Condition> condeq = create_condition(5, 12, Equals);
+    sptr<Condition> condeq = create_condition(5, 12, Eq);
     sptr<Condition> condne = create_condition(5, 12, Ne);
     sptr<Condition> condge = create_condition(5, 12, Ge);
     sptr<Condition> condgt = create_condition(5, 12, Gt);
@@ -50,14 +50,14 @@ TEST_F(TestCompareCondition, intComparison) {
 }
 
 TEST_F(TestCompareCondition, floatComparison) {
-    sptr<Condition> condeq = create_condition(5.1f, 12.2f, Equals);
+    sptr<Condition> condeq = create_condition(5.1f, 12.2f, Eq);
     sptr<Condition> condne = create_condition(5.1f, 12.2f, Ne);
     sptr<Condition> condge = create_condition(5.5f, 12.1f, Ge);
     sptr<Condition> condgt = create_condition(5.0f, 12.f, Gt);
     sptr<Condition> condle = create_condition(5.f, 12.f, Le);
     sptr<Condition> condlt = create_condition(5.f, 12.f, Lt);
     auto half_ep = std::numeric_limits<FloatType>::epsilon() / 2;
-    sptr<Condition> condsameeq = create_condition(5.f, 5.f + half_ep, Equals);
+    sptr<Condition> condsameeq = create_condition(5.f, 5.f + half_ep, Eq);
     sptr<Condition> condsamele = create_condition(5.f, 5.f + half_ep, Le);
     sptr<Condition> condsamege = create_condition(5.f, 5.f + half_ep, Ge);
     sptr<Condition> condsamegt = create_condition(5.f, 5.f + half_ep, Gt);
@@ -78,7 +78,7 @@ TEST_F(TestCompareCondition, floatComparison) {
 
 TEST_F(TestCompareCondition, stringComparison) {
     using namespace std::literals;
-    sptr<Condition> condeq = create_condition("Hello"s, "Test"s, Equals);
+    sptr<Condition> condeq = create_condition("Hello"s, "Test"s, Eq);
     sptr<Condition> condne = create_condition("Hello"s, "Test"s, Ne);
     sptr<Condition> condle = create_condition("Hello"s, "Test"s, Le);
     sptr<Condition> condge = create_condition("Hello"s, "Test"s, Ge);
