@@ -10,10 +10,11 @@ public:
     CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op);
 
     bool resolve(sptr<TableValueGatherer> gatherer) const override;
+    std::optional<StringType> validate() const override;
 
 private:
-    sptr<Expression> expr_left_;
-    sptr<Expression> expr_right_;
+    sptr<Expression> lhs_;
+    sptr<Expression> rhs_;
     BinaryOperator operator_;
 };
 

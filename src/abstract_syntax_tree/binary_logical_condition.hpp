@@ -9,6 +9,8 @@ public:
     BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
 
     bool resolve(sptr<TableValueGatherer> gatherer) const override;
+    std::optional<StringType> validate() const override
+	{ return std::nullopt; }
 
 protected:
     sptr<Condition> lhs_;

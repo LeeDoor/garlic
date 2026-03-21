@@ -4,11 +4,15 @@
 namespace garlic {
 
 BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression> rhs, BinaryMathOperator op)
-: lhs_{ lhs }
+: Expression{ TypeRules::binary_math_comp(lhs->get_type(), rhs->get_type()) }
+, lhs_{ lhs }
 , rhs_{ rhs }
 , op_ { op }
 {}
 
+std::optional<StringType> BinaryMathExpression::validate() const {
+    return Validateable::validate(lhs_->get_type(), rhs_->get_type());
+}
 sptr<CellValue> BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
     sptr<CellAcceptMathOp> 
 	lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(lhs_->get_value(gatherer)),

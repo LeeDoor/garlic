@@ -11,6 +11,10 @@ namespace garlic {
 
 class ThrowingCondition : public Condition {
 public:
+    ThrowingCondition() : Condition{ Boolean } {}
+    std::optional<StringType> validate() const override { 
+	throw std::logic_error("Unexpected call"); 
+    }
     bool resolve(sptr<TableValueGatherer>) const override {
         throw std::logic_error("condition resolve failed");
     }
@@ -18,6 +22,10 @@ public:
 
 class ThrowingExpression : public Expression {
 public:
+    ThrowingExpression() : Expression{ Int } {}
+    std::optional<StringType> validate() const override { 
+	throw std::logic_error("Unexpected call"); 
+    }
     sptr<CellValue> get_value(sptr<TableValueGatherer>) const override {
         throw std::logic_error("expression evaluate failed");
     }

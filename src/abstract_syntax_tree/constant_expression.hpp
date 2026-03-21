@@ -13,8 +13,11 @@ template<IsStoringColumnType ValueType>
 class ConstantExpression : public Expression {
 public:
     ConstantExpression(ValueType value) 
-    : value_(std::move(value))
+    : Expression{ TypeRules::get_cell_from_type<ValueType>() }
+    , value_(std::move(value))
     {}
+
+    std::optional<StringType> validate() const override { return std::nullopt; }
 
     sptr<CellValue> get_value(sptr<TableValueGatherer>) const override {
         return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);

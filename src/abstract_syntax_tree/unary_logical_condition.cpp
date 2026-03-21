@@ -3,7 +3,8 @@
 namespace garlic {
 
 UnaryLogicalCondition::UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op)
-: cond_{ std::move(condition) }
+: Condition{ Boolean }
+, cond_{ std::move(condition) }
 , op_{ op }
 {}
 

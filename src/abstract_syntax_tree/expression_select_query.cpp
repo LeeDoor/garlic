@@ -1,4 +1,5 @@
 #include "expression_select_query.hpp"
+#include "cell_value.hpp"
 #include "string_query_result.hpp"
 
 namespace garlic {

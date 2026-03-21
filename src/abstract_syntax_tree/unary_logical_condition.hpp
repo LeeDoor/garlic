@@ -9,6 +9,7 @@ public:
     UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
 
     bool resolve(sptr<TableValueGatherer> gatherer) const override;
+    std::optional<StringType> validate() const override { return std::nullopt; }
 
 protected:
     sptr<Condition> cond_;

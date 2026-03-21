@@ -3,7 +3,8 @@
 namespace garlic {
 
 BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op)
-: lhs_{ std::move(lhs) }
+: Condition{ Boolean }
+, lhs_{ std::move(lhs) }
 , rhs_{ std::move(rhs) }
 , op_{ op }
 {}

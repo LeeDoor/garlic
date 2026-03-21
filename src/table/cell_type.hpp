@@ -10,10 +10,6 @@ using FloatType = float;
 template<typename T>
 using ArrayType = std::vector<T>;
 
-enum CellType {
-    String, Int, Float
-};
-
 template<typename T>
 concept IsStoringColumnType = 
     std::is_same_v<T, StringType>
@@ -29,24 +25,8 @@ concept IsReadonlyColumnType =
 template<typename T>
 concept IsAnyColumnType = IsStoringColumnType<T> || IsReadonlyColumnType<T>;
 
-template<CellType cell>
-constexpr size_t get_type_size() {
-    if constexpr (cell == CellType::Int) {
-        return sizeof(IntType);
-    } else if constexpr (cell == CellType::Float) {
-        return sizeof(FloatType);
-    } else {
-        throw std::logic_error("Unknown type to get size of");
-    }
-}
-
-constexpr size_t get_type_size(CellType cell) {
-    switch(cell) {
-        case CellType::Int: return get_type_size<CellType::Int>();
-        case CellType::Float: return get_type_size<CellType::Float>();
-        default: throw std::logic_error("Unknown type to get size of");
-    }
-}
-
+enum CellType {
+    String, Int, Float, Boolean
+};
 
 }

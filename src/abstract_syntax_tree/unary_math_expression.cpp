@@ -4,10 +4,14 @@
 namespace garlic {
 
 UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op)
-: operand_{ operand }
+: Expression{ TypeRules::unary_math_comp(operand->get_type()) }
+, operand_{ operand }
 , op_{ op }
 {}
 
+std::optional<StringType> UnaryMathExpression::validate() const { 
+    return Validateable::validate(operand_->get_type()); 
+}
 sptr<CellValue> UnaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
     sptr<CellAcceptMathOp> 
 	operand = std::dynamic_pointer_cast<CellAcceptMathOp>(operand_->get_value(gatherer));

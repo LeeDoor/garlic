@@ -9,6 +9,8 @@ class UnaryMathExpression : public Expression {
 public:
     UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op);
 
+    std::optional<StringType> validate() const override;
+
     sptr<CellValue> get_value(sptr<TableValueGatherer> gatherer) const override;
 
 private:
