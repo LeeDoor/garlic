@@ -105,7 +105,7 @@ query: SELECT comp { $$ = mk<ConditionSelectQuery>(std::move($2)); }
 
 comp: comp LOGICAND comp { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), And); }
     | comp LOGICOR comp { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), Or); }
-    | LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($2), IsFalse); }
+    | LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($2), IsTrue); }
     | NOT LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($3), IsFalse); }
     | expr MOREEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Ge); }
     | expr LESSEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Le); }
