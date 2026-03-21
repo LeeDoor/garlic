@@ -83,7 +83,7 @@
 %token <FloatType> FLOAT "float"
 %token <IntType> INTEGER "integer"
 %nterm <uptr<Query>> query
-%nterm <uptr<Condition>> comp
+%nterm <uptr<Condition>> cond
 %nterm <uptr<Expression>> expr 
 %nterm <uptr<Expression>> value 
 %printer { yyo << $$; } <*>;
@@ -99,14 +99,14 @@ queries: /**/
     | queries SEMICOLON
     ;
 
-query: SELECT comp { $$ = mk<ConditionSelectQuery>(std::move($2)); }
+query: SELECT cond { $$ = mk<ConditionSelectQuery>(std::move($2)); }
      | SELECT expr { $$ = mk<ExpressionSelectQuery>(std::move($2)); }
      ;
 
-comp: comp LOGICAND comp { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), And); }
-    | comp LOGICOR comp { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), Or); }
-    | LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($2), IsTrue); }
-    | NOT LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($3), IsFalse); }
+cond: cond LOGICAND cond { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), And); }
+    | cond LOGICOR cond { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), Or); }
+    | LPAREN cond RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($2), IsTrue); }
+    | NOT LPAREN cond RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($3), IsFalse); }
     | expr MOREEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Ge); }
     | expr LESSEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Le); }
     | expr ISEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Eq); }

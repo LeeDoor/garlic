@@ -3,6 +3,8 @@
 
 namespace garlic {
 
+/// @ref CellValue subclass defining numbers or other entities
+/// that accept math operations.
 class CellAcceptMathOp : public CellValue {
 protected:
     CellAcceptMathOp(CellType ct)

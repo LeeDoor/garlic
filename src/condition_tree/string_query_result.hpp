@@ -3,11 +3,12 @@
 
 namespace garlic {
 
+/// @ref QueryResult 's subclass defining query result containing 
+/// one line of output. It also may be any number converted to string.
 class StringQueryResult : public QueryResult {
 public:
-
-
     StringQueryResult() = default;
+
     template<IsAnyColumnType T>
     StringQueryResult(const T& res)
     : result_str_{ form_string(res) }
