@@ -17,7 +17,7 @@ const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function 
  *  To get the typename of CellValue child storing some primitive, use:
  *  ```
  *  typename get_cell_primitive<CellIntValue>::Type // AKA IntType
- *  typename get_cell_primitive<CellStringValue>::Type // AKA StringViewType
+ *  typename get_cell_primitive<CellStringViewValue>::Type // AKA StringViewType
  *  ```
  */
 class CellValue {

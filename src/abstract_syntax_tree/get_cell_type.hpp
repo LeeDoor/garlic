@@ -5,19 +5,19 @@ namespace garlic {
 
 class CellIntValue; 
 class CellFloatValue; 
-class CellStringValue;
+class CellStringViewValue;
 
 template<IsAnyColumnType T>
 struct get_cell_type;
 
 template<>
 struct get_cell_type<StringViewType> {
-    using Type = CellStringValue;
+    using Type = CellStringViewValue;
 };
 
 template<>
 struct get_cell_type<StringType> {
-    using Type = CellStringValue;
+    using Type = CellStringViewValue;
 };
 
 template<>

@@ -1,27 +1,19 @@
 #pragma once
-#include "cell_value.hpp"
+#include "cell_string_view_value.hpp"
 
 namespace garlic {
 
-class CellStringValue : public CellValue {
+class CellStringValue : public CellStringViewValue {
 public:
-    CellStringValue(StringViewType value);
-
-    explicit operator StringViewType() const;
-
-    StringViewType get_string() const;
-    bool equals(sptr<CellValue> other) const override;
-    bool le(sptr<CellValue> other) const override;
-    bool lt(sptr<CellValue> other) const override;
-    bool ge(sptr<CellValue> other) const override;
-    bool gt(sptr<CellValue> other) const override;
-    void format(std::ostream& os) const override;
-
-private:
-    int get_cmp(sptr<CellValue> other) const;
+    CellStringValue(StringType&& value)
+    : CellStringViewValue{ "" }
+    , stored_{ std::move(value) }
+    {
+	CellStringViewValue::value_ = stored_;
+    }
 
 protected:
-    StringViewType value_;
+    StringType stored_;
 };
 
 }

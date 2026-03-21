@@ -6,7 +6,7 @@ namespace garlic {
 class CellValue;
 class CellIntValue;
 class CellFloatValue;
-class CellStringValue;
+class CellStringViewValue;
 
 template<typename T>
 struct get_cell_primitive;
@@ -20,7 +20,7 @@ struct get_cell_primitive<CellFloatValue> {
     using Type = FloatType;
 };
 template<>
-struct get_cell_primitive<CellStringValue> {
+struct get_cell_primitive<CellStringViewValue> {
     using Type = StringViewType;
 };
 

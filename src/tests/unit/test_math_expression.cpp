@@ -1,6 +1,6 @@
 #include "cell_int_value.hpp"
 #include "cell_float_value.hpp"
-#include "cell_string_value.hpp"
+#include "cell_string_view_value.hpp"
 
 namespace garlic {
 
@@ -104,7 +104,7 @@ TEST(test_math_expression, intRemainderShouldBehaveAsModulo) {
 TEST(test_math_expression, arithmeticWithStringShouldThrow) {
     auto i = std::make_shared<CellIntValue>(5);
     auto f = std::make_shared<CellFloatValue>(5.0f);
-    auto s = std::make_shared<CellStringValue>("abc");
+    auto s = std::make_shared<CellStringViewValue>("abc");
 
     EXPECT_THROW(i->add(s), std::logic_error);
     EXPECT_THROW(i->sub(s), std::logic_error);

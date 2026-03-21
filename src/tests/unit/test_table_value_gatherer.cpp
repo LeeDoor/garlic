@@ -1,7 +1,7 @@
 #include "table_value_gatherer_impl.hpp"
 #include "typed_table.hpp"
 #include "public_column_info.hpp"
-#include "cell_string_value.hpp"
+#include "cell_string_view_value.hpp"
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
 
@@ -57,7 +57,7 @@ TEST_F(TableValueGathererFixture, accessingData_0ByDefault) {
     sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
     sptr<CellValue> cellint = tvg->get_table_value("Int field");
 
-    EXPECT_TRUE(cellstr->equals(std::make_shared<CellStringValue>(str_Aboba10)));
+    EXPECT_TRUE(cellstr->equals(std::make_shared<CellStringViewValue>(str_Aboba10)));
     EXPECT_TRUE(cellfloat->equals(std::make_shared<CellFloatValue>(1.6f)));
     EXPECT_TRUE(cellint->equals(std::make_shared<CellIntValue>(1)));
 }
@@ -70,7 +70,7 @@ TEST_F(TableValueGathererFixture, accessingData_rowSelect) {
     sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
     sptr<CellValue> cellint = tvg->get_table_value("Int field");
 
-    EXPECT_TRUE(cellstr->equals(std::make_shared<CellStringValue>(str_TEST2026)));
+    EXPECT_TRUE(cellstr->equals(std::make_shared<CellStringViewValue>(str_TEST2026)));
     EXPECT_TRUE(cellfloat->equals(std::make_shared<CellFloatValue>(1e10f + 5)));
     EXPECT_TRUE(cellint->equals(std::make_shared<CellIntValue>(INT_MAX - 2024)));
 }

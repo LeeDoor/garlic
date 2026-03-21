@@ -1,7 +1,7 @@
 #include "table_value_gatherer_impl.hpp"
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
-#include "cell_string_value.hpp"
+#include "cell_string_view_value.hpp"
 #include "typed_table.hpp"
 
 namespace garlic {
@@ -16,7 +16,7 @@ sptr<CellValue> TableValueGathererImpl::get_table_value(const std::string& colum
     CellType type = table_->get_column_type(column_number);
     switch(type) {
     case String:
-	return std::make_shared<CellStringValue>(
+	return std::make_shared<CellStringViewValue>(
 	    table_->get_value<StringType>(row_number_, column_number)
 	);
     case Int:

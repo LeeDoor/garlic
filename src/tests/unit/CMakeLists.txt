@@ -10,6 +10,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_typed_table.cpp
     test_cell_int_value.cpp
     test_cell_float_value.cpp
+    test_cell_string_view_value.cpp
     test_cell_string_value.cpp
     test_constant_expression.cpp
     test_table_value_gatherer.cpp

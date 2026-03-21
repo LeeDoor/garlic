@@ -12,6 +12,7 @@
 EXP ([Ee][-+]?[0-9]+)
 float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
 int "0"|([1-9][0-9]*{EXP}?)
+/*string ("'"[^\n']"'")|("\""[^\n']"\"")*/
 blank [ \t\n]
 
 %{
@@ -64,8 +65,8 @@ blank [ \t\n]
 "OR"{blank}  { return yy::parser::make_LOGICOR(loc); }
 "!"  { return yy::parser::make_NOT(loc); }
 
-{int} { return make_INTEGER(yytext, loc); }
-{float} { return make_FLOAT(yytext, loc); }
+{int}    { return make_INTEGER(yytext, loc); }
+{float}  { return make_FLOAT(yytext, loc); }
 
 {blank}+ { }
 

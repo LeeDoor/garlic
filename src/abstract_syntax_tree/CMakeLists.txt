@@ -2,7 +2,7 @@ add_library(abstract_syntax_tree STATIC
     binary_logical_condition.cpp
     cell_float_value.cpp
     cell_int_value.cpp
-    cell_string_value.cpp
+    cell_string_view_value.cpp
     compare_condition.cpp
     condition_select_query.cpp
     expression_select_query.cpp

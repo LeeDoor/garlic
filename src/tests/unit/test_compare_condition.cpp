@@ -1,7 +1,7 @@
 #include "compare_condition.hpp"
 #include "cell_int_value.hpp"
 #include "cell_float_value.hpp"
-#include "cell_string_value.hpp"
+#include "cell_string_view_value.hpp"
 #include "constant_expression.hpp"
 #include "table_value_gatherer_mock.hpp"
 
