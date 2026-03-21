@@ -1,0 +1,5 @@
+SELECT 'hello';
+SELECT "world";
+SELECT 'hello' = 'hello';
+SELECT 'hello' != 'world';
+SELECT 'abc' < 'abd';

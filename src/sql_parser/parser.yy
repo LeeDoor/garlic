@@ -81,7 +81,7 @@
 %token EOL "EOL"
 %token <FloatType> FLOAT "float"
 %token <IntType> INTEGER "integer"
-// %token <StringViewType> STRING "string"
+%token <StringType> STRING "string"
 %nterm <uptr<Query>> query
 %nterm <uptr<Condition>> cond
 %nterm <uptr<Expression>> expr 
@@ -128,7 +128,7 @@ expr: value { $$ = std::move($1); }
 
 value: INTEGER { $$ = mk<IntConstExpr>($1); }
      | FLOAT   { $$ = mk<FloatConstExpr>($1); }
-     // | STRING  { $$ = mk<StringConstExpr>($1); }
+     | STRING  { $$ = mk<StringConstExpr>($1); }
      ;
 
 %left LOGICOR;

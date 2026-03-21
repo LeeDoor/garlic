@@ -5,15 +5,17 @@
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_FLOAT(const std::string &s, const yy::parser::location_type& loc);
-    yy::parser::symbol_type make_INTEGER(const std::string &s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::location_type& loc);
 %}
 
 EXP ([Ee][-+]?[0-9]+)
 float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
 int "0"|([1-9][0-9]*{EXP}?)
-/*string ("'"[^\n']"'")|("\""[^\n']"\"")*/
 blank [ \t\n]
+single_string ("'"([^\\']*(\\.)*)*"'")|("\""([^\\"]*(\\.)*)*"\"")
+string ({single_string}{blank}*)*
 
 %{
     #define YY_USER_ACTION  loc.columns (yyleng);
@@ -63,10 +65,11 @@ blank [ \t\n]
 
 "AND"{blank}  { return yy::parser::make_LOGICAND(loc); }
 "OR"{blank}  { return yy::parser::make_LOGICOR(loc); }
-"!"  { return yy::parser::make_NOT(loc); }
+"!"  { return	 yy::parser::make_NOT(loc); }
 
 {int}    { return make_INTEGER(yytext, loc); }
 {float}  { return make_FLOAT(yytext, loc); }
+{string}  { return make_STRING(yytext, loc); }
 
 {blank}+ { }
 
@@ -77,20 +80,61 @@ blank [ \t\n]
 
 %%
 
-yy::parser::symbol_type make_FLOAT(const std::string &s, const yy::parser::location_type& loc) {
+yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc) {
     errno = 0;
     char* end;
-    float n = strtof(s.c_str(), &end);
+    float n = strtof(s.data(), &end);
     if (errno == ERANGE)
-        throw ll::lexing_error(loc, "failed to convert " + s + " to float");
+        throw ll::lexing_error(loc, "failed to convert string to float");
     return yy::parser::make_FLOAT(n, loc);
 }
-yy::parser::symbol_type make_INTEGER(const std::string &s, const yy::parser::location_type& loc) {
+yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc) {
     errno = 0;
-    int n = std::stoi(s.c_str());
+    int n = std::stoi(s.data());
     if (errno == ERANGE)
-        throw ll::lexing_error(loc, "failed to convert " + s + " to int");
+        throw ll::lexing_error(loc, "failed to convert string to int");
     return yy::parser::make_INTEGER(n, loc);
+}
+yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::location_type& loc) {
+    std::string result; result.reserve(s.size() - 2);
+    char in_string = '\0';
+    for(size_t i = 0; i < s.size(); ++i) {
+	if(s[i] == '\"' || s[i] == '\'') { // "
+	    if(!in_string) {
+		in_string = s[i];
+		continue;
+	    } else if (in_string == s[i]) {
+		in_string = '\0';
+		continue;
+	    }
+	}
+	if(!in_string) continue;
+	if(s[i] == '\\') {
+	    switch(s[++i]) {
+		case 'n':
+		    result.push_back('\n');
+		    break;
+		case 't':
+		    result.push_back('\t');
+		    break;
+		case '\\':
+		    result.push_back('\\');
+		    break;
+		case '\'':
+		    result.push_back('\'');
+		    break;
+		case '\"': // " -- character to fix broken highlight in .ll file
+		    result.push_back('\"');// "
+		    break;
+		default:
+		    result.push_back(s[--i]);
+		    break;
+	    }
+	} else { 
+	    result.push_back(s[i]);
+	}
+    }
+    return yy::parser::make_STRING(std::move(result), loc);
 }
 void driver::scan_begin() {
     yy_flex_debug = debug_mode_;

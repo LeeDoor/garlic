@@ -36,9 +36,6 @@ def read_file_content(file_path: Path, max_lines: Optional[int] = None) -> str:
         if max_lines:
             lines = []
             for i, line in enumerate(f, 1): 
-                if i > max_lines:
-                    lines.append(f"... (truncated after {max_lines} lines)")
-                    break
                 lines.append(f"{i:3d}: {line.rstrip('\n')}")
             return '\n'.join(lines)
         else:
@@ -172,13 +169,19 @@ def main():
     test_pairs = find_regular_test_pairs()
     lexing_error_tests = find_error_tests("LEXING_ERROR")
     syntax_error_tests = find_error_tests("SYNTAX_ERROR")
+    logic_error_tests = find_error_tests("LOGIC_ERROR")
 
-    if not test_pairs and not lexing_error_tests and not syntax_error_tests:
+    if not test_pairs and not lexing_error_tests and not syntax_error_tests and not logic_error_tests:
         script_dir = Path(__file__).parent
         print(f"No test files found in {script_dir}")
         sys.exit(0)
 
-    print(f"Found {len(test_pairs)} regular test(s), {len(lexing_error_tests)} lexing error test(s), {len(syntax_error_tests)} syntax error test(s)")
+    print(
+        f"Found {len(test_pairs)} regular test(s), "
+        f"{len(lexing_error_tests)} lexing error test(s), "
+        f"{len(syntax_error_tests)} syntax error test(s), "
+        f"{len(logic_error_tests)} logic error test(s)"
+    )
 
     for i, (input_file, expected_file) in enumerate(test_pairs, 1):
         print(f"Running regular test {i}: {input_file.name}")
@@ -195,6 +198,12 @@ def main():
     for i, input_file in enumerate(syntax_error_tests, 1):
         print(f"Running syntax error test {i}: {input_file.name}")
         if not run_error_prefix_test(executable, input_file, "[SYNTAX_ERROR]"):
+            print(f"\nTest failed: {input_file.stem}")
+            sys.exit(1)
+
+    for i, input_file in enumerate(logic_error_tests, 1):
+        print(f"Running logic error test {i}: {input_file.name}")
+        if not run_error_prefix_test(executable, input_file, "[LOGIC_ERROR]"):
             print(f"\nTest failed: {input_file.stem}")
             sys.exit(1)
 

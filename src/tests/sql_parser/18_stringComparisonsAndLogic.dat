@@ -1,0 +1,11 @@
+SELECT 'alpha';
+SELECT "beta";
+SELECT 'abc' = "abc";
+SELECT 'abc' != 'abd';
+SELECT 'ab' < 'abc';
+SELECT 'zz' > 'za';
+SELECT 'left' = 'left' AND 'x' != 'y';
+SELECT 'a' = 'b' OR 'x' = 'x' AND '1' = '1';
+SELECT ('a' = 'b' OR 'x' = 'x') AND '1' = '2';
+SELECT !('foo' = 'bar');
+SELECT !('a' = 'a' OR 'b' = 'c') AND 'd' = 'd';

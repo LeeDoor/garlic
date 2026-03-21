@@ -1,0 +1,9 @@
+SELECT "aboba\\n";
+SELECT 'serega';
+SELECT "'quoted'";
+SELECT '"double"';
+SELECT '';
+SELECT "";
+SELECT "\\n\\t\\r\\0";
+SELECT "aboba\\n" = "aboba\\n";
+SELECT "'a'" = "'a'" AND '"b"' = '"b"';

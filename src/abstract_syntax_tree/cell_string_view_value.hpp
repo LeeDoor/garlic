@@ -6,6 +6,7 @@ namespace garlic {
 class CellStringViewValue : public CellValue {
 public:
     CellStringViewValue(StringViewType value);
+    virtual ~CellStringViewValue() = default;
 
     explicit operator StringViewType() const;
 
