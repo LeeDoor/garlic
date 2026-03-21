@@ -2,7 +2,7 @@ set(TEST_EXECUTABLE_NAME unit_test)
 set(GENERAL_LINK_LIBRARIES ${GENERAL_LINK_LIBRARIES} pch_gtest)
 set(DEPENDENCIES 
     table
-    condition_tree
+    abstract_syntax_tree
 )
 
 add_executable(${TEST_EXECUTABLE_NAME} 
@@ -28,7 +28,7 @@ target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
 target_include_directories(${TEST_EXECUTABLE_NAME} PUBLIC 
     ${GENERAL_INCLUDE_DIRECTORIES}
     ${DEPENDENCIES}
-    ${CMAKE_SOURCE_DIR}/src/condition_tree
+    ${CMAKE_SOURCE_DIR}/src/abstract_syntax_tree
     mocks
 )
 

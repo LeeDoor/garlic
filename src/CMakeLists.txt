@@ -7,7 +7,7 @@ set(GENERAL_INCLUDE_DIRECTORIES
 
 set(DEPENDENCIES 
     table
-    condition_tree
+    abstract_syntax_tree
     sql_parser
 )
 

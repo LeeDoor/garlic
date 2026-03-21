@@ -19,8 +19,8 @@ add_library(sql_parser
     driver.cpp
     value.cpp
 )
-set(INCLUDE_DIRS ../condition_tree ../table ${GENERAL_INCLUDE_DIRECTORIES} ${GEN_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-set(LINK_LIBS ${GENERAL_LINK_LIBRARIES} condition_tree)
+set(INCLUDE_DIRS ../abstract_syntax_tree ../table ${GENERAL_INCLUDE_DIRECTORIES} ${GEN_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+set(LINK_LIBS ${GENERAL_LINK_LIBRARIES} abstract_syntax_tree)
 
 target_include_directories(sql_parser PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(sql_parser PUBLIC ${LINK_LIBS})
