@@ -42,6 +42,11 @@
 	}
     };
 
+    template<typename T, typename... Args>
+    std::unique_ptr<T> mk(Args&&... args) {
+	return std::make_unique<T>(std::forward<Args>(args)...);
+    }
+
 }
 
 %define api.token.prefix {TOK_}
@@ -94,35 +99,35 @@ queries: /**/
     | queries SEMICOLON
     ;
 
-query: SELECT comp { $$ = std::make_unique<ConditionSelectQuery>(std::move($2)); }
-     | SELECT expr { $$ = std::make_unique<ExpressionSelectQuery>(std::move($2)); }
+query: SELECT comp { $$ = mk<ConditionSelectQuery>(std::move($2)); }
+     | SELECT expr { $$ = mk<ExpressionSelectQuery>(std::move($2)); }
      ;
 
-comp: comp LOGICAND comp { $$ = std::make_unique<BinaryLogicalCondition>(std::move($1), std::move($3), And); }
-    | comp LOGICOR comp { $$ = std::make_unique<BinaryLogicalCondition>(std::move($1), std::move($3), Or); }
-    | LPAREN comp RPAREN { $$ = std::make_unique<UnaryLogicalCondition>(std::move($2), IsFalse); }
-    | NOT LPAREN comp RPAREN { $$ = std::make_unique<UnaryLogicalCondition>(std::move($3), IsFalse); }
-    | expr MOREEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Ge); }
-    | expr LESSEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Le); }
-    | expr ISEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Equals); }
-    | expr NOTEQ expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Ne); }
-    | expr MORE expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Gt); }
-    | expr LESS expr { $$ = std::make_unique<CompareCondition>(std::move($1), std::move($3), Lt); }
+comp: comp LOGICAND comp { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), And); }
+    | comp LOGICOR comp { $$ = mk<BinaryLogicalCondition>(std::move($1), std::move($3), Or); }
+    | LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($2), IsFalse); }
+    | NOT LPAREN comp RPAREN { $$ = mk<UnaryLogicalCondition>(std::move($3), IsFalse); }
+    | expr MOREEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Ge); }
+    | expr LESSEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Le); }
+    | expr ISEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Equals); }
+    | expr NOTEQ expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Ne); }
+    | expr MORE expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Gt); }
+    | expr LESS expr { $$ = mk<CompareCondition>(std::move($1), std::move($3), Lt); }
    ;
 
 expr: value { $$ = std::move($1); }
-   | expr PLUS expr { $$ = std::make_unique<BinaryMathExpression>(std::move($1), std::move($3), ADD); }
-   | expr MINUS expr { $$ = std::make_unique<BinaryMathExpression>(std::move($1), std::move($3), SUB); }
-   | expr MUL expr { $$ = std::make_unique<BinaryMathExpression>(std::move($1), std::move($3), MUL); }
-   | expr DIV expr { $$ = std::make_unique<BinaryMathExpression>(std::move($1), std::move($3), DIV); }
-   | ABS expr ABS { $$ = std::make_unique<UnaryMathExpression>(std::move($2), ABS); }
+   | expr PLUS expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), ADD); }
+   | expr MINUS expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), SUB); }
+   | expr MUL expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), MUL); }
+   | expr DIV expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), DIV); }
+   | ABS expr ABS { $$ = mk<UnaryMathExpression>(std::move($2), ABS); }
    | LPAREN expr RPAREN { $$ = std::move($2); }
-   | MINUS expr %prec UMINUS { $$ = std::make_unique<UnaryMathExpression>(std::move($2), NEG);  }
-   | expr REMDIV expr { $$ = std::make_unique<BinaryMathExpression>(std::move($1), std::move($3), REMDIV); }
+   | MINUS expr %prec UMINUS { $$ = mk<UnaryMathExpression>(std::move($2), NEG);  }
+   | expr REMDIV expr { $$ = mk<BinaryMathExpression>(std::move($1), std::move($3), REMDIV); }
    ;
 
-value: INTEGER { $$ = std::make_unique<IntConstExpr>($1); }
-     | FLOAT   { $$ = std::make_unique<FloatConstExpr>($1); }
+value: INTEGER { $$ = mk<IntConstExpr>($1); }
+     | FLOAT   { $$ = mk<FloatConstExpr>($1); }
      ;
 
 %left LOGICOR;
