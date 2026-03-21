@@ -7,7 +7,6 @@
 %define parse.assert
 
 %code requires {
-    #include "value.hpp"
     #include "cell_type.hpp"
     #include "string_query_result.hpp"
     #include "expression_select_query.hpp"
