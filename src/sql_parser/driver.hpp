@@ -8,16 +8,18 @@ YY_DECL;
 
 namespace garlic::sql_parser {
 
-class driver
-{
+class driver {
 public:
-    explicit driver(bool debug_mode);
+    enum ErrorStage { Lexing, Parsing, SemanticAnalysis };
 
-    yy::location& location() { return location_; }
+    explicit driver(bool debug_mode = false);
+
+    yy::location& location() & { return location_; }
 
     int parse();
     void scan_end();
     void scan_begin();
+    void log_error(ErrorStage stage, const std::string& err) const;
 
 private:
     yy::location location_;

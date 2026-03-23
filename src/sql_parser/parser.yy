@@ -47,11 +47,11 @@
     }
 
     template<typename T, typename... Args>
-    std::unique_ptr<T> mk_v(const yy::parser::location_type& loc, Args&&... args) {
+    std::unique_ptr<T> mk_v(const driver& drv, Args&&... args) {
 	auto obj = mk<T>(std::forward<Args>(args)...);
 	if constexpr (requires (const T& t) { t.validate(); }) {
 	    if(auto error = obj->validate()) {
-		std::cerr << "[SEMANTIC_ERROR] " << loc << ": " << *error << std::endl;
+		drv.log_error(driver::ErrorStage::SemanticAnalysis, *error);
 		return nullptr;
 	    }
 	}
@@ -73,7 +73,7 @@
     ;
 %token SEMICOLON;
 %token
-    MINUS   
+    MINUS   YYABORT
     PLUS    
     MUL     
     DIV     
@@ -117,36 +117,36 @@ queries: /**/
     | queries SEMICOLON
     ;
 
-query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ConditionSelectQuery>(@$, std::move($2))); }
-     | SELECT expr { ASSIGN_OR_ABORT($$, mk_v<ExpressionSelectQuery>(@$, std::move($2))); }
+query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ConditionSelectQuery>(drv, std::move($2))); }
+     | SELECT expr { ASSIGN_OR_ABORT($$, mk_v<ExpressionSelectQuery>(drv, std::move($2))); }
      ;
 
-cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(@$, std::move($1), std::move($3), And)); }
-    | cond LOGICOR cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(@$, std::move($1), std::move($3), Or)); }
-    | LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(@$, std::move($2), IsTrue)); }
-    | NOT LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(@$, std::move($3), IsFalse)); }
-    | expr MOREEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(@$, std::move($1), std::move($3), Ge)); }
-    | expr LESSEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(@$, std::move($1), std::move($3), Le)); }
-    | expr ISEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(@$, std::move($1), std::move($3), Eq)); }
-    | expr NOTEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(@$, std::move($1), std::move($3), Ne)); }
-    | expr MORE expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(@$, std::move($1), std::move($3), Gt)); }
-    | expr LESS expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(@$, std::move($1), std::move($3), Lt)); }
+cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(drv, std::move($1), std::move($3), And)); }
+    | cond LOGICOR cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(drv, std::move($1), std::move($3), Or)); }
+    | LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(drv, std::move($2), IsTrue)); }
+    | NOT LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(drv, std::move($3), IsFalse)); }
+    | expr MOREEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(drv, std::move($1), std::move($3), Ge)); }
+    | expr LESSEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(drv, std::move($1), std::move($3), Le)); }
+    | expr ISEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(drv, std::move($1), std::move($3), Eq)); }
+    | expr NOTEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(drv, std::move($1), std::move($3), Ne)); }
+    | expr MORE expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(drv, std::move($1), std::move($3), Gt)); }
+    | expr LESS expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(drv, std::move($1), std::move($3), Lt)); }
    ;
 
 expr: value { $$ = std::move($1); }
-   | expr PLUS expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(@$, std::move($1), std::move($3), Add)); }
-   | expr MINUS expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(@$, std::move($1), std::move($3), Sub)); }
-   | expr MUL expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(@$, std::move($1), std::move($3), Mul)); }
-   | expr DIV expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(@$, std::move($1), std::move($3), Div)); }
-   | ABS expr ABS { ASSIGN_OR_ABORT($$, mk_v<UnaryMathExpression>(@$, std::move($2), Abs)); }
+   | expr PLUS expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(drv, std::move($1), std::move($3), Add)); }
+   | expr MINUS expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(drv, std::move($1), std::move($3), Sub)); }
+   | expr MUL expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(drv, std::move($1), std::move($3), Mul)); }
+   | expr DIV expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(drv, std::move($1), std::move($3), Div)); }
+   | ABS expr ABS { ASSIGN_OR_ABORT($$, mk_v<UnaryMathExpression>(drv, std::move($2), Abs)); }
    | LPAREN expr RPAREN { $$ = std::move($2); }
-   | MINUS expr %prec UMINUS { ASSIGN_OR_ABORT($$, mk_v<UnaryMathExpression>(@$, std::move($2), Neg)); }
-   | expr REMDIV expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(@$, std::move($1), std::move($3), Remdiv)); }
+   | MINUS expr %prec UMINUS { ASSIGN_OR_ABORT($$, mk_v<UnaryMathExpression>(drv, std::move($2), Neg)); }
+   | expr REMDIV expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(drv, std::move($1), std::move($3), Remdiv)); }
    ;
 
-value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(@$, $1)); }
-     | FLOAT   { ASSIGN_OR_ABORT($$, mk_v<FloatConstExpr>(@$, $1)); }
-     | STRING  { ASSIGN_OR_ABORT($$, mk_v<StringConstExpr>(@$, $1)); }
+value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(drv, $1)); }
+     | FLOAT   { ASSIGN_OR_ABORT($$, mk_v<FloatConstExpr>(drv, $1)); }
+     | STRING  { ASSIGN_OR_ABORT($$, mk_v<StringConstExpr>(drv, $1)); }
      ;
 
 %left LOGICOR;
@@ -157,6 +157,6 @@ value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(@$, $1)); }
 %left UMINUS;
 
 %%
-void yy::parser::error (const location_type& l, const std::string& m) {
-  std::cerr << "[SYNTAX_ERROR] " << l << ": " << m << '\n';
+void yy::parser::error (const location_type&, const std::string& m) {
+    drv.log_error(driver::ErrorStage::Parsing, m);
 }

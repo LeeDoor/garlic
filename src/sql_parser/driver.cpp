@@ -12,13 +12,20 @@ int driver::parse () {
     parse.set_debug_level (debug_mode_);
     scan_begin();
     int res = -1;
-    try {
-        res = parse ();
-    } catch (const std::runtime_error& ex) {
-        std::cerr << ex.what() << std::endl;
-    }
+    res = parse ();
     scan_end ();
     return res;
+}
+void driver::log_error(ErrorStage stage, const std::string& err) const {
+    static const std::unordered_map<ErrorStage, std::string> stage_str {
+	{ Lexing, "LEXICAL_ERROR" },
+	{ Parsing, "SYNTAX_ERROR" },
+	{ SemanticAnalysis, "SEMANTIC_ERROR" },
+    };
+    std::cerr 
+	<< "[" << stage_str.at(stage) << "] "
+	<< " at [" << location_ << "]: "
+	<< err << std::endl;
 }
 
 }

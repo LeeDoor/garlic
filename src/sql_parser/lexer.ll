@@ -5,8 +5,8 @@
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc);
-    yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, const driver& drv);
+    yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, const driver& drv);
     yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::location_type& loc);
 %}
 
@@ -19,22 +19,6 @@ string ({single_string}{blank}*)*
 
 %{
     #define YY_USER_ACTION  loc.columns (yyleng);
-
-    namespace ll {
-    class lexing_error : public std::runtime_error {
-    public:
-        lexing_error(const yy::location& loc, std::string msg)
-        : std::runtime_error{ format_string(loc, msg) }
-        {}
-
-    private:
-        static std::string format_string(const yy::location& l, std::string msg) {
-            std::stringstream ss;
-            ss << "[LEXING_ERROR] " << l << ":" << msg << std::endl;
-            return ss.str();
-        }
-    };
-    }
 %}
 
 %%
@@ -67,33 +51,43 @@ string ({single_string}{blank}*)*
 "OR"{blank}  { return yy::parser::make_LOGICOR(loc); }
 "!"  { return	 yy::parser::make_NOT(loc); }
 
-{int}    { return make_INTEGER(yytext, loc); }
-{float}  { return make_FLOAT(yytext, loc); }
+{int}    { return make_INTEGER(yytext, loc, drv); }
+{float}  { return make_FLOAT(yytext, loc, drv); }
 {string}  { return make_STRING(yytext, loc); }
 
 {blank}+ { }
 
 .    {
-        throw ll::lexing_error(loc, "invalid character: " + std::string(yytext));
+        drv.log_error(driver::ErrorStage::Lexing, "Invalid character");
+	return yy::parser::make_YYerror(loc);
      }
 <<EOF>>    return yy::parser::make_YYEOF (loc);
 
 %%
 
-yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc) {
-    errno = 0;
-    char* end;
-    float n = strtof(s.data(), &end);
-    if (errno == ERANGE)
-        throw ll::lexing_error(loc, "failed to convert string to float");
-    return yy::parser::make_FLOAT(n, loc);
+template<typename T> requires std::is_arithmetic_v<T>
+std::optional<T> make_number(std::string_view s) {
+    T result;
+    auto [ptr, ec] = std::from_chars(s.data(), s.data() + s.size(), result);
+    if (ec == std::errc::result_out_of_range) {
+	return std::nullopt;
+    }
+    return result;
 }
-yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc) {
-    errno = 0;
-    int n = std::stoi(s.data());
-    if (errno == ERANGE)
-        throw ll::lexing_error(loc, "failed to convert string to int");
-    return yy::parser::make_INTEGER(n, loc);
+
+yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, const driver& drv) {
+    if(auto num = make_number<FloatType>(s)) {
+	return yy::parser::make_FLOAT(*num, loc);
+    }
+    drv.log_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to float; too big value");
+    return yy::parser::make_YYerror(loc);
+}
+yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, const driver& drv) {
+    if(auto num = make_number<IntType>(s)) {
+	return yy::parser::make_INTEGER(*num, loc);
+    }
+    drv.log_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to int; too big value");
+    return yy::parser::make_YYerror(loc);
 }
 yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::location_type& loc) {
     std::string result; result.reserve(s.size() - 2);
