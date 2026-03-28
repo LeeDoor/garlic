@@ -158,5 +158,7 @@ value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(drv, $1)); }
 
 %%
 void yy::parser::error (const location_type&, const std::string& m) {
-    drv.log_error(driver::ErrorStage::Parsing, m);
+    if(!(drv.is_eof() && drv.more_context_required())) {
+	drv.log_error(driver::ErrorStage::Parsing, m);
+    }
 }

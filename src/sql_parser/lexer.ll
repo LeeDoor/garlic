@@ -15,6 +15,8 @@ float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
 int "0"|([1-9][0-9]*{EXP}?)
 blank [ \t\n]
 single_string ("'"([^\\']*(\\.)*)*"'")|("\""([^\\"]*(\\.)*)*"\"")
+incomplete_string ("'"([^\\']*(\\.)*)*)|("\""([^\\"]*(\\.)*)*)
+/* " */
 string ({single_string}{blank}*)*
 
 %{
@@ -47,13 +49,19 @@ string ({single_string}{blank}*)*
 ">"  { return yy::parser::make_MORE(loc); }
 "<"  { return yy::parser::make_LESS(loc); }
 
-"AND"{blank}  { return yy::parser::make_LOGICAND(loc); }
+"AND"{blank} { return yy::parser::make_LOGICAND(loc); }
 "OR"{blank}  { return yy::parser::make_LOGICOR(loc); }
-"!"  { return	 yy::parser::make_NOT(loc); }
+"!"	     { return yy::parser::make_NOT(loc); }
 
 {int}    { return make_INTEGER(yytext, loc, drv); }
 {float}  { return make_FLOAT(yytext, loc, drv); }
 {string}  { return make_STRING(yytext, loc); }
+{incomplete_string} { 
+    if(drv.more_context_required())
+	return yy::parser::make_YYEOF(loc);
+    drv.log_error(driver::ErrorStage::Lexing, "Unterminated string");
+    return yy::parser::make_YYerror(loc);
+}
 
 {blank}+ { }
 
@@ -61,7 +69,7 @@ string ({single_string}{blank}*)*
         drv.log_error(driver::ErrorStage::Lexing, "Invalid character");
 	return yy::parser::make_YYerror(loc);
      }
-<<EOF>>    return yy::parser::make_YYEOF (loc);
+<<EOF>> { drv.met_eof(); return yy::parser::make_YYEOF (loc); }
 
 %%
 
@@ -130,11 +138,15 @@ yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::locati
     }
     return yy::parser::make_STRING(std::move(result), loc);
 }
+
 void driver::scan_begin() {
     yy_flex_debug = debug_mode_;
-    yyin = stdin;
+    is_eof_ = false;
+    more_context_required_ = false;
+    yy_scan_bytes(query_.data(), static_cast<int>(query_.size()));
 }
 
 void driver::scan_end() {
+    yy_delete_buffer(YY_CURRENT_BUFFER);
 }
 

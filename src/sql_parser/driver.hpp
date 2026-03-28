@@ -17,13 +17,27 @@ public:
     yy::location& location() & { return location_; }
 
     int parse();
+    /*! @returns true if more input required and false overwise. */
+    bool parse_repl();
+
     void scan_end();
     void scan_begin();
     void log_error(ErrorStage stage, const std::string& err) const;
 
+    /// Called if lexing process requires more user input to continue.
+    bool more_context_required();
+
+    void met_eof();
+    bool is_eof() const;
+
 private:
     yy::location location_;
     bool debug_mode_;
+    bool is_eof_ = false;
+    bool more_context_required_ = false;
+    bool more_context_available_ = true;
+    std::string query_;
+    std::string input_line_;
 };
 
 }
