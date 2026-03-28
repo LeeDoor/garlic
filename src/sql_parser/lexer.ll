@@ -34,7 +34,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 %{
   yy::location& loc = drv.location();
-  loc.step ();
+  loc.step();
   std::string multiline_str;
 %}
 
@@ -168,6 +168,7 @@ void driver::scan_begin() {
     yy_flex_debug = debug_mode_;
     is_eof_ = false;
     more_context_required_ = false;
+    location_.initialize();
     yy_scan_bytes(query_.data(), static_cast<int>(query_.size()));
 }
 
