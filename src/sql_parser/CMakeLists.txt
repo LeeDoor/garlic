@@ -23,12 +23,3 @@ set(LINK_LIBS ${GENERAL_LINK_LIBRARIES} abstract_syntax_tree)
 
 target_include_directories(sql_parser PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(sql_parser PUBLIC ${LINK_LIBS})
-
-add_executable(test_sql_parser 
-    ${GEN_DIR}/lexer.yy.cpp 
-    ${GEN_DIR}/parser.tab.cpp 
-    driver.cpp
-    test_main.cpp
-)
-target_include_directories(test_sql_parser PUBLIC ${INCLUDE_DIRS})
-target_link_libraries(test_sql_parser PUBLIC ${LINK_LIBS})

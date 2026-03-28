@@ -16,7 +16,7 @@ public:
 
     yy::location& location() & { return location_; }
 
-    int parse();
+    void parse();
     /*! @returns true if more input required and false overwise. */
     bool parse_repl();
 
@@ -31,6 +31,8 @@ public:
     bool is_eof() const;
 
 private:
+    static inline bool should_print_prompt();
+
     yy::location location_;
     bool debug_mode_;
     bool is_eof_ = false;

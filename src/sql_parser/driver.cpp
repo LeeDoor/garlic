@@ -7,19 +7,25 @@ driver::driver(bool debug_mode)
 : debug_mode_{ debug_mode }
 {}
 
-int driver::parse() {
-    while(true) {
-	std::cout << "#> " << std::flush;
-	more_context_available_ = static_cast<bool>(std::getline(std::cin, input_line_));
+void driver::parse() {
+    query_.clear();
+    input_line_.clear();
+    more_context_available_ = true;
+    more_context_required_ = false;
+    is_eof_ = false;
+    do {
+	if(should_print_prompt())
+	    std::cout << "#> " << std::flush;
+	std::getline(std::cin, input_line_);
+	more_context_available_ = !std::cin.eof();
 	query_ += input_line_;
 	query_ += "\n";
 	bool input_required = parse_repl();
 	if(!input_required) {
 	    query_.clear();   
 	}
-	if(!more_context_available_) break;
-    }
-    return 0;
+	
+    } while (more_context_available_);
 }
 bool driver::parse_repl() {
     yy::parser parse(*this);
@@ -52,5 +58,14 @@ void driver::met_eof() {
 bool driver::is_eof() const {
     return is_eof_;
 }
+#ifdef _WIN32
+inline bool driver::should_print_prompt() {
+    return _isatty(_fileno(stdin)) && _isatty(_fileno(stdout));
+}
+#else
+inline bool driver::should_print_prompt() {
+    return isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
+}
+#endif
 
 }
