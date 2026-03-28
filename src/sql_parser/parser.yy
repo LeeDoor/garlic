@@ -104,6 +104,7 @@
 %nterm <uptr<Condition>> cond
 %nterm <uptr<Expression>> expr 
 %nterm <uptr<Expression>> value 
+%nterm <StringType> strings 
 %printer { yyo << $$; } <*>;
 
 %%
@@ -146,9 +147,12 @@ expr: value { $$ = std::move($1); }
 
 value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(drv, $1)); }
      | FLOAT   { ASSIGN_OR_ABORT($$, mk_v<FloatConstExpr>(drv, $1)); }
-     | STRING  { ASSIGN_OR_ABORT($$, mk_v<StringConstExpr>(drv, $1)); }
+     | strings { ASSIGN_OR_ABORT($$, mk_v<StringConstExpr>(drv, $1)); }
      ;
 
+strings: STRING { $$ = $1; }
+       | strings STRING { $$ = $1 + $2; }
+       ;
 %left LOGICOR;
 %left LOGICAND;
 %left NOT;

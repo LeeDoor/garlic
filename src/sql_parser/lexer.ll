@@ -7,17 +7,24 @@
 %{
     yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, const driver& drv);
     yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, const driver& drv);
-    yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_STRING(std::string& s, const yy::parser::location_type& loc);
 %}
 
+%x STRING_Q
+%x STRING_D
+
+EOL "\n"
 EXP ([Ee][-+]?[0-9]+)
 float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
 int "0"|([1-9][0-9]*{EXP}?)
-blank [ \t\n]
-single_string ("'"([^\\']*(\\.)*)*"'")|("\""([^\\"]*(\\.)*)*"\"")
-incomplete_string ("'"([^\\']*(\\.)*)*)|("\""([^\\"]*(\\.)*)*)
+blank [ \t]
+string_quote_q "'"
+string_quote_d "\""
 /* " */
-string ({single_string}{blank}*)*
+string_content_q ([^\\'\n]*(\\.)*)*
+string_content_d ([^\\"\n]*(\\.)*)*
+/* " */
+
 
 %{
     #define YY_USER_ACTION  loc.columns (yyleng);
@@ -28,9 +35,10 @@ string ({single_string}{blank}*)*
 %{
   yy::location& loc = drv.location();
   loc.step ();
+  std::string multiline_str;
 %}
 
-"SELECT"{blank} { return yy::parser::make_SELECT(loc); }
+"SELECT"({blank}|{EOL}) { return yy::parser::make_SELECT(loc); }
 
 ";"  { return yy::parser::make_SEMICOLON(loc); }
 "-"  { return yy::parser::make_MINUS(loc); }
@@ -55,21 +63,48 @@ string ({single_string}{blank}*)*
 
 {int}    { return make_INTEGER(yytext, loc, drv); }
 {float}  { return make_FLOAT(yytext, loc, drv); }
-{string}  { return make_STRING(yytext, loc); }
-{incomplete_string} { 
+
+{string_quote_q} { multiline_str += yytext; BEGIN STRING_Q; }
+<STRING_Q>{string_content_q} { multiline_str += yytext; }
+<STRING_Q>{EOL} { loc.lines(); loc.step(); multiline_str += yytext; }
+<STRING_Q><<EOF>> {
     if(drv.more_context_required())
 	return yy::parser::make_YYEOF(loc);
     drv.log_error(driver::ErrorStage::Lexing, "Unterminated string");
     return yy::parser::make_YYerror(loc);
 }
+<STRING_Q>{string_quote_q} { 
+    multiline_str += yytext; 
+    BEGIN INITIAL; 
+    return make_STRING(multiline_str, loc); 
+}
 
-{blank}+ { }
+{string_quote_d} { multiline_str += yytext; BEGIN STRING_D; }
+<STRING_D>{string_content_d} { multiline_str += yytext; }
+<STRING_D>{EOL} { loc.lines(); loc.step(); multiline_str += yytext; }
+<STRING_D><<EOF>> {
+    if(drv.more_context_required())
+	return yy::parser::make_YYEOF(loc);
+    drv.log_error(driver::ErrorStage::Lexing, "Unterminated string");
+    return yy::parser::make_YYerror(loc);
+}
+<STRING_D>{string_quote_d} { 
+    multiline_str += yytext; 
+    BEGIN INITIAL; 
+    return make_STRING(multiline_str, loc);
+}
+
+{EOL} { loc.lines(); loc.step(); }
+{blank}+ { loc.step(); }
 
 .    {
         drv.log_error(driver::ErrorStage::Lexing, "Invalid character");
 	return yy::parser::make_YYerror(loc);
      }
-<<EOF>> { drv.met_eof(); return yy::parser::make_YYEOF (loc); }
+<<EOF>> {
+    drv.met_eof(); 
+    return yy::parser::make_YYEOF (loc); 
+}
 
 %%
 
@@ -97,20 +132,9 @@ yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::locat
     drv.log_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to int; too big value");
     return yy::parser::make_YYerror(loc);
 }
-yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::location_type& loc) {
+yy::parser::symbol_type make_STRING(std::string& s, const yy::parser::location_type& loc) {
     std::string result; result.reserve(s.size() - 2);
-    char in_string = '\0';
-    for(size_t i = 0; i < s.size(); ++i) {
-	if(s[i] == '\"' || s[i] == '\'') { // "
-	    if(!in_string) {
-		in_string = s[i];
-		continue;
-	    } else if (in_string == s[i]) {
-		in_string = '\0';
-		continue;
-	    }
-	}
-	if(!in_string) continue;
+    for(size_t i = 1; i < s.size() - 1; ++i) {
 	if(s[i] == '\\') {
 	    switch(s[++i]) {
 		case 'n':
@@ -136,6 +160,7 @@ yy::parser::symbol_type make_STRING(std::string_view s, const yy::parser::locati
 	    result.push_back(s[i]);
 	}
     }
+    s.clear();
     return yy::parser::make_STRING(std::move(result), loc);
 }
 
