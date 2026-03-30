@@ -81,12 +81,13 @@ void driver::parse_repl() {
 
 void driver::shrink_executed_queries() {
     int iterations = executed_queries_;
-    StringType::size_type remove_until = 0;
     executed_queries_ = 0;
+    StringType::size_type remove_until = 0;
     for(int i = 0; i < iterations; ++i) {
-	remove_until = query_.find(';', remove_until) + 1;
+	remove_until = query_.find(';', remove_until);
 	if(remove_until == StringType::npos)
 	    return query_.clear();
+	++remove_until;
     }
     query_.erase(0, remove_until);
 }
