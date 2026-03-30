@@ -22,7 +22,7 @@ public:
 
     void scan_end();
     void scan_begin();
-    void log_error(ErrorStage stage, const std::string& err) const;
+    void invoke_error(ErrorStage stage, const std::string& err);
 
     /// Called if lexing process requires more user input to continue.
     bool more_context_required();
@@ -30,16 +30,23 @@ public:
     void met_eof();
     bool is_eof() const;
 
-private:
-    static inline bool should_print_prompt();
+    void shrink_last_query();
 
-    yy::location location_;
-    bool debug_mode_;
-    bool is_eof_ = false;
-    bool more_context_required_ = false;
-    bool more_context_available_ = true;
-    std::string query_;
-    std::string input_line_;
+private:
+    static inline bool is_manual_IO();
+    static void print_prompt();
+    void reset_before_parse();
+    void reset_before_iteration();
+    void read_input_to_query();
+    void log_error(ErrorStage stage, const std::string& err) const;
+
+    bool debug_mode_ {};
+    yy::location location_ {};
+    bool is_eof_ {};
+    bool more_context_required_ {};
+    bool more_context_available_ {};
+    std::string query_ {};
+    std::string input_line_ {};
 };
 
 }

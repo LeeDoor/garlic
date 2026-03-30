@@ -47,11 +47,11 @@
     }
 
     template<typename T, typename... Args>
-    std::unique_ptr<T> mk_v(const driver& drv, Args&&... args) {
+    std::unique_ptr<T> mk_v(driver& drv, Args&&... args) {
 	auto obj = mk<T>(std::forward<Args>(args)...);
 	if constexpr (requires (const T& t) { t.validate(); }) {
 	    if(auto error = obj->validate()) {
-		drv.log_error(driver::ErrorStage::SemanticAnalysis, *error);
+		drv.invoke_error(driver::ErrorStage::SemanticAnalysis, *error);
 		return nullptr;
 	    }
 	}
@@ -114,8 +114,9 @@ queries: /**/
 	auto gatherer = std::make_shared<DumbTableValueGatherer>(); 
 	auto result = $2->resolve(gatherer); 
 	std::cout << result->format() << std::endl;
+	drv.shrink_last_query();
     }
-    | queries SEMICOLON
+    | queries SEMICOLON { drv.shrink_last_query(); }
     ;
 
 query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ConditionSelectQuery>(drv, std::move($2))); }
@@ -162,7 +163,5 @@ strings: STRING { $$ = $1; }
 
 %%
 void yy::parser::error (const location_type&, const std::string& m) {
-    if(!(drv.is_eof() && drv.more_context_required())) {
-	drv.log_error(driver::ErrorStage::Parsing, m);
-    }
+    drv.invoke_error(driver::ErrorStage::Parsing, m);
 }

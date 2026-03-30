@@ -5,8 +5,8 @@
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, const driver& drv);
-    yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, const driver& drv);
+    yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, driver& drv);
+    yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, driver& drv);
     yy::parser::symbol_type make_STRING(std::string& s, const yy::parser::location_type& loc);
 %}
 
@@ -27,7 +27,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 
 %{
-    #define YY_USER_ACTION  loc.columns (yyleng);
+    #define YY_USER_ACTION do { loc.columns (yyleng); loc.step(); } while(0);
 %}
 
 %%
@@ -70,7 +70,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_Q><<EOF>> {
     if(drv.more_context_required())
 	return yy::parser::make_YYEOF(loc);
-    drv.log_error(driver::ErrorStage::Lexing, "Unterminated string");
+    drv.invoke_error(driver::ErrorStage::Lexing, "Unterminated string");
     return yy::parser::make_YYerror(loc);
 }
 <STRING_Q>{string_quote_q} { 
@@ -85,7 +85,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_D><<EOF>> {
     if(drv.more_context_required())
 	return yy::parser::make_YYEOF(loc);
-    drv.log_error(driver::ErrorStage::Lexing, "Unterminated string");
+    drv.invoke_error(driver::ErrorStage::Lexing, "Unterminated string");
     return yy::parser::make_YYerror(loc);
 }
 <STRING_D>{string_quote_d} { 
@@ -98,7 +98,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 {blank}+ { loc.step(); }
 
 .    {
-        drv.log_error(driver::ErrorStage::Lexing, "Invalid character");
+        drv.invoke_error(driver::ErrorStage::Lexing, "Invalid character \"" + std::string(yytext) + "\"");
 	return yy::parser::make_YYerror(loc);
      }
 <<EOF>> {
@@ -118,18 +118,18 @@ std::optional<T> make_number(std::string_view s) {
     return result;
 }
 
-yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, const driver& drv) {
+yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, driver& drv) {
     if(auto num = make_number<FloatType>(s)) {
 	return yy::parser::make_FLOAT(*num, loc);
     }
-    drv.log_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to float; too big value");
+    drv.invoke_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to float; too big value");
     return yy::parser::make_YYerror(loc);
 }
-yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, const driver& drv) {
+yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, driver& drv) {
     if(auto num = make_number<IntType>(s)) {
 	return yy::parser::make_INTEGER(*num, loc);
     }
-    drv.log_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to int; too big value");
+    drv.invoke_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to int; too big value");
     return yy::parser::make_YYerror(loc);
 }
 yy::parser::symbol_type make_STRING(std::string& s, const yy::parser::location_type& loc) {
@@ -166,9 +166,6 @@ yy::parser::symbol_type make_STRING(std::string& s, const yy::parser::location_t
 
 void driver::scan_begin() {
     yy_flex_debug = debug_mode_;
-    is_eof_ = false;
-    more_context_required_ = false;
-    location_.initialize();
     yy_scan_bytes(query_.data(), static_cast<int>(query_.size()));
 }
 

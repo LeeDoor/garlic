@@ -5,3 +5,7 @@ SELECT (1 + 1) = 2;
 ;
 SELECT
 (1 + 1) = 2;
+
+SELECT 5 + 5; SELECT 5
+
+;
