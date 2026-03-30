@@ -33,7 +33,6 @@ void driver::met_eof() {
     is_eof_ = true;
 }
 
-
 void driver::parse() {
     reset_before_parse_process();
     do {

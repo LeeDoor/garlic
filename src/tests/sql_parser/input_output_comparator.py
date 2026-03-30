@@ -1,6 +1,9 @@
 import sys
 import subprocess
 import re
+import time
+import select
+import os
 from pathlib import Path
 from typing import List, Tuple, Optional
 
@@ -60,20 +63,106 @@ def read_file_content_with_line_numbers(file_path: Path) -> str:
             lines.append(f"{i:3d}: {line.rstrip('\n')}")
         return '\n'.join(lines)
 
-def run_executable(executable: str, input_content: str) -> subprocess.CompletedProcess:
+def estimate_output_limit(expected_output: Optional[str]) -> int:
+    if expected_output is None:
+        return 64 * 1024
+
+    lines = normalize_lines(expected_output)
+    expected_chars = sum(len(line) + 1 for line in lines)
+    expected_error_lines = sum(1 for line in lines if line in ERROR_WILDCARDS)
+
+    # Error lines contain location/context; reserve extra space.
+    calculated = expected_chars + expected_error_lines * 200 + 1024
+    return max(4096, min(calculated, 256 * 1024))
+
+def run_executable(executable: str, input_content: str, expected_output: Optional[str] = None) -> subprocess.CompletedProcess:
+    max_output_bytes = estimate_output_limit(expected_output)
+    max_runtime_seconds = 1.0
+
     try:
-        return subprocess.run(
+        process = subprocess.Popen(
             [executable],
-            input=input_content,
+            stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            text=True,
-            check=False
+            text=False,
+        )
+
+        if process.stdin is not None:
+            process.stdin.write(input_content.encode())
+            process.stdin.close()
+
+        output = bytearray()
+        timed_out = False
+        output_limited = False
+        start_time = time.monotonic()
+
+        if process.stdout is None:
+            raise RuntimeError("Failed to capture process stdout")
+
+        out_fd = process.stdout.fileno()
+        while True:
+            elapsed = time.monotonic() - start_time
+            if elapsed > max_runtime_seconds:
+                timed_out = True
+                process.terminate()
+                break
+
+            if len(output) >= max_output_bytes:
+                output_limited = True
+                process.terminate()
+                break
+
+            if process.poll() is not None:
+                break
+
+            remaining = max_output_bytes - len(output)
+            wait_timeout = min(0.05, max(0.0, max_runtime_seconds - elapsed))
+            readable, _, _ = select.select([out_fd], [], [], wait_timeout)
+            if not readable:
+                continue
+
+            chunk = os.read(out_fd, min(4096, remaining))
+            if not chunk:
+                break
+            output.extend(chunk)
+
+        # Drain remaining output quickly after process end/termination.
+        drain_deadline = time.monotonic() + 0.2
+        while len(output) < max_output_bytes and time.monotonic() < drain_deadline:
+            readable, _, _ = select.select([out_fd], [], [], 0.01)
+            if not readable:
+                break
+            chunk = os.read(out_fd, min(4096, max_output_bytes - len(output)))
+            if not chunk:
+                break
+            output.extend(chunk)
+
+        try:
+            process.wait(timeout=0.2)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=0.2)
+
+        class ExecResult:
+            def __init__(self, returncode: int, stdout: str, timed_out: bool, output_limited: bool):
+                self.returncode = returncode
+                self.stdout = stdout
+                self.timed_out = timed_out
+                self.output_limited = output_limited
+
+        return ExecResult(
+            process.returncode,
+            output.decode(errors="replace"),
+            timed_out,
+            output_limited,
         )
     except FileNotFoundError:
         class MissingExecutable:
             returncode = 127
             stdout = f"Error: Executable '{executable}' not found"
+            timed_out = False
+            output_limited = False
         return MissingExecutable()
 
 def normalize_lines(content: str) -> List[str]:
@@ -152,10 +241,9 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
     input_content_full = read_file_content(input_file)
     input_content_preview = read_file_content(input_file, max_input_lines)
     expected_output_with_numbers = read_file_content_with_line_numbers(expected_file)
-    process = run_executable(executable, input_content_full)
-    actual_output = process.stdout
-
     expected_output = read_file_content(expected_file)
+    process = run_executable(executable, input_content_full, expected_output=expected_output)
+    actual_output = process.stdout
     if outputs_match(expected_output, actual_output):
         return True
 
@@ -167,6 +255,10 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
     numbered_actual = '\n'.join([f"{i+1:3d}: {line}" for i, line in enumerate(actual_lines)])
     print(numbered_actual)
     print(f"===RETURN CODE===\n{process.returncode}")
+    if getattr(process, "timed_out", False):
+        print("===EXECUTION LIMIT===\nProcess timed out")
+    if getattr(process, "output_limited", False):
+        print("===EXECUTION LIMIT===\nOutput limit reached")
     print("===EXPECTED (with line numbers)===")
     print(expected_output_with_numbers)
     print("===DIFFERENCE===")
@@ -178,7 +270,8 @@ def run_error_prefix_test(executable: str, input_file: Path, required_prefix: st
     test_name = input_file.stem
     input_content_full = read_file_content(input_file)
     input_content_preview = read_file_content(input_file, max_input_lines)
-    process = run_executable(executable, input_content_full)
+    expected_output = required_prefix + "\n"
+    process = run_executable(executable, input_content_full, expected_output=expected_output)
 
     output = process.stdout.lstrip()
     if output.startswith(required_prefix):
@@ -191,6 +284,10 @@ def run_error_prefix_test(executable: str, input_file: Path, required_prefix: st
     print("===OUTPUT===")
     print(process.stdout)
     print(f"===RETURN CODE===\n{process.returncode}")
+    if getattr(process, "timed_out", False):
+        print("===EXECUTION LIMIT===\nProcess timed out")
+    if getattr(process, "output_limited", False):
+        print("===EXECUTION LIMIT===\nOutput limit reached")
     return False
 
 def main():
