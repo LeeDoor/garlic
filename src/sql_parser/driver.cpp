@@ -22,7 +22,7 @@ void driver::reset_before_parsing_iteration() {
 void driver::parse() {
     reset_before_parse_process();
     do {
-	if(is_eof() || query_.empty()) {
+	if(is_eof_ || query_.empty()) {
 	    print_prompt();
 	    read_input_to_query();
 	}
@@ -50,7 +50,7 @@ bool driver::parse_repl() {
     return more_context_required_;
 }
 void driver::invoke_error(ErrorStage stage, const std::string& err) {
-    if(!(is_eof() && more_context_required())) {
+    if(!(is_eof_ && more_context_required())) {
 	log_error(stage, err);
 	query_executed();
     }
@@ -74,9 +74,6 @@ bool driver::more_context_required() {
 }
 void driver::met_eof() {
     is_eof_ = true;
-}
-bool driver::is_eof() const {
-    return is_eof_;
 }
 void driver::query_executed() {
     ++executed_queries_;
