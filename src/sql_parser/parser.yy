@@ -73,7 +73,7 @@
     ;
 %token SEMICOLON;
 %token
-    MINUS   YYABORT
+    MINUS   
     PLUS    
     MUL     
     DIV     

@@ -36,6 +36,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
   yy::location& loc = drv.location();
   loc.step();
   std::string multiline_str;
+  BEGIN INITIAL;
 %}
 
 "SELECT"({blank}|{EOL}) { return yy::parser::make_SELECT(loc); }
