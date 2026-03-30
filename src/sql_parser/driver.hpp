@@ -15,19 +15,16 @@ public:
     explicit driver(bool debug_mode = false);
 
     yy::location& location() & { return location_; }
-
     void parse();
-    bool parse_repl();
-
-    void scan_end();
-    void scan_begin();
     void invoke_error(ErrorStage stage, const std::string& err);
-
-    bool more_context_required();
-    void met_eof();
     void query_executed();
+    void met_eof();
 
 private:
+    void parse_repl();
+    void scan_end();
+    void scan_begin();
+
     static inline bool is_manual_IO();
     static void print_prompt();
     void reset_before_parse_process();
@@ -39,7 +36,6 @@ private:
     bool debug_mode_ {};
     yy::location location_ {};
     bool is_eof_ {};
-    bool more_context_required_ {};
     bool more_context_available_ {};
     std::string query_ {};
     std::string input_line_ {};
