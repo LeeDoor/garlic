@@ -7,12 +7,12 @@ driver::driver(bool debug_mode)
 : debug_mode_{ debug_mode }
 { }
 
-void driver::reset_before_parse() {
+void driver::reset_before_parse_process() {
     query_.clear();
     input_line_.clear();
     more_context_available_ = true;
 }
-void driver::reset_before_iteration() {
+void driver::reset_before_parsing_iteration() {
     more_context_required_ = false;
     is_eof_ = false;
     if(is_manual_IO() && !more_context_required_) {
@@ -20,12 +20,15 @@ void driver::reset_before_iteration() {
     }
 }
 void driver::parse() {
-    reset_before_parse();
+    reset_before_parse_process();
     do {
-	reset_before_iteration();
-	print_prompt();
-	read_input_to_query();
+	if(is_eof() || query_.empty()) {
+	    print_prompt();
+	    read_input_to_query();
+	}
+	reset_before_parsing_iteration();
 	parse_repl();
+	shrink_executed_queries();
     } while (more_context_available_);
 }
 void driver::print_prompt() {
@@ -49,7 +52,7 @@ bool driver::parse_repl() {
 void driver::invoke_error(ErrorStage stage, const std::string& err) {
     if(!(is_eof() && more_context_required())) {
 	log_error(stage, err);
-	shrink_last_query();
+	query_executed();
     }
 }
 void driver::log_error(ErrorStage stage, const std::string& err) const {
@@ -75,11 +78,19 @@ void driver::met_eof() {
 bool driver::is_eof() const {
     return is_eof_;
 }
-void driver::shrink_last_query() {
-    auto first_semicolon = query_.find(';');
-    if(first_semicolon == query_.npos)
-	query_.clear();
-    query_.erase(0, first_semicolon + 1);
+void driver::query_executed() {
+    ++executed_queries_;
+}
+void driver::shrink_executed_queries() {
+    int iterations = executed_queries_;
+    StringType::size_type remove_until = 0;
+    executed_queries_ = 0;
+    for(int i = 0; i < iterations; ++i) {
+	remove_until = query_.find(';', remove_until) + 1;
+	if(remove_until == StringType::npos)
+	    return query_.clear();
+    }
+    query_.erase(0, remove_until);
 }
 
 #ifdef _WIN32

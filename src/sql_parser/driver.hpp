@@ -30,15 +30,16 @@ public:
     void met_eof();
     bool is_eof() const;
 
-    void shrink_last_query();
+    void query_executed();
 
 private:
     static inline bool is_manual_IO();
     static void print_prompt();
-    void reset_before_parse();
-    void reset_before_iteration();
+    void reset_before_parse_process();
+    void reset_before_parsing_iteration();
     void read_input_to_query();
     void log_error(ErrorStage stage, const std::string& err) const;
+    void shrink_executed_queries();
 
     bool debug_mode_ {};
     yy::location location_ {};
@@ -47,6 +48,7 @@ private:
     bool more_context_available_ {};
     std::string query_ {};
     std::string input_line_ {};
+    size_t executed_queries_ {};
 };
 
 }
