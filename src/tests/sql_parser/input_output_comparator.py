@@ -1,10 +1,21 @@
-import os
 import sys
 import subprocess
-import difflib
 import re
 from pathlib import Path
 from typing import List, Tuple, Optional
+
+ERROR_WILDCARDS = {
+    "<ERROR>": lambda line: line.startswith("[") and "_ERROR]" in line,
+    "<LEXICAL_ERROR>": lambda line: line.startswith("[LEXICAL_ERROR]"),
+    "<SYNTAX_ERROR>": lambda line: line.startswith("[SYNTAX_ERROR]"),
+    "<SEMANTIC_ERROR>": lambda line: line.startswith("[SEMANTIC_ERROR]"),
+}
+
+ANSI_RESET = "\033[0m"
+ANSI_BOLD = "\033[1m"
+ANSI_RED = "\033[31m"
+ANSI_GREEN = "\033[32m"
+ANSI_YELLOW = "\033[33m"
 
 def test_file_sort_key(path: Path) -> Tuple[int, str]:
     name = path.stem
@@ -54,18 +65,47 @@ def run_executable(executable: str, input_content: str) -> subprocess.CompletedP
         return subprocess.run(
             [executable],
             input=input_content,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
             check=False
         )
     except FileNotFoundError:
         class MissingExecutable:
             returncode = 127
-            stdout = ""
-            stderr = f"Error: Executable '{executable}' not found"
+            stdout = f"Error: Executable '{executable}' not found"
         return MissingExecutable()
 
-def get_diff(actual: str, expected: str, width: int = 10) -> str:
+def normalize_lines(content: str) -> List[str]:
+    return content.splitlines()
+
+def line_matches(expected_line: str, actual_line: str) -> bool:
+    checker = ERROR_WILDCARDS.get(expected_line)
+    if checker is not None:
+        return checker(actual_line)
+    return expected_line == actual_line
+
+def outputs_match(expected: str, actual: str) -> bool:
+    expected_lines = normalize_lines(expected)
+    actual_lines = normalize_lines(actual)
+    if len(expected_lines) != len(actual_lines):
+        return False
+    return all(
+        line_matches(exp, act)
+        for exp, act in zip(expected_lines, actual_lines)
+    )
+
+def style(text: str, *codes: str) -> str:
+    return "".join(codes) + text + ANSI_RESET
+
+def truncate_for_width(text: str, width: int) -> str:
+    if len(text) <= width:
+        return text
+    if width <= 3:
+        return text[:width]
+    return text[:width - 3] + "..."
+
+def get_diff(actual: str, expected: str, width: int = 180) -> str:
     actual_lines = actual.splitlines()
     expected_lines = expected.splitlines()
     
@@ -74,36 +114,35 @@ def get_diff(actual: str, expected: str, width: int = 10) -> str:
     actual_lines.extend([''] * (max_len - len(actual_lines)))
     expected_lines.extend([''] * (max_len - len(expected_lines)))
     
-    # Calculate column widths (40% for left, 40% for right, 20% for middle marker)
-    left_width = int(width * 0.4)
-    right_width = int(width * 0.4)
-    marker_width = width - left_width - right_width
+    marker_width = 8
+    content_width = max(40, width - marker_width)
+    left_width = content_width // 2
+    right_width = content_width - left_width
     
     result = []
     result.append(" " * left_width + " " * marker_width + " " * right_width)
-    result.append("LEFT".ljust(left_width) + " " * marker_width + "RIGHT".ljust(right_width))
+    result.append(style("ACTUAL", ANSI_BOLD).ljust(left_width) + " " * marker_width + style("EXPECTED", ANSI_BOLD).ljust(right_width))
     result.append("-" * left_width + "-" * marker_width + "-" * right_width)
     
     for actual_line, expected_line in zip(actual_lines, expected_lines):
-        if actual_line == expected_line:
-            marker = "  "  # Two spaces for matching lines
+        expected_is_wildcard = expected_line in ERROR_WILDCARDS
+        if line_matches(expected_line, actual_line):
+            if expected_is_wildcard:
+                marker = style("~OK~", ANSI_BOLD, ANSI_GREEN)
+            else:
+                marker = style(" OK ", ANSI_GREEN)
         elif actual_line == "":
-            marker = "<<"
-            expected_line = expected_line.ljust(right_width)
+            marker = style(" << ", ANSI_BOLD, ANSI_YELLOW)
         elif expected_line == "":
-            marker = ">>"
-            actual_line = actual_line.ljust(left_width)
+            marker = style(" >> ", ANSI_BOLD, ANSI_YELLOW)
         else:
-            marker = "! "
+            marker = style(" !! ", ANSI_BOLD, ANSI_RED)
         
-        # Truncate lines if they're too long
-        if len(actual_line) > left_width:
-            actual_line = actual_line[:left_width-3] + "..."
-        if len(expected_line) > right_width:
-            expected_line = expected_line[:right_width-3] + "..."
+        actual_disp = truncate_for_width(actual_line, left_width)
+        expected_disp = truncate_for_width(expected_line, right_width)
         
         # Format the line
-        line = f"{actual_line:<{left_width}}{marker:<{marker_width}}{expected_line:<{right_width}}"
+        line = f"{actual_disp:<{left_width}} {marker} {expected_disp:<{right_width}}"
         result.append(line)
     
     return '\n'.join(result)
@@ -116,7 +155,8 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
     process = run_executable(executable, input_content_full)
     actual_output = process.stdout
 
-    if process.returncode == 0 and actual_output == read_file_content(expected_file):
+    expected_output = read_file_content(expected_file)
+    if outputs_match(expected_output, actual_output):
         return True
 
     print(f"test name: {test_name}")
@@ -126,14 +166,11 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
     actual_lines = actual_output.splitlines()
     numbered_actual = '\n'.join([f"{i+1:3d}: {line}" for i, line in enumerate(actual_lines)])
     print(numbered_actual)
-    if process.stderr:
-        print("===STDERR===")
-        print(process.stderr)
     print(f"===RETURN CODE===\n{process.returncode}")
     print("===EXPECTED (with line numbers)===")
     print(expected_output_with_numbers)
     print("===DIFFERENCE===")
-    print(get_diff(actual_output, read_file_content(expected_file)))
+    print(get_diff(actual_output, expected_output))
 
     return False
 
@@ -143,19 +180,16 @@ def run_error_prefix_test(executable: str, input_file: Path, required_prefix: st
     input_content_preview = read_file_content(input_file, max_input_lines)
     process = run_executable(executable, input_content_full)
 
-    stdout = process.stdout.lstrip()
-    stderr = process.stderr.lstrip()
-    if stdout.startswith(required_prefix) or stderr.startswith(required_prefix):
+    output = process.stdout.lstrip()
+    if output.startswith(required_prefix):
         return True
 
     print(f"test name: {test_name}")
     print("===INPUT===")
     print(input_content_preview)
     print(f"===EXPECTED PREFIX===\n{required_prefix}")
-    print("===STDOUT===")
+    print("===OUTPUT===")
     print(process.stdout)
-    print("===STDERR===")
-    print(process.stderr)
     print(f"===RETURN CODE===\n{process.returncode}")
     return False
 
@@ -167,18 +201,18 @@ def main():
     executable = sys.argv[1]
 
     test_pairs = find_regular_test_pairs()
-    lexing_error_tests = find_error_tests("LEXING_ERROR")
+    lexical_error_tests = find_error_tests("LEXICAL_ERROR")
     syntax_error_tests = find_error_tests("SYNTAX_ERROR")
     semantic_error_tests = find_error_tests("SEMANTIC_ERROR")
 
-    if not test_pairs and not lexing_error_tests and not syntax_error_tests and not semantic_error_tests:
+    if not test_pairs and not lexical_error_tests and not syntax_error_tests and not semantic_error_tests:
         script_dir = Path(__file__).parent
         print(f"No test files found in {script_dir}")
         sys.exit(0)
 
     print(
         f"Found {len(test_pairs)} regular test(s), "
-        f"{len(lexing_error_tests)} lexing error test(s), "
+        f"{len(lexical_error_tests)} lexical error test(s), "
         f"{len(syntax_error_tests)} syntax error test(s), "
         f"{len(semantic_error_tests)} semantic error test(s)"
     )
@@ -189,9 +223,9 @@ def main():
             print(f"\nTest failed: {input_file.stem}")
             sys.exit(1)
 
-    for i, input_file in enumerate(lexing_error_tests, 1):
-        print(f"Running lexing error test {i}: {input_file.name}")
-        if not run_error_prefix_test(executable, input_file, "[LEXING_ERROR]"):
+    for i, input_file in enumerate(lexical_error_tests, 1):
+        print(f"Running lexical error test {i}: {input_file.name}")
+        if not run_error_prefix_test(executable, input_file, "[LEXICAL_ERROR]"):
             print(f"\nTest failed: {input_file.stem}")
             sys.exit(1)
 
