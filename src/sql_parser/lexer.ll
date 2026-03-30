@@ -69,8 +69,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_Q>{string_content_q} { multiline_str += yytext; }
 <STRING_Q>{EOL} { loc.lines(); loc.step(); multiline_str += yytext; }
 <STRING_Q><<EOF>> {
-    if(drv.more_context_required())
-	return yy::parser::make_YYEOF(loc);
+    drv.met_eof();
     drv.invoke_error(driver::ErrorStage::Lexing, "Unterminated string");
     return yy::parser::make_YYerror(loc);
 }
@@ -84,8 +83,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_D>{string_content_d} { multiline_str += yytext; }
 <STRING_D>{EOL} { loc.lines(); loc.step(); multiline_str += yytext; }
 <STRING_D><<EOF>> {
-    if(drv.more_context_required())
-	return yy::parser::make_YYEOF(loc);
+    drv.met_eof();
     drv.invoke_error(driver::ErrorStage::Lexing, "Unterminated string");
     return yy::parser::make_YYerror(loc);
 }
