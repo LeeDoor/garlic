@@ -27,6 +27,9 @@ void driver::log_error(ErrorStage stage, const std::string& err) const {
 
 void driver::query_executed() {
     ++executed_queries_;
+    if(is_manual_IO()) {
+	location_.initialize();
+    }
 }
 
 void driver::met_eof() {
@@ -36,14 +39,14 @@ void driver::met_eof() {
 void driver::parse() {
     reset_before_parse_process();
     do {
-	if(is_eof_ || query_.empty()) {
+	if(is_eof_ && more_context_available_) {
 	    print_prompt();
 	    read_input_to_query();
 	}
 	reset_before_parsing_iteration();
 	parse_repl();
 	shrink_executed_queries();
-    } while (more_context_available_);
+    } while (more_context_available_ || !query_.empty());
 }
 
 void driver::reset_before_parse_process() {
@@ -65,9 +68,6 @@ void driver::read_input_to_query() {
 }
 
 void driver::reset_before_parsing_iteration() {
-    if(is_manual_IO()) {
-	location_.initialize();
-    }
     is_eof_ = false;
 }
 
@@ -75,7 +75,8 @@ void driver::parse_repl() {
     yy::parser parse(*this);
     parse.set_debug_level(debug_mode_);
     scan_begin();
-    parse();
+    if(parse() == 0)
+	query_executed();
     scan_end();
 }
 

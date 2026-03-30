@@ -114,9 +114,9 @@ queries: /**/
 	auto gatherer = std::make_shared<DumbTableValueGatherer>(); 
 	auto result = $2->resolve(gatherer); 
 	std::cout << result->format() << std::endl;
-	drv.shrink_last_query();
+	drv.query_executed();
     }
-    | queries SEMICOLON { drv.shrink_last_query(); }
+    | queries SEMICOLON { drv.query_executed(); }
     ;
 
 query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ConditionSelectQuery>(drv, std::move($2))); }
