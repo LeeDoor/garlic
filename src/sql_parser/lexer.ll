@@ -28,7 +28,12 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 
 %{
-    #define YY_USER_ACTION do { --left_ok; loc.columns (yyleng); loc.step(); } while(0);
+    #define YY_USER_ACTION do { \
+	loc.columns(1); \
+	drv.memorize_token_begin_loc(); \
+	--left_ok; \
+	loc.columns (yyleng - 1); loc.step(); \
+    } while(0);
 
     #define WHITESPACE_SEPARATED(TOKEN_NAME) \
     do { \
@@ -41,7 +46,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
         loc.columns(-yyleng); loc.step(); \
 	drv.invoke_error(driver::ErrorStage::Lexing, msg); \
 	return yy::parser::make_YYerror(loc); \
-	} while(0);
+    } while(0);
 %}
 
 %%

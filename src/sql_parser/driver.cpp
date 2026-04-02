@@ -21,7 +21,7 @@ void driver::log_error(ErrorStage stage, const std::string& err) const {
     };
     std::cerr 
 	<< "[" << stage_str.at(stage) << "] "
-	<< "at [" << location_ << "] "
+	<< "at [" << token_begin_location_ << "] "
 	<< err << std::endl;
 }
 
@@ -35,7 +35,9 @@ void driver::query_executed() {
 void driver::met_eof() {
     is_eof_ = true;
 }
-
+void driver::memorize_token_begin_loc() {
+    token_begin_location_ = location_;
+}
 void driver::parse() {
     reset_before_parse_process();
     do {

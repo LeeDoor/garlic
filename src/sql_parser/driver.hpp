@@ -19,6 +19,7 @@ public:
     void query_executed();
     void met_eof();
     void parse();
+    void memorize_token_begin_loc();
 
 private:
     void log_error(ErrorStage stage, const std::string& err) const;
@@ -37,6 +38,7 @@ private:
 
     bool debug_mode_ {};
     yy::location location_ {};
+    yy::location token_begin_location_ {};
     bool is_eof_ {};
     bool more_context_available_ {};
     std::string query_ {};
