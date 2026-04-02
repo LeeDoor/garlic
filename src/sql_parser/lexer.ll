@@ -14,10 +14,11 @@
 %x STRING_D
 
 EOL "\n"
+blank [ \t]
+token_separator {EOL}|{blank}|$
 EXP ([Ee][-+]?[0-9]+)
 float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
 int "0"|([1-9][0-9]*{EXP}?)
-blank [ \t]
 string_quote_q "'"
 string_quote_d "\""
 /* " */
@@ -27,19 +28,31 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 
 %{
-    #define YY_USER_ACTION do { loc.columns (yyleng); loc.step(); } while(0);
+    #define YY_USER_ACTION do { --left_ok; loc.columns (yyleng); loc.step(); } while(0);
+    #define WHITESPACE_SEPARATED(TOKEN_NAME) \
+    do { \
+	if(left_ok < 0) { \
+	    drv.invoke_error(driver::ErrorStage::Lexing, "Token " TOKEN_NAME " should be whitespace-separated"); \
+	    return yy::parser::make_YYerror(loc); \
+	} \
+    } while(0);
 %}
 
 %%
 
 %{
-  yy::location& loc = drv.location();
-  loc.step();
-  std::string multiline_str;
-  BEGIN INITIAL;
+    yy::location& loc = drv.location();
+    loc.step();
+    static std::string multiline_str;
+    // 1 when seen a whitespace; 
+    // decremented in YY_USER_ACTION; 
+    // if == 0, it means the last character was a whitespace; 
+    // if < 0, it wasn't
+    static int left_ok = 1; 
+    BEGIN INITIAL;
 %}
 
-"SELECT"({blank}|{EOL}) { return yy::parser::make_SELECT(loc); }
+"SELECT"/({token_separator}) { WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(loc); }
 
 ";"  { return yy::parser::make_SEMICOLON(loc); }
 "-"  { return yy::parser::make_MINUS(loc); }
@@ -58,9 +71,9 @@ string_content_d ([^\\"\n]*(\\.)*)*
 ">"  { return yy::parser::make_MORE(loc); }
 "<"  { return yy::parser::make_LESS(loc); }
 
-"AND"{blank} { return yy::parser::make_LOGICAND(loc); }
-"OR"{blank}  { return yy::parser::make_LOGICOR(loc); }
-"!"	     { return yy::parser::make_NOT(loc); }
+"AND"/({token_separator}) { WHITESPACE_SEPARATED("AND"); return yy::parser::make_LOGICAND(loc); }
+"OR"/({token_separator})  { WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(loc); }
+"!"			{ return yy::parser::make_NOT(loc); }
 
 {int}    { return make_INTEGER(yytext, loc, drv); }
 {float}  { return make_FLOAT(yytext, loc, drv); }
@@ -93,8 +106,8 @@ string_content_d ([^\\"\n]*(\\.)*)*
     return make_STRING(multiline_str, loc);
 }
 
-{EOL} { loc.lines(); loc.step(); }
-{blank}+ { loc.step(); }
+{EOL} { left_ok = 1; loc.lines(); loc.step(); }
+{blank}+ { left_ok = 1; loc.step(); }
 
 .    {
         drv.invoke_error(driver::ErrorStage::Lexing, "Invalid character \"" + std::string(yytext) + "\"");
