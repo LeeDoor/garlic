@@ -5,9 +5,9 @@
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, driver& drv);
-    yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, driver& drv);
-    yy::parser::symbol_type make_STRING(std::string& s, const yy::parser::location_type& loc);
+    yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& loc, driver& drv);
+    yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& loc, driver& drv);
+    yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& loc);
 %}
 
 %x STRING_Q
@@ -29,13 +29,19 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 %{
     #define YY_USER_ACTION do { --left_ok; loc.columns (yyleng); loc.step(); } while(0);
+
     #define WHITESPACE_SEPARATED(TOKEN_NAME) \
     do { \
 	if(left_ok < 0) { \
-	    drv.invoke_error(driver::ErrorStage::Lexing, "Token " TOKEN_NAME " should be whitespace-separated"); \
-	    return yy::parser::make_YYerror(loc); \
+	    LEXING_ERROR("Token " TOKEN_NAME " should be whitespace-separated"); \
 	} \
     } while(0);
+
+    #define LEXING_ERROR(msg) do { \
+        loc.columns(-yyleng); loc.step(); \
+	drv.invoke_error(driver::ErrorStage::Lexing, msg); \
+	return yy::parser::make_YYerror(loc); \
+	} while(0);
 %}
 
 %%
@@ -83,8 +89,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_Q>{EOL} { loc.lines(); loc.step(); multiline_str += yytext; }
 <STRING_Q><<EOF>> {
     drv.met_eof();
-    drv.invoke_error(driver::ErrorStage::Lexing, "Unterminated string");
-    return yy::parser::make_YYerror(loc);
+    LEXING_ERROR("Unterminated string");
 }
 <STRING_Q>{string_quote_q} { 
     multiline_str += yytext; 
@@ -97,8 +102,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_D>{EOL} { loc.lines(); loc.step(); multiline_str += yytext; }
 <STRING_D><<EOF>> {
     drv.met_eof();
-    drv.invoke_error(driver::ErrorStage::Lexing, "Unterminated string");
-    return yy::parser::make_YYerror(loc);
+    LEXING_ERROR("Unterminated string");
 }
 <STRING_D>{string_quote_d} { 
     multiline_str += yytext; 
@@ -110,8 +114,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 {blank}+ { left_ok = 1; loc.step(); }
 
 .    {
-        drv.invoke_error(driver::ErrorStage::Lexing, "Invalid character \"" + std::string(yytext) + "\"");
-	return yy::parser::make_YYerror(loc);
+	LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");
      }
 <<EOF>> {
     drv.met_eof(); 
@@ -130,21 +133,19 @@ std::optional<T> make_number(std::string_view s) {
     return result;
 }
 
-yy::parser::symbol_type make_FLOAT(std::string_view s, const yy::parser::location_type& loc, driver& drv) {
+yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& loc, driver& drv) {
     if(auto num = make_number<FloatType>(s)) {
 	return yy::parser::make_FLOAT(*num, loc);
     }
-    drv.invoke_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to float; too big value");
-    return yy::parser::make_YYerror(loc);
+    LEXING_ERROR("Failed to convert \"" + std::string(s) + "\" to float; too big value");
 }
-yy::parser::symbol_type make_INTEGER(std::string_view s, const yy::parser::location_type& loc, driver& drv) {
+yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& loc, driver& drv) {
     if(auto num = make_number<IntType>(s)) {
 	return yy::parser::make_INTEGER(*num, loc);
     }
-    drv.invoke_error(driver::ErrorStage::Lexing, "Failed to convert \"" + std::string(s) + "\" to int; too big value");
-    return yy::parser::make_YYerror(loc);
+    LEXING_ERROR("Failed to convert \"" + std::string(s) + "\" to int; too big value");
 }
-yy::parser::symbol_type make_STRING(std::string& s, const yy::parser::location_type& loc) {
+yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& loc) {
     std::string result; result.reserve(s.size() - 2);
     for(size_t i = 1; i < s.size() - 1; ++i) {
 	if(s[i] == '\\') {

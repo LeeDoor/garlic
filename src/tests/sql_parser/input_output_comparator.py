@@ -13,6 +13,7 @@ ERROR_WILDCARDS = {
     "<SYNTAX_ERROR>": lambda line: line.startswith("[SYNTAX_ERROR]"),
     "<SEMANTIC_ERROR>": lambda line: line.startswith("[SEMANTIC_ERROR]"),
 }
+LOCATION_ERROR_PREFIX_RE = re.compile(r"^\[[A-Z_]+_ERROR\] at \[\d+\.\d+\]$")
 
 ANSI_RESET = "\033[0m"
 ANSI_BOLD = "\033[1m"
@@ -37,6 +38,19 @@ def find_regular_test_pairs() -> List[Tuple[Path, Path]]:
         if e_file.exists():
             pairs.append((i_file, e_file))
 
+    return pairs
+
+def find_directory_test_pairs(directory_name: str) -> List[Tuple[Path, Path]]:
+    script_dir = Path(__file__).parent / directory_name
+    if not script_dir.exists():
+        return []
+
+    i_files = sorted(script_dir.glob("*.dat"), key=test_file_sort_key)
+    pairs = []
+    for i_file in i_files:
+        e_file = i_file.with_suffix(".ans")
+        if e_file.exists():
+            pairs.append((i_file, e_file))
     return pairs
 
 def find_error_tests(directory_name: str) -> List[Path]:
@@ -184,6 +198,21 @@ def outputs_match(expected: str, actual: str) -> bool:
         for exp, act in zip(expected_lines, actual_lines)
     )
 
+def location_line_matches(expected_line: str, actual_line: str) -> bool:
+    if LOCATION_ERROR_PREFIX_RE.match(expected_line):
+        return actual_line.startswith(expected_line)
+    return expected_line == actual_line
+
+def location_outputs_match(expected: str, actual: str) -> bool:
+    expected_lines = normalize_lines(expected)
+    actual_lines = normalize_lines(actual)
+    if len(expected_lines) != len(actual_lines):
+        return False
+    return all(
+        location_line_matches(exp, act)
+        for exp, act in zip(expected_lines, actual_lines)
+    )
+
 def style(text: str, *codes: str) -> str:
     return "".join(codes) + text + ANSI_RESET
 
@@ -266,6 +295,37 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
 
     return False
 
+def run_exact_test(executable: str, input_file: Path, expected_file: Path, max_input_lines: int = 10) -> bool:
+    test_name = input_file.stem
+    input_content_full = read_file_content(input_file)
+    input_content_preview = read_file_content(input_file, max_input_lines)
+    expected_output_with_numbers = read_file_content_with_line_numbers(expected_file)
+    expected_output = read_file_content(expected_file)
+    process = run_executable(executable, input_content_full, expected_output=expected_output)
+    actual_output = process.stdout
+
+    if location_outputs_match(expected_output, actual_output):
+        return True
+
+    print(f"test name: {test_name}")
+    print("===INPUT===")
+    print(input_content_preview)
+    print("===OUTPUTS===")
+    actual_lines = actual_output.splitlines()
+    numbered_actual = '\n'.join([f"{i+1:3d}: {line}" for i, line in enumerate(actual_lines)])
+    print(numbered_actual)
+    print(f"===RETURN CODE===\n{process.returncode}")
+    if getattr(process, "timed_out", False):
+        print("===EXECUTION LIMIT===\nProcess timed out")
+    if getattr(process, "output_limited", False):
+        print("===EXECUTION LIMIT===\nOutput limit reached")
+    print("===EXPECTED (with line numbers)===")
+    print(expected_output_with_numbers)
+    print("===DIFFERENCE===")
+    print(get_diff(actual_output, expected_output))
+
+    return False
+
 def run_error_prefix_test(executable: str, input_file: Path, required_prefix: str, max_input_lines: int = 10) -> bool:
     test_name = input_file.stem
     input_content_full = read_file_content(input_file)
@@ -298,17 +358,19 @@ def main():
     executable = sys.argv[1]
 
     test_pairs = find_regular_test_pairs()
+    location_test_pairs = find_directory_test_pairs("location_tests")
     lexical_error_tests = find_error_tests("LEXICAL_ERROR")
     syntax_error_tests = find_error_tests("SYNTAX_ERROR")
     semantic_error_tests = find_error_tests("SEMANTIC_ERROR")
 
-    if not test_pairs and not lexical_error_tests and not syntax_error_tests and not semantic_error_tests:
+    if not test_pairs and not location_test_pairs and not lexical_error_tests and not syntax_error_tests and not semantic_error_tests:
         script_dir = Path(__file__).parent
         print(f"No test files found in {script_dir}")
         sys.exit(0)
 
     print(
         f"Found {len(test_pairs)} regular test(s), "
+        f"{len(location_test_pairs)} location test(s), "
         f"{len(lexical_error_tests)} lexical error test(s), "
         f"{len(syntax_error_tests)} syntax error test(s), "
         f"{len(semantic_error_tests)} semantic error test(s)"
@@ -317,6 +379,12 @@ def main():
     for i, (input_file, expected_file) in enumerate(test_pairs, 1):
         print(f"Running regular test {i}: {input_file.name}")
         if not run_test(executable, input_file, expected_file):
+            print(f"\nTest failed: {input_file.stem}")
+            sys.exit(1)
+
+    for i, (input_file, expected_file) in enumerate(location_test_pairs, 1):
+        print(f"Running location test {i}: {input_file.name}")
+        if not run_exact_test(executable, input_file, expected_file):
             print(f"\nTest failed: {input_file.stem}")
             sys.exit(1)
 
