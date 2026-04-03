@@ -1,4 +1,5 @@
 #include "driver.hpp"
+#include "manual_io.hpp"
 #include "parser.tab.hpp"
 
 namespace garlic::sql_parser {
@@ -8,23 +9,11 @@ driver::driver(bool debug_mode)
 { }
 
 void driver::invoke_error(ErrorStage stage, const std::string& err) {
-    if(!(is_eof_ && more_context_available_)) {
-	log_error(stage, err);
+    if(!(is_eof_ && query_io_.more_context_available())) {
+	query_io_.print_error(stage, err, token_begin_location_);
 	query_executed();
     }
 }
-void driver::log_error(ErrorStage stage, const std::string& err) const {
-    static const std::unordered_map<ErrorStage, std::string> stage_str {
-	{ Lexing, "LEXICAL_ERROR" },
-	{ Parsing, "SYNTAX_ERROR" },
-	{ SemanticAnalysis, "SEMANTIC_ERROR" },
-    };
-    std::cerr 
-	<< "[" << stage_str.at(stage) << "] "
-	<< "at [" << token_begin_location_ << "] "
-	<< err << std::endl;
-}
-
 void driver::query_executed() {
     ++executed_queries_;
     if(is_manual_IO()) {
@@ -44,37 +33,23 @@ void driver::memorize_token_begin_loc() {
 void driver::parse() {
     reset_before_parse_process();
     do {
-	if(is_eof_ && more_context_available_) {
-	    print_prompt();
-	    read_input_to_query();
+	if(is_eof_) {
+	    query_io_.readline();
 	}
 	reset_before_parsing_iteration();
 	parse_repl();
-	shrink_executed_queries();
-    } while (more_context_available_ || !query_.empty());
+	query_io_.shrink_queries(executed_queries_);
+    } while (query_io_.more_context_available() || !query_io_.query_empty());
 }
 
 void driver::reset_before_parse_process() {
-    query_.clear();
-    input_line_.clear();
-    more_context_available_ = true;
-}
-
-void driver::print_prompt() {
-    if(is_manual_IO())
-	std::cout << "#> " << std::flush;
-}
-
-void driver::read_input_to_query() {
-    std::getline(std::cin, input_line_);
-    more_context_available_ = !std::cin.eof(); 
-    query_ += input_line_;
-    query_ += "\n";
+    query_io_.reset();
 }
 
 void driver::reset_before_parsing_iteration() {
     is_eof_ = false;
     location_ = current_query_beginning_;
+    executed_queries_ = 0;
 }
 
 void driver::parse_repl() {
@@ -85,28 +60,5 @@ void driver::parse_repl() {
 	query_executed();
     scan_end();
 }
-
-void driver::shrink_executed_queries() {
-    int iterations = executed_queries_;
-    executed_queries_ = 0;
-    StringType::size_type remove_until = 0;
-    for(int i = 0; i < iterations; ++i) {
-	remove_until = query_.find(';', remove_until);
-	if(remove_until == StringType::npos)
-	    return query_.clear();
-	++remove_until;
-    }
-    query_.erase(0, remove_until);
-}
-
-#ifdef _WIN32
-inline bool driver::should_print_prompt() {
-    return _isatty(_fileno(stdin)) && _isatty(_fileno(stdout));
-}
-#else
-inline bool driver::is_manual_IO() {
-    return isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
-}
-#endif
 
 }

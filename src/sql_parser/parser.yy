@@ -51,7 +51,7 @@
 	auto obj = mk<T>(std::forward<Args>(args)...);
 	if constexpr (requires (const T& t) { t.validate(); }) {
 	    if(auto error = obj->validate()) {
-		drv.invoke_error(driver::ErrorStage::SemanticAnalysis, *error);
+		drv.invoke_error(ErrorStage::SemanticAnalysis, *error);
 		return nullptr;
 	    }
 	}
@@ -163,5 +163,5 @@ strings: STRING { $$ = $1; }
 
 %%
 void yy::parser::error (const location_type&, const std::string& m) {
-    drv.invoke_error(driver::ErrorStage::Parsing, m);
+    drv.invoke_error(ErrorStage::Parsing, m);
 }

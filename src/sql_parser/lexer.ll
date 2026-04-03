@@ -44,7 +44,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
     #define LEXING_ERROR(msg) do { \
         loc.columns(-yyleng); loc.step(); \
-	drv.invoke_error(driver::ErrorStage::Lexing, msg); \
+	drv.invoke_error(ErrorStage::Lexing, msg); \
 	return yy::parser::make_YYerror(loc); \
     } while(0);
 %}
@@ -184,7 +184,8 @@ yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& l
 
 void driver::scan_begin() {
     yy_flex_debug = debug_mode_;
-    yy_scan_bytes(query_.data(), static_cast<int>(query_.size()));
+    auto [data, size] = query_io_.get_query();
+    yy_scan_bytes(data, size);
 }
 
 void driver::scan_end() {
