@@ -28,7 +28,10 @@ void driver::log_error(ErrorStage stage, const std::string& err) const {
 void driver::query_executed() {
     ++executed_queries_;
     if(is_manual_IO()) {
+	current_query_beginning_.initialize();
 	location_.initialize();
+    } else {
+	current_query_beginning_ = location_;
     }
 }
 
@@ -71,6 +74,7 @@ void driver::read_input_to_query() {
 
 void driver::reset_before_parsing_iteration() {
     is_eof_ = false;
+    location_ = current_query_beginning_;
 }
 
 void driver::parse_repl() {
