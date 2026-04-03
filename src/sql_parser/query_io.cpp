@@ -37,7 +37,7 @@ void QueryIO::shrink_queries(int n) {
 std::tuple<const char*, int> QueryIO::get_query() const {
     return { query_.data(), query_.size() };
 }
-void QueryIO::print_error(ErrorStage err, const std::string& msg, const yy::location& error_location) {
+void QueryIO::print_error(ErrorStage err, const std::string& msg, const yy::location& error_location) const {
     static const std::unordered_map<ErrorStage, std::string> stage_str {
 	{ Lexing, "LEXICAL_ERROR" },
 	{ Parsing, "SYNTAX_ERROR" },

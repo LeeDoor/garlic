@@ -33,7 +33,7 @@ private:
     yy::location location_ {};
     yy::location token_begin_location_ {};
     yy::location current_query_beginning_ {};
-    bool is_eof_ {};
+    bool more_context_required_ {};
     size_t executed_queries_ {};
 };
 

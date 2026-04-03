@@ -9,7 +9,7 @@ driver::driver(bool debug_mode)
 { }
 
 void driver::invoke_error(ErrorStage stage, const std::string& err) {
-    if(!(is_eof_ && query_io_.more_context_available())) {
+    if(!(more_context_required_ && query_io_.more_context_available())) {
 	query_io_.print_error(stage, err, token_begin_location_);
 	query_executed();
     }
@@ -25,7 +25,7 @@ void driver::query_executed() {
 }
 
 void driver::met_eof() {
-    is_eof_ = true;
+    more_context_required_ = true;
 }
 void driver::memorize_token_begin_loc() {
     token_begin_location_ = location_;
@@ -33,7 +33,7 @@ void driver::memorize_token_begin_loc() {
 void driver::parse() {
     reset_before_parse_process();
     do {
-	if(is_eof_) {
+	if(more_context_required_) {
 	    query_io_.readline();
 	}
 	reset_before_parsing_iteration();
@@ -47,7 +47,7 @@ void driver::reset_before_parse_process() {
 }
 
 void driver::reset_before_parsing_iteration() {
-    is_eof_ = false;
+    more_context_required_ = false;
     location_ = current_query_beginning_;
     executed_queries_ = 0;
 }

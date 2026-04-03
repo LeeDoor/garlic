@@ -14,7 +14,7 @@ public:
     bool query_empty() const;
     void readline();
     void shrink_queries(int executed_queries);
-    void print_error(ErrorStage err, const std::string& msg, const yy::location& err_loc);
+    void print_error(ErrorStage err, const std::string& msg, const yy::location& err_loc) const;
     std::tuple<const char*, int> get_query() const;
     
 private:
