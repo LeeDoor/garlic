@@ -1,5 +1,6 @@
 #pragma once
 #include "location.hh"
+#include "cell_type.hpp"
 
 namespace garlic {
 
@@ -15,7 +16,7 @@ public:
     void readline();
     void shrink_queries(int executed_queries);
     void print_error(ErrorStage err, const std::string& msg, const yy::location& err_loc) const;
-    std::tuple<const char*, int> get_query() const;
+    StringViewType get_query() const;
     
 private:
     void print_prompt() const;

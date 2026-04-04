@@ -184,8 +184,8 @@ yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& l
 
 void driver::scan_begin() {
     yy_flex_debug = debug_mode_;
-    auto [data, size] = query_io_.get_query();
-    yy_scan_bytes(data, size);
+    auto string_view = query_io_.get_query();
+    yy_scan_bytes(string_view.data(), string_view.size());
 }
 
 void driver::scan_end() {
