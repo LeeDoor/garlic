@@ -134,6 +134,8 @@ std::optional<T> make_number(std::string_view s) {
     auto [ptr, ec] = std::from_chars(s.data(), s.data() + s.size(), result);
     if (ec == std::errc::result_out_of_range) {
 	return std::nullopt;
+    } else if (ec == std::errc::invalid_argument) {
+	throw std::logic_error("Regular expression matched wrong number");
     }
     return result;
 }
