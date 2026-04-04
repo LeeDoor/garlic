@@ -19,6 +19,7 @@ add_library(sql_parser
     driver.cpp
     query_io.cpp
     parsing_location.cpp
+    error_printer.cpp
 )
 set(INCLUDE_DIRS 
     ../abstract_syntax_tree 

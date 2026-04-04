@@ -1,4 +1,5 @@
 #pragma once
+#include "error_printer.hpp"
 #include "parsing_location.hpp"
 #include "query_io.hpp"
 #include "parser.tab.hpp"
@@ -15,7 +16,7 @@ public:
     explicit driver(bool debug_mode = false);
 
     ParsingLocation& location() & { return location_; }
-    void invoke_error(ErrorStage stage, const std::string& err);
+    void invoke_error(ErrorStage stage, const std::string& msg);
     void query_executed();
     void met_eof();
     void memorize_token_begin_loc();
@@ -30,6 +31,7 @@ private:
     void scan_end();
 
     QueryIO query_io_ {};
+    ErrorPrinter err_printer_ {};
     ParsingLocation location_ {};
     bool debug_mode_ {};
     bool more_context_required_ {};

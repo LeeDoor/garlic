@@ -7,7 +7,7 @@ namespace garlic::sql_parser {
 
 class QueryIO {
 public:
-    QueryIO() : os_{ std::cerr }, is_{ std::cin } {}
+    QueryIO() : is_{ std::cin } {}
 
     void reset();
     bool more_context_available() const;
@@ -22,7 +22,6 @@ private:
 
     bool more_ctx_available_ { false };
 
-    std::ostream& os_;
     std::istream& is_;
 
     std::string query_ {};

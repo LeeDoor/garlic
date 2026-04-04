@@ -8,9 +8,9 @@ driver::driver(bool debug_mode)
 : debug_mode_{ debug_mode }
 { }
 
-void driver::invoke_error(ErrorStage stage, const std::string& err) {
+void driver::invoke_error(ErrorStage stage, const std::string& msg) {
     if(!(more_context_required_ && query_io_.more_context_available())) {
-	query_io_.print_error(stage, err, location_.token_start());
+	err_printer_.print_error(stage, location_.token_start(), msg);
 	query_executed();
     }
 }
