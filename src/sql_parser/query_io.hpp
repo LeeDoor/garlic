@@ -1,7 +1,5 @@
 #pragma once
-#include "location.hh"
 #include "cell_type.hpp"
-#include "error_stage.hpp"
 
 namespace garlic::sql_parser {
 
@@ -14,7 +12,6 @@ public:
     bool query_empty() const;
     void readline();
     void shrink_queries(int executed_queries);
-    void print_error(ErrorStage err, const std::string& msg, const yy::location& err_loc) const;
     StringViewType get_query() const;
     
 private:
