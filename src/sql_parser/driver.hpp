@@ -3,6 +3,7 @@
 #include "parsing_location.hpp"
 #include "query_io.hpp"
 #include "parser.tab.hpp"
+#include "sql_ast_executor.hpp"
 
 #define YY_DECL \
     yy::parser::symbol_type yylex (driver& drv)
@@ -18,6 +19,7 @@ public:
     ParsingLocation& location() & { return location_; }
     void invoke_error(ErrorStage stage, const std::string& msg);
     void query_executed();
+    void query_executed(uptr<Query> query);
     void met_eof();
     void memorize_token_begin_loc();
     void parse();
@@ -33,6 +35,7 @@ private:
     QueryIO query_io_ {};
     ErrorPrinter err_printer_ {};
     ParsingLocation location_ {};
+    SqlAstExecutor ast_executor_ {};
     bool debug_mode_ {};
     bool more_context_required_ {};
     size_t executed_queries_ {};

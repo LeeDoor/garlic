@@ -34,13 +34,6 @@
 %code {
     #include "driver.hpp"
 
-    class DumbTableValueGatherer : public TableValueGatherer {
-    public:
-	sptr<CellValue> get_table_value(const std::string& ) override {
-	    throw std::logic_error("Not supposed to be invoked; stub class");
-	}
-    };
-
     template<typename T, typename... Args>
     std::unique_ptr<T> mk_v(driver& drv, Args&&... args) {
 	auto obj = std::make_unique<T>(std::forward<Args>(args)...);
@@ -105,12 +98,7 @@
 %%
 
 queries: /**/
-    | queries query SEMICOLON { 
-	auto gatherer = std::make_shared<DumbTableValueGatherer>(); 
-	auto result = $2->resolve(gatherer); 
-	std::cout << result->format() << std::endl;
-	drv.query_executed();
-    }
+    | queries query SEMICOLON { drv.query_executed(std::move($2)); }
     | queries SEMICOLON { drv.query_executed(); }
     ;
 

@@ -14,7 +14,7 @@ public:
 
     /// Resolves query and forms the @ref QueryResult on return.
     /*! @param gatherer used to resolve table cells mentioned in query. */
-    virtual sptr<QueryResult> resolve(sptr<TableValueGatherer> gatherer) = 0;
+    [[nodiscard]] virtual sptr<QueryResult> resolve(sptr<TableValueGatherer> gatherer) = 0;
 };
 
 }

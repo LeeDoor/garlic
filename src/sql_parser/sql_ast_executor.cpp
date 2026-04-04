@@ -1,0 +1,16 @@
+#include "sql_ast_executor.hpp"
+#include "dumb_table_value_gatherer.hpp"
+
+namespace garlic::sql_parser {
+
+SqlAstExecutor::SqlAstExecutor()
+: os_{ std::cout }
+, gatherer_{ std::make_unique<DumbTableValueGatherer>() }
+{}
+
+void SqlAstExecutor::print_sql_ast(uptr<Query> query) const {
+    sptr<QueryResult> q_result = query->resolve(gatherer_);
+    os_ << q_result->format() << std::endl;
+}
+
+}

@@ -16,11 +16,15 @@ void driver::invoke_error(ErrorStage stage, const std::string& msg) {
 }
 void driver::query_executed() {
     ++executed_queries_;
-    if(is_manual_IO()) {
+    if (is_manual_IO()) {
 	location_.reset();
     } else {
 	location_.on_query_start();
     }
+}
+void driver::query_executed(uptr<Query> query) {
+    query_executed();
+    ast_executor_.print_sql_ast(std::move(query));
 }
 
 void driver::met_eof() {
