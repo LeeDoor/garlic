@@ -42,13 +42,8 @@
     };
 
     template<typename T, typename... Args>
-    std::unique_ptr<T> mk(Args&&... args) {
-	return std::make_unique<T>(std::forward<Args>(args)...);
-    }
-
-    template<typename T, typename... Args>
     std::unique_ptr<T> mk_v(driver& drv, Args&&... args) {
-	auto obj = mk<T>(std::forward<Args>(args)...);
+	auto obj = std::make_unique<T>(std::forward<Args>(args)...);
 	if constexpr (requires (const T& t) { t.validate(); }) {
 	    if(auto error = obj->validate()) {
 		drv.invoke_error(ErrorStage::SemanticAnalysis, *error);
