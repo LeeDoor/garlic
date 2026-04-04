@@ -1,10 +1,9 @@
 #pragma once
 #include "location.hh"
 #include "cell_type.hpp"
+#include "error_stage.hpp"
 
 namespace garlic {
-
-enum ErrorStage { Lexing, Parsing, SemanticAnalysis };
 
 class QueryIO {
 public:
