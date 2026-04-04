@@ -2,7 +2,7 @@
 #include "cell_type.hpp"
 #include "manual_io.hpp"
 
-namespace garlic {
+namespace garlic::sql_parser {
 
 void QueryIO::reset() {
     query_.clear();

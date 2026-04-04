@@ -1,4 +1,5 @@
 #pragma once
+#include "parsing_location.hpp"
 #include "query_io.hpp"
 #include "parser.tab.hpp"
 
@@ -13,12 +14,12 @@ class driver {
 public:
     explicit driver(bool debug_mode = false);
 
-    yy::location& location() & { return location_; }
+    ParsingLocation& location() & { return location_; }
     void invoke_error(ErrorStage stage, const std::string& err);
     void query_executed();
     void met_eof();
-    void parse();
     void memorize_token_begin_loc();
+    void parse();
 
 private:
     void reset_before_parse_process();
@@ -29,10 +30,8 @@ private:
     void scan_end();
 
     QueryIO query_io_ {};
+    ParsingLocation location_ {};
     bool debug_mode_ {};
-    yy::location location_ {};
-    yy::location token_begin_location_ {};
-    yy::location current_query_beginning_ {};
     bool more_context_required_ {};
     size_t executed_queries_ {};
 };

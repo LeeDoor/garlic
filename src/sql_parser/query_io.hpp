@@ -3,7 +3,7 @@
 #include "cell_type.hpp"
 #include "error_stage.hpp"
 
-namespace garlic {
+namespace garlic::sql_parser {
 
 class QueryIO {
 public:

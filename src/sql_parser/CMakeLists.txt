@@ -18,6 +18,7 @@ add_library(sql_parser
     ${GEN_DIR}/parser.tab.cpp
     driver.cpp
     query_io.cpp
+    parsing_location.cpp
 )
 set(INCLUDE_DIRS 
     ../abstract_syntax_tree 

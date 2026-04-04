@@ -2,7 +2,7 @@
 #include "driver.hpp"
 #include "parser.tab.hpp"
 
-namespace garlic {
+namespace garlic::sql_parser {
 
 template<typename T, typename... Args>
 std::unique_ptr<T> assign_or_abort(driver& drv, Args&&... args) {

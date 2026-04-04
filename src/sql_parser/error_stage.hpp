@@ -1,6 +1,6 @@
 #pragma once
 
-namespace garlic {
+namespace garlic::sql_parser {
 
 enum ErrorStage { Lexing, Parsing, SemanticAnalysis };
 
