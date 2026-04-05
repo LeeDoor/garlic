@@ -7,11 +7,20 @@ ParsingContext::ParsingContext(bool debug)
 : debug_mode_{ debug }
 {}
 
-ParsingContext::ParsingResult ParsingContext::parse(StringViewType query_string) {
+void ParsingContext::reset_before_parse() {
     location_.reset_to_query_start();
     parsed_queries_ = 0;
     more_context_required_ = false;
     stored_error_ = std::nullopt;
+}
+
+
+ParsingContext::ParserPtr ParsingContext::create_parser() {
+    return ParserPtr(new yy::parser(*this), std::move(deleter));
+}
+
+ParsingContext::ParsingResult ParsingContext::parse(StringViewType query_string) {
+    reset_before_parse();
     yy::parser parse(*this);
     parse.set_debug_level(debug_mode_);
     scan_begin(query_string);
