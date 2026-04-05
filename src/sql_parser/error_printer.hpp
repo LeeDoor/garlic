@@ -2,6 +2,7 @@
 #include "cell_type.hpp"
 #include "error_stage.hpp"
 #include "location.hh"
+#include "parsing_error.hpp"
 
 namespace garlic::sql_parser {
 
@@ -11,10 +12,10 @@ public:
     explicit ErrorPrinter(std::ostream& os) : os_{ os } {}
     ErrorPrinter() : ErrorPrinter(std::cerr) {}
 
-    void print_error(ErrorStage stage, LocationType location, const StringType& msg) {
-	os_ << "[" << stage_str.at(stage) << "] "
-	    << "at [" << location << "] "
-	    << msg << std::endl;
+    void print_error(const ParsingError& error) const {
+	os_ << "[" << stage_str.at(error.stage) << "] "
+	    << "at [" << error.location << "] "
+	    << error.message << std::endl;
     }
 
 private:

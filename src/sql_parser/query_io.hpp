@@ -12,6 +12,7 @@ public:
     bool query_empty() const;
     void readline();
     void shrink_queries(int executed_queries);
+    void clear_query();
     StringViewType get_query() const;
     
 private:

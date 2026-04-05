@@ -34,6 +34,9 @@ void QueryIO::shrink_queries(int n) {
     }
     query_.erase(0, remove_until);
 }
+void QueryIO::clear_query() {
+    query_.clear();
+}
 StringViewType QueryIO::get_query() const {
     return query_;
 }

@@ -1,67 +1,52 @@
 #include "driver.hpp"
-#include "manual_io.hpp"
 #include "parser.tab.hpp"
 
 namespace garlic::sql_parser {
 
 driver::driver(bool debug_mode)
-: debug_mode_{ debug_mode }
+: parse_ctx_{ debug_mode }
 { }
 
-void driver::invoke_error(ErrorStage stage, const std::string& msg) {
-    if(!(more_context_required_ && query_io_.more_context_available())) {
-	err_printer_.print_error(stage, location_.token_start(), msg);
-	query_executed();
-    }
-}
-void driver::query_executed() {
-    ++executed_queries_;
-    if (is_manual_IO()) {
-	location_.reset();
-    } else {
-	location_.on_query_start();
-    }
-}
-void driver::query_executed(uptr<Query> query) {
-    query_executed();
-    ast_executor_.print_sql_ast(std::move(query));
-}
-
-void driver::met_eof() {
-    more_context_required_ = true;
-}
-void driver::memorize_token_begin_loc() {
-    location_.on_token_start();
-}
 void driver::parse() {
     reset_before_parse_process();
     do {
-	if(more_context_required_) {
-	    query_io_.readline();
-	}
-	reset_before_parsing_iteration();
-	parse_repl();
-	query_io_.shrink_queries(executed_queries_);
+	query_io_.readline();
+	auto result = parse_ctx_.parse(query_io_.get_query());
+	execute_queries(parse_ctx_.get_queries());
+	print_error(result);
+	shrink_queries(result);
     } while (query_io_.more_context_available() || !query_io_.query_empty());
+}
+
+void driver::shrink_queries(ParsingContext::ParsingResult result) {
+    using Res = ParsingContext::ParsingResult;
+    if(result == Res::Ok ||
+       (result == Res::MoreContextRequired && !query_io_.more_context_available())) {
+	return query_io_.clear_query();
+    }
+    query_io_.shrink_queries(parse_ctx_.parsed_queries());
+}
+
+void driver::print_error(ParsingContext::ParsingResult result) const {
+    using Res = ParsingContext::ParsingResult;
+    if(result == Res::Ok) return;
+    auto error = parse_ctx_.get_error();
+    if(!error) 
+	throw std::logic_error("ParsingContext returned error without error itself");
+    if(result == Res::Error || !query_io_.more_context_available())
+	err_printer_.print_error(*error);
+}
+
+void driver::execute_queries(ParsingContext::Queries& queries) const {
+    std::for_each(queries.begin(), queries.end(), [this](uptr<Query>& ptr) {
+	ast_executor_.execute_sql_ast(std::move(ptr));
+    });
+    queries.clear();
 }
 
 void driver::reset_before_parse_process() {
     query_io_.reset();
-}
-
-void driver::reset_before_parsing_iteration() {
-    more_context_required_ = false;
-    location_.reset_to_query_start();
-    executed_queries_ = 0;
-}
-
-void driver::parse_repl() {
-    yy::parser parse(*this);
-    parse.set_debug_level(debug_mode_);
-    scan_begin();
-    if(parse() == 0)
-	query_executed();
-    scan_end();
+    parse_ctx_.reset();
 }
 
 }

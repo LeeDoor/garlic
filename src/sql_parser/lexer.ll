@@ -1,12 +1,12 @@
 %{ 
-#include "driver.hpp"
+#include "parsing_context.hpp"
 #include "parser.tab.hpp"
 %}
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& curloc, driver& drv);
-    yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& curloc, driver& drv);
+    yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx);
+    yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx);
     yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& curloc);
 %}
 
@@ -30,7 +30,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 %{
     #define YY_USER_ACTION do { \
 	curloc.columns(1); \
-	drv.memorize_token_begin_loc(); \
+	ctx.memorize_token_begin_loc(); \
 	--left_ok; \
 	curloc.columns (yyleng - 1); curloc.step(); \
     } while(0);
@@ -44,7 +44,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
     #define LEXING_ERROR(msg) do { \
         curloc.columns(-yyleng); curloc.step(); \
-	drv.invoke_error(ErrorStage::Lexing, msg); \
+	ctx.invoke_error(ErrorStage::Lexing, msg); \
 	return yy::parser::make_YYerror(curloc); \
     } while(0);
 %}
@@ -52,7 +52,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 %%
 
 %{
-    auto& location = drv.location();
+    auto& location = ctx.location();
     auto& curloc = location.cur();
     curloc.step();
     static std::string multiline_str;
@@ -87,14 +87,14 @@ string_content_d ([^\\"\n]*(\\.)*)*
 "OR"/({token_separator})  { WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(curloc); }
 "!"			{ return yy::parser::make_NOT(curloc); }
 
-{int}    { return make_INTEGER(yytext, curloc, drv); }
-{float}  { return make_FLOAT(yytext, curloc, drv); }
+{int}    { return make_INTEGER(yytext, curloc, ctx); }
+{float}  { return make_FLOAT(yytext, curloc, ctx); }
 
 {string_quote_q} { multiline_str += yytext; BEGIN STRING_Q; }
 <STRING_Q>{string_content_q} { multiline_str += yytext; }
 <STRING_Q>{EOL} { curloc.lines(); curloc.step(); multiline_str += yytext; }
 <STRING_Q><<EOF>> {
-    drv.met_eof();
+    ctx.met_eof();
     LEXING_ERROR("Unterminated string");
 }
 <STRING_Q>{string_quote_q} { 
@@ -107,7 +107,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_D>{string_content_d} { multiline_str += yytext; }
 <STRING_D>{EOL} { curloc.lines(); curloc.step(); multiline_str += yytext; }
 <STRING_D><<EOF>> {
-    drv.met_eof();
+    ctx.met_eof();
     LEXING_ERROR("Unterminated string");
 }
 <STRING_D>{string_quote_d} { 
@@ -123,7 +123,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 	LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");
      }
 <<EOF>> {
-    drv.met_eof(); 
+    ctx.met_eof(); 
     return yy::parser::make_YYEOF (curloc); 
 }
 
@@ -141,13 +141,13 @@ std::optional<T> make_number(std::string_view s) {
     return result;
 }
 
-yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& curloc, driver& drv) {
+yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx) {
     if(auto num = make_number<FloatType>(s)) {
 	return yy::parser::make_FLOAT(*num, curloc);
     }
     LEXING_ERROR("Failed to convert \"" + std::string(s) + "\" to float; too big value");
 }
-yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& curloc, driver& drv) {
+yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx) {
     if(auto num = make_number<IntType>(s)) {
 	return yy::parser::make_INTEGER(*num, curloc);
     }
@@ -185,13 +185,12 @@ yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& c
     return yy::parser::make_STRING(std::move(result), curloc);
 }
 
-void driver::scan_begin() {
+void ParsingContext::scan_begin(StringViewType query_string) {
     yy_flex_debug = debug_mode_;
-    auto string_view = query_io_.get_query();
-    yy_scan_bytes(string_view.data(), string_view.size());
+    yy_scan_bytes(query_string.data(), query_string.size());
 }
 
-void driver::scan_end() {
+void ParsingContext::scan_end() {
     yy_delete_buffer(YY_CURRENT_BUFFER);
 }
 

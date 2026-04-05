@@ -21,6 +21,7 @@ add_library(sql_parser
     parsing_location.cpp
     error_printer.cpp
     sql_ast_executor.cpp
+    parsing_context.cpp
 )
 set(INCLUDE_DIRS 
     ../abstract_syntax_tree 
