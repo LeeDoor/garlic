@@ -11,6 +11,7 @@ void ParsingContext::reset_before_parse() {
     location_.reset_to_query_start();
     parsed_queries_ = 0;
     more_context_required_ = false;
+    stored_queries_.clear();
     stored_error_ = std::nullopt;
 }
 
@@ -38,11 +39,7 @@ ParsingContext::ParsingResult ParsingContext::parse(StringViewType query_string)
     return Ok;
 }
 
-void ParsingContext::reset() {
-    parsed_queries_ = 0;
-    stored_queries_.clear();
-    stored_error_ = std::nullopt;
-    more_context_required_ = false;
+void ParsingContext::reset_location() {
     location_.reset();
 }
 

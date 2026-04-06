@@ -21,7 +21,7 @@ public:
     explicit ParsingContext(bool debug = false);
 
     /// Driver API
-    void reset();
+    void reset_location();
     ParsingResult parse(StringViewType query_string);
     const std::optional<ParsingError>& get_error() const &;
     Queries& get_queries() &;

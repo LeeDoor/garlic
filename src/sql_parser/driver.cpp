@@ -41,12 +41,11 @@ void driver::execute_queries(ParsingContext::Queries& queries) const {
     std::for_each(queries.begin(), queries.end(), [this](uptr<Query>& ptr) {
 	ast_executor_.execute_sql_ast(std::move(ptr));
     });
-    queries.clear();
 }
 
 void driver::reset_before_parse_process() {
     query_io_.reset();
-    parse_ctx_.reset();
+    parse_ctx_.reset_location();
 }
 
 }
