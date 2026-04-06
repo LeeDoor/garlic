@@ -14,6 +14,11 @@ void ParsingContext::reset_before_parse() {
     stored_error_ = std::nullopt;
 }
 
+
+ParsingContext::ParserPtr ParsingContext::create_parser() {
+    return ParserPtr(new yy::parser(*this), std::move(deleter));
+}
+
 ParsingContext::ParsingResult ParsingContext::parse(StringViewType query_string) {
     reset_before_parse();
     yy::parser parse(*this);
