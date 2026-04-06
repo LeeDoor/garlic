@@ -14,18 +14,21 @@ void ParsingContext::reset_before_parse() {
     stored_error_ = std::nullopt;
 }
 
-
-ParsingContext::ParserPtr ParsingContext::create_parser() {
-    return ParserPtr(new yy::parser(*this), std::move(deleter));
+decltype(auto) ParsingContext::create_parser(StringViewType query_string) {
+    auto deleter = [this](yy::parser* p) {
+	scan_end();
+	delete p;
+    };
+    auto parser = std::unique_ptr<yy::parser, decltype(deleter)>(new yy::parser(*this), std::move(deleter));
+    parser->set_debug_level(debug_mode_);
+    scan_begin(query_string);
+    return parser;
 }
 
 ParsingContext::ParsingResult ParsingContext::parse(StringViewType query_string) {
     reset_before_parse();
-    yy::parser parse(*this);
-    parse.set_debug_level(debug_mode_);
-    scan_begin(query_string);
-    parse();
-    scan_end();
+    auto parser = create_parser(query_string);
+    (*parser)();
     if(stored_error_.has_value()) {
 	if(more_context_required_) {
 	    return MoreContextRequired;
