@@ -36,10 +36,7 @@ public:
     void memorize_token_begin_loc();
 
 private:
-    using ParserPtr = uptr<yy::parser, void(*)(yy::parser*)>;
     void reset_before_parse();
-    ParserPtr create_parser();
-
     void scan_begin(StringViewType query_string);
     void scan_end();
 
