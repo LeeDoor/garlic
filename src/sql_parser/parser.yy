@@ -49,7 +49,7 @@
     #define ASSIGN_OR_ABORT(dst, expr) \
 	do {                           \
 	    auto _tmp = (expr);        \
-	    if(!_tmp) YYABORT;         \
+	    if(!_tmp) YYERROR;         \
 	    (dst) = std::move(_tmp);   \
 	} while(0)
 }
@@ -99,6 +99,7 @@
 
 queries: /**/
     | queries query SEMICOLON { ctx.query_executed(std::move($2)); }
+    | queries error SEMICOLON { yyerrok; yyclearin; ctx.query_executed(); }
     | queries SEMICOLON { ctx.query_executed(); }
     ;
 
@@ -137,6 +138,7 @@ value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(ctx, $1)); }
 strings: STRING { $$ = $1; }
        | strings STRING { $$ = $1 + $2; }
        ;
+
 %left LOGICOR;
 %left LOGICAND;
 %left NOT;

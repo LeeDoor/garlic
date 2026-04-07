@@ -14,26 +14,28 @@ namespace garlic::sql_parser {
 
 class ParsingContext {
 public:
-    using Queries = std::list<uptr<Query>>;
+    using ParsingResult = std::variant<uptr<Query>, ParsingError>;
+    using ParsingResults = std::list<ParsingResult>;
 
-    enum ParsingResult { Error, MoreContextRequired, Ok };
+    struct Context {
+	ParsingLocation location {};
+	std::string multiline_string_buffer {};
+	int left_ok {};
+	bool recovery {};
+    };
 
     explicit ParsingContext(bool debug = false);
 
     /// Driver API
-    void reset_location();
-    ParsingResult parse(StringViewType query_string);
-    const std::optional<ParsingError>& get_error() const &;
-    Queries& get_queries() &;
-    size_t parsed_queries() const;
+    void reset_context();
+    ParsingResults& parse(StringViewType query_string) &;
 
     /// Parser/Lexer API
-    ParsingLocation& location() & { return location_; }
+    Context& context() & { return context_; }
     void invoke_error(ErrorStage stage, const std::string& msg);
-    void query_executed();
     void query_executed(uptr<Query> query);
+    void query_executed();
     void met_eof();
-    void memorize_token_begin_loc();
 
 private:
     void reset_before_parse();
@@ -44,11 +46,8 @@ private:
 
     bool debug_mode_ {};
     bool more_context_required_ {};
-    size_t parsed_queries_ {};
-    Queries stored_queries_ {};
-    std::optional<ParsingError> stored_error_ {};
-    ParsingLocation location_ {};
-
+    ParsingResults parsing_results_ {};
+    Context context_ {};
 };
 
 }

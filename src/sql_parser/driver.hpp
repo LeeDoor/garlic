@@ -12,10 +12,10 @@ public:
 
     void parse();
 private:
-    void print_error(ParsingContext::ParsingResult result) const;
+    void print_error(const ParsingError& error) const;
     void reset_before_parse_process();
-    void execute_queries(ParsingContext::Queries& queries) const;
-    void shrink_queries(ParsingContext::ParsingResult result);
+    void handle_results(ParsingContext::ParsingResults& results) const;
+    void shrink_queries(const ParsingContext::ParsingResults& results);
 
     ParsingContext parse_ctx_;
     QueryIO query_io_ {};

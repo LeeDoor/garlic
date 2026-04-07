@@ -12,6 +12,7 @@
 
 %x STRING_Q
 %x STRING_D
+%x RECOVERY 
 
 EOL "\n"
 blank [ \t]
@@ -30,7 +31,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 %{
     #define YY_USER_ACTION do { \
 	curloc.columns(1); \
-	ctx.memorize_token_begin_loc(); \
+	location.on_token_start(); \
 	--left_ok; \
 	curloc.columns (yyleng - 1); curloc.step(); \
     } while(0);
@@ -42,8 +43,10 @@ string_content_d ([^\\"\n]*(\\.)*)*
 	} \
     } while(0);
 
+    #define MET_WHITESPACE() \
+    { left_ok = 1; }
+
     #define LEXING_ERROR(msg) do { \
-        curloc.columns(-yyleng); curloc.step(); \
 	ctx.invoke_error(ErrorStage::Lexing, msg); \
 	return yy::parser::make_YYerror(curloc); \
     } while(0);
@@ -52,16 +55,24 @@ string_content_d ([^\\"\n]*(\\.)*)*
 %%
 
 %{
-    auto& location = ctx.location();
+    auto& context = ctx.context();
+    auto& location = context.location;
     auto& curloc = location.cur();
     curloc.step();
-    static std::string multiline_str;
+    auto& multiline_str = context.multiline_string_buffer;
     // 1 when seen a whitespace; 
     // decremented in YY_USER_ACTION; 
     // if == 0, it means the last character was a whitespace; 
     // if < 0, it wasn't
-    static int left_ok = 1; 
-    BEGIN INITIAL;
+    auto& left_ok = context.left_ok; 
+    auto& recovery = context.recovery;
+    MET_WHITESPACE(); 
+    // TODO move it to scan_begin
+    if(recovery) {
+	BEGIN RECOVERY;
+    } else {
+	BEGIN INITIAL;
+    }
 %}
 
 "SELECT"/({token_separator}) { WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
@@ -85,7 +96,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 "AND"/({token_separator}) { WHITESPACE_SEPARATED("AND"); return yy::parser::make_LOGICAND(curloc); }
 "OR"/({token_separator})  { WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(curloc); }
-"!"			{ return yy::parser::make_NOT(curloc); }
+"!"			  { return yy::parser::make_NOT(curloc); }
 
 {int}    { return make_INTEGER(yytext, curloc, ctx); }
 {float}  { return make_FLOAT(yytext, curloc, ctx); }
@@ -116,8 +127,11 @@ string_content_d ([^\\"\n]*(\\.)*)*
     return make_STRING(multiline_str, curloc);
 }
 
-{EOL} { left_ok = 1; curloc.lines(); curloc.step(); }
-{blank}+ { left_ok = 1; curloc.step(); }
+{EOL} { MET_WHITESPACE(); curloc.lines(); curloc.step(); }
+{blank}+ { MET_WHITESPACE(); curloc.step(); }
+
+<RECOVERY>";"	{ recovery = false; BEGIN INITIAL; return yy::parser::make_SEMICOLON(curloc); }
+<RECOVERY>.	{ /* Skip */ } 
 
 .    {
 	LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");

@@ -11,41 +11,46 @@ void driver::parse() {
     reset_before_parse_process();
     do {
 	query_io_.readline();
-	auto result = parse_ctx_.parse(query_io_.get_query());
-	execute_queries(parse_ctx_.get_queries());
-	print_error(result);
-	shrink_queries(result);
-    } while (query_io_.more_context_available() || !query_io_.query_empty());
+	auto& queries_and_errors = parse_ctx_.parse(query_io_.get_query());
+	handle_results(queries_and_errors);
+	shrink_queries(queries_and_errors);
+    } while (query_io_.is_more_context_available() || !query_io_.is_query_empty());
 }
 
-void driver::shrink_queries(ParsingContext::ParsingResult result) {
-    using Res = ParsingContext::ParsingResult;
-    if(result == Res::Ok ||
-       (result == Res::MoreContextRequired && !query_io_.more_context_available())) {
-	return query_io_.clear_query();
+void driver::shrink_queries(const ParsingContext::ParsingResults& results) {
+    if(!results.empty()) {
+	auto& last_result = results.back();
+	const ParsingError *error = std::get_if<ParsingError>(&last_result);
+	if(error && error->more_context_required) {
+	    query_io_.shrink_to_last_query();
+	    return;
+	}
     }
-    query_io_.shrink_queries(parse_ctx_.parsed_queries());
+
+    return query_io_.clear_query();
 }
 
-void driver::print_error(ParsingContext::ParsingResult result) const {
-    using Res = ParsingContext::ParsingResult;
-    if(result == Res::Ok) return;
-    auto error = parse_ctx_.get_error();
-    if(!error) 
-	throw std::logic_error("ParsingContext returned error without error itself");
-    if(result == Res::Error || !query_io_.more_context_available())
-	err_printer_.print_error(*error);
+void driver::print_error(const ParsingError& error) const {
+    if(!(error.more_context_required && query_io_.is_more_context_available()))
+	err_printer_.print_error(error);
 }
 
-void driver::execute_queries(ParsingContext::Queries& queries) const {
-    std::for_each(queries.begin(), queries.end(), [this](uptr<Query>& ptr) {
-	ast_executor_.execute_sql_ast(std::move(ptr));
+void driver::handle_results(ParsingContext::ParsingResults& results) const {
+    std::for_each(results.begin(), results.end(), [this](ParsingContext::ParsingResult& result) {
+	if(auto query_ptr = std::get_if<uptr<Query>>(&result)) {
+	    ast_executor_.execute_sql_ast(std::move(*query_ptr));
+	}
+	else if(auto error = std::get_if<ParsingError>(&result)) {
+	    print_error(*error);
+	} else {
+	    throw std::logic_error("incoming std::variant couldn't be resolved");
+	}
     });
 }
 
 void driver::reset_before_parse_process() {
     query_io_.reset();
-    parse_ctx_.reset_location();
+    parse_ctx_.reset_context();
 }
 
 }

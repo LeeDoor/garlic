@@ -9,30 +9,26 @@ void QueryIO::reset() {
     input_line_.clear();
     more_ctx_available_ = true;
 }
-bool QueryIO::more_context_available() const {
+bool QueryIO::is_more_context_available() const {
     return more_ctx_available_;
 }
-bool QueryIO::query_empty() const {
+bool QueryIO::is_query_empty() const {
     return query_.empty();
 }
 
 void QueryIO::readline() {
-    if(!more_context_available()) return;
+    if(!is_more_context_available()) return;
     print_prompt();
     std::getline(is_, input_line_);
     more_ctx_available_ = !is_.eof(); 
     query_ += input_line_;
     query_ += "\n";
 }
-void QueryIO::shrink_queries(int n) {
-    StringType::size_type remove_until = 0;
-    for(int i = 0; i < n; ++i) {
-	remove_until = query_.find(';', remove_until);
-	if(remove_until == StringType::npos)
-	    return query_.clear();
-	++remove_until;
-    }
-    query_.erase(0, remove_until);
+void QueryIO::shrink_to_last_query() {
+    auto rightmost_semicolon = query_.rfind(';');
+    if(rightmost_semicolon == StringType::npos)
+	rightmost_semicolon = 0;
+    query_.erase(0, rightmost_semicolon);
 }
 void QueryIO::clear_query() {
     query_.clear();

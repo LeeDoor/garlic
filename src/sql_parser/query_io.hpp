@@ -8,20 +8,19 @@ public:
     QueryIO() : is_{ std::cin } {}
 
     void reset();
-    bool more_context_available() const;
-    bool query_empty() const;
     void readline();
-    void shrink_queries(int executed_queries);
+    void shrink_to_last_query();
     void clear_query();
+
     StringViewType get_query() const;
+    bool is_more_context_available() const;
+    bool is_query_empty() const;
     
 private:
     void print_prompt() const;
 
-    bool more_ctx_available_ { false };
-
     std::istream& is_;
-
+    bool more_ctx_available_ { false };
     std::string query_ {};
     std::string input_line_ {};
 };
