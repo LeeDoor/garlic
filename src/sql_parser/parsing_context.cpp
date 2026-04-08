@@ -30,12 +30,22 @@ ParsingContext::ParsingResults& ParsingContext::parse(StringViewType query_strin
 }
 
 void ParsingContext::reset_before_parse() {
+    if(!parsing_results_.empty()) {
+	auto& last = parsing_results_.back();
+	auto q = std::get_if<ParsingError>(&last);
+	if(q && q->more_context_required) {
+	    context_.location.reset_to_query_start();
+	}
+    } 
+    context_.multiline_string_buffer = "";
+    context_.left_ok = 1;
+    context_.recovery = false;
     more_context_required_ = false;
-    context_.location.reset_to_query_start();
     parsing_results_.clear();
 }
 
 void ParsingContext::invoke_error(ErrorStage stage, const std::string& msg) {
+    if(context_.recovery) return;
     context_.recovery = !more_context_required_;
     parsing_results_.push_back(
 	ParsingError{ 

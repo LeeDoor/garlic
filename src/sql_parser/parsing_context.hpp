@@ -20,7 +20,7 @@ public:
     struct Context {
 	ParsingLocation location {};
 	std::string multiline_string_buffer {};
-	int left_ok {};
+	int left_ok {1};
 	bool recovery {};
     };
 

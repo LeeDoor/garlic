@@ -66,18 +66,11 @@ string_content_d ([^\\"\n]*(\\.)*)*
     // if < 0, it wasn't
     auto& left_ok = context.left_ok; 
     auto& recovery = context.recovery;
-    MET_WHITESPACE(); 
-    // TODO move it to scan_begin
-    if(recovery) {
-	BEGIN RECOVERY;
-    } else {
-	BEGIN INITIAL;
-    }
 %}
 
 "SELECT"/({token_separator}) { WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
 
-";"  { return yy::parser::make_SEMICOLON(curloc); }
+";"  { recovery = false; return yy::parser::make_SEMICOLON(curloc); }
 "-"  { return yy::parser::make_MINUS(curloc); }
 "+"  { return yy::parser::make_PLUS(curloc); }
 "*"  { return yy::parser::make_MUL(curloc); }
@@ -105,6 +98,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_Q>{string_content_q} { multiline_str += yytext; }
 <STRING_Q>{EOL} { curloc.lines(); curloc.step(); multiline_str += yytext; }
 <STRING_Q><<EOF>> {
+    BEGIN INITIAL;
     ctx.met_eof();
     LEXING_ERROR("Unterminated string");
 }
@@ -118,6 +112,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 <STRING_D>{string_content_d} { multiline_str += yytext; }
 <STRING_D>{EOL} { curloc.lines(); curloc.step(); multiline_str += yytext; }
 <STRING_D><<EOF>> {
+    BEGIN INITIAL;
     ctx.met_eof();
     LEXING_ERROR("Unterminated string");
 }
@@ -129,9 +124,6 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 {EOL} { MET_WHITESPACE(); curloc.lines(); curloc.step(); }
 {blank}+ { MET_WHITESPACE(); curloc.step(); }
-
-<RECOVERY>";"	{ recovery = false; BEGIN INITIAL; return yy::parser::make_SEMICOLON(curloc); }
-<RECOVERY>.	{ /* Skip */ } 
 
 .    {
 	LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");

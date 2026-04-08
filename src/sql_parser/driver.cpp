@@ -26,7 +26,6 @@ void driver::shrink_queries(const ParsingContext::ParsingResults& results) {
 	    return;
 	}
     }
-
     return query_io_.clear_query();
 }
 
