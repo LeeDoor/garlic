@@ -5,9 +5,9 @@
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx);
-    yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx);
-    yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& curloc);
+    yy::parser::symbol_type make_FLOAT(std::string_view s, Multilocation& curloc, ParsingContext& ctx);
+    yy::parser::symbol_type make_INTEGER(std::string_view s, Multilocation& curloc, ParsingContext& ctx);
+    yy::parser::symbol_type make_STRING(std::string& s, Multilocation& curloc);
 %}
 
 %x STRING_Q
@@ -147,19 +147,19 @@ std::optional<T> make_number(std::string_view s) {
     return result;
 }
 
-yy::parser::symbol_type make_FLOAT(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx) {
+yy::parser::symbol_type make_FLOAT(std::string_view s, Multilocation& curloc, ParsingContext& ctx) {
     if(auto num = make_number<FloatType>(s)) {
 	return yy::parser::make_FLOAT(*num, curloc);
     }
     LEXING_ERROR("Failed to convert \"" + std::string(s) + "\" to float; too big value");
 }
-yy::parser::symbol_type make_INTEGER(std::string_view s, yy::parser::location_type& curloc, ParsingContext& ctx) {
+yy::parser::symbol_type make_INTEGER(std::string_view s, Multilocation& curloc, ParsingContext& ctx) {
     if(auto num = make_number<IntType>(s)) {
 	return yy::parser::make_INTEGER(*num, curloc);
     }
     LEXING_ERROR("Failed to convert \"" + std::string(s) + "\" to int; too big value");
 }
-yy::parser::symbol_type make_STRING(std::string& s, yy::parser::location_type& curloc) {
+yy::parser::symbol_type make_STRING(std::string& s, Multilocation& curloc) {
     std::string result; result.reserve(s.size() - 2);
     for(size_t i = 1; i < s.size() - 1; ++i) {
 	if(s[i] == '\\') {

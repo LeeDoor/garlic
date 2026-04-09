@@ -9,7 +9,7 @@ SqlAstExecutor::SqlAstExecutor()
 , gatherer_{ std::make_unique<DumbTableValueGatherer>() }
 {}
 
-void SqlAstExecutor::execute_sql_ast(uptr<Query> query) const {
+void SqlAstExecutor::execute_sql_ast(const uptr<Query>& query) const {
     sptr<QueryResult> q_result = query->resolve(gatherer_);
     os_ << q_result->format() << std::endl;
 }

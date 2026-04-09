@@ -98,9 +98,9 @@
 %%
 
 queries: /**/
-    | queries query SEMICOLON { ctx.query_executed(std::move($2)); }
-    | queries error SEMICOLON { yyerrok; yyclearin; ctx.query_executed(); }
-    | queries SEMICOLON { ctx.query_executed(); }
+    | queries query SEMICOLON { ctx.query_parsed(std::move($2)); }
+    | queries error SEMICOLON { yyerrok; yyclearin; ctx.error_parsed(); }
+    | queries SEMICOLON { ctx.blank_parsed(); }
     ;
 
 query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ConditionSelectQuery>(ctx, std::move($2))); }

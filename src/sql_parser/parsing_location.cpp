@@ -11,6 +11,9 @@ void ParsingLocation::reset() {
 ParsingLocation::LocationType& ParsingLocation::cur() & {
     return current_location_;
 }
+const ParsingLocation::LocationType& ParsingLocation::cur() const& {
+    return current_location_;
+}
 ParsingLocation::LocationType ParsingLocation::token_start() const {
     return token_start_location_;
 }

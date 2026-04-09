@@ -32,8 +32,7 @@ ParsingContext::ParsingResults& ParsingContext::parse(StringViewType query_strin
 void ParsingContext::reset_before_parse() {
     if(!parsing_results_.empty()) {
 	auto& last = parsing_results_.back();
-	auto q = std::get_if<ParsingError>(&last);
-	if(q && q->more_context_required) {
+	if(last.is_error() && last.as_error().more_context_required) {
 	    context_.location.reset_to_query_start();
 	}
     } 
@@ -48,18 +47,36 @@ void ParsingContext::invoke_error(ErrorStage stage, const std::string& msg) {
     if(context_.recovery) return;
     context_.recovery = !more_context_required_;
     parsing_results_.push_back(
+    ParsingResult{
 	ParsingError{ 
 	    .more_context_required = more_context_required_,
 	    .stage = stage, 
 	    .location = context_.location.token_start(), 
 	    .message = std::move(msg) 
-	});
+	}, now_at_char()
+    });
 }
-void ParsingContext::query_executed(uptr<Query> query) {
-    query_executed();
-    parsing_results_.push_back(std::move(query));
+void ParsingContext::query_parsed(uptr<Query> query) {
+    parsing_results_.push_back({ std::move(query), now_at_char() });
+    location_to_query_start();
 }
-void ParsingContext::query_executed() {
+void ParsingContext::blank_parsed() {
+    auto current_chars_read = now_at_char();
+    if(parsing_results_.empty() || !parsing_results_.back().is_blank()) {
+	parsing_results_.push_back(ParsingResult{ current_chars_read });
+    } else {
+	parsing_results_.back().update_end_idx(current_chars_read);
+    }
+    location_to_query_start();
+}
+void ParsingContext::error_parsed() {
+    if(parsing_results_.empty() || !parsing_results_.back().is_error()) {
+	throw std::logic_error("ErrorParsed Called but last parsing result is not an error");
+    }
+    parsing_results_.back().update_end_idx(now_at_char());
+    location_to_query_start();
+}
+void ParsingContext::location_to_query_start() {
     auto& location = context_.location;
      if (is_manual_IO()) {
         location.reset();
@@ -70,6 +87,10 @@ void ParsingContext::query_executed() {
 
 void ParsingContext::met_eof() {
     more_context_required_ = true;
+}
+
+size_t ParsingContext::now_at_char() const {
+    return context_.location.cur().chars_amount();
 }
 
 }

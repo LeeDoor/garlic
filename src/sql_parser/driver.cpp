@@ -19,9 +19,8 @@ void driver::parse() {
 
 void driver::shrink_queries(const ParsingContext::ParsingResults& results) {
     if(!results.empty()) {
-	auto& last_result = results.back();
-	const ParsingError *error = std::get_if<ParsingError>(&last_result);
-	if(error && error->more_context_required) {
+	auto& last = results.back();
+	if(last.is_error() && last.as_error().more_context_required) {
 	    query_io_.shrink_to_last_query();
 	    return;
 	}
@@ -35,9 +34,9 @@ void driver::print_error(const ParsingError& error) const {
 }
 
 void driver::handle_results(ParsingContext::ParsingResults& results) const {
-    std::for_each(results.begin(), results.end(), [this](ParsingContext::ParsingResult& result) {
-	if(auto query_ptr = std::get_if<uptr<Query>>(&result)) {
-	    ast_executor_.execute_sql_ast(std::move(*query_ptr));
+    std::for_each(results.begin(), results.end(), [this](ParsingResult& result) {
+	if(result.is_query()) {
+	    ast_executor_.execute_sql_ast(result.as_query());
 	}
 	else if(auto error = std::get_if<ParsingError>(&result)) {
 	    print_error(*error);
