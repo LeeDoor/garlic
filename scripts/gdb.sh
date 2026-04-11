@@ -7,4 +7,4 @@ BUILD_DIR="${ROOT_DIR}/build"
 EXE_REL="src/garlic"
 
 cd "${BUILD_DIR}"
-gdb "./${EXE_REL}"
+gdb "./${EXE_REL}" $@

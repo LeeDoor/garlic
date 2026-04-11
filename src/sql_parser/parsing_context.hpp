@@ -18,7 +18,7 @@ public:
 
     struct Context {
 	ParsingLocation location {};
-	std::string multiline_string_buffer {};
+	StringType multiline_string_buffer {};
 	int left_ok {1};
 	bool recovery {};
     };
@@ -41,7 +41,7 @@ public:
 private:
     void reset_before_parse();
     decltype(auto) create_parser(StringViewType query_string);
-    size_t now_at_char() const;
+    Position current_position() const;
 
     void scan_begin(StringViewType query_string);
     void scan_end();

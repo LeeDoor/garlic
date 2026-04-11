@@ -8,26 +8,26 @@ namespace garlic::sql_parser {
 class ParsingResult { 
 public:
     using ValueType = std::variant<uptr<Query>, ParsingError, std::monostate>;
-    explicit ParsingResult(size_t end_idx) : value_{ }, end_idx_{ end_idx } {}
-    ParsingResult(uptr<Query> query, size_t end_idx) 
-    : value_{ std::move(query) }, end_idx_{ end_idx } {}
 
-    ParsingResult(ParsingError&& error, size_t end_idx) 
-    : value_{ std::move(error) }, end_idx_{ end_idx } {}
+    explicit ParsingResult(Position end_pos) : value_{ std::monostate{} }, end_pos_{ end_pos } {}
 
-    size_t get_end_idx() const { return end_idx_; }
-    void update_end_idx(size_t end_idx) { end_idx_ = end_idx; }
+    ParsingResult(uptr<Query> query, Position end_pos) 
+    : value_{ std::move(query) }, end_pos_{ end_pos } {}
+
+    ParsingResult(ParsingError&& error, Position end_pos) 
+    : value_{ std::move(error) }, end_pos_{ end_pos } {}
+
+    Position get_end_position() const { return end_pos_; }
+    void update_end_pos(Position end_pos) { end_pos_ = end_pos; }
 
     bool is_blank() const { 
 	return std::holds_alternative<std::monostate>(value_);
     }
     bool is_error() const {
-	const ParsingError* error = std::get_if<ParsingError>(&value_);
-	return error != nullptr;
+	return std::holds_alternative<ParsingError>(value_);
     }
     bool is_query() const {
-	const uptr<Query>* query = std::get_if<uptr<Query>>(&value_);
-	return query != nullptr;
+	return std::holds_alternative<uptr<Query>>(value_);
     }
     const ParsingError& as_error() const& {
 	const ParsingError* error = std::get_if<ParsingError>(&value_);
@@ -36,13 +36,13 @@ public:
     }
     const uptr<Query>& as_query() const& {
 	const uptr<Query>* query = std::get_if<uptr<Query>>(&value_);
-	if(!query) throw std::logic_error("ParsingResult is not an query but called as_query()");
+	if(!query) throw std::logic_error("ParsingResult is not a query but called as_query()");
 	return *query;
     }
 
 private:
     ValueType value_;
-    size_t end_idx_;
+    Position end_pos_;
 };
 
 }

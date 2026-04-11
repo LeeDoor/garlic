@@ -1,5 +1,4 @@
 #include "parsing_context.hpp"
-#include "manual_io.hpp"
 
 namespace garlic::sql_parser {
 
@@ -34,7 +33,7 @@ void ParsingContext::reset_before_parse() {
 	auto& last = parsing_results_.back();
 	if(last.is_error() && last.as_error().more_context_required) {
 	    context_.location.reset_to_query_start();
-	}
+	} 
     } 
     context_.multiline_string_buffer = "";
     context_.left_ok = 1;
@@ -51,46 +50,43 @@ void ParsingContext::invoke_error(ErrorStage stage, const std::string& msg) {
 	ParsingError{ 
 	    .more_context_required = more_context_required_,
 	    .stage = stage, 
-	    .location = context_.location.token_start(), 
+	    .location = context_.location.token_start(),
 	    .message = std::move(msg) 
-	}, now_at_char()
+	}, current_position()
     });
 }
 void ParsingContext::query_parsed(uptr<Query> query) {
-    parsing_results_.push_back({ std::move(query), now_at_char() });
+    parsing_results_.push_back({ std::move(query), current_position() });
     location_to_query_start();
 }
 void ParsingContext::blank_parsed() {
-    auto current_chars_read = now_at_char();
+    auto current_chars_read = current_position();
     if(parsing_results_.empty() || !parsing_results_.back().is_blank()) {
 	parsing_results_.push_back(ParsingResult{ current_chars_read });
     } else {
-	parsing_results_.back().update_end_idx(current_chars_read);
+	parsing_results_.back().update_end_pos(current_chars_read);
     }
     location_to_query_start();
 }
 void ParsingContext::error_parsed() {
     if(parsing_results_.empty() || !parsing_results_.back().is_error()) {
-	throw std::logic_error("ErrorParsed Called but last parsing result is not an error");
+	throw std::logic_error("ErrorParsed careset();lled but last parsing result is not an error");
     }
-    parsing_results_.back().update_end_idx(now_at_char());
-    location_to_query_start();
+    auto& last = parsing_results_.back();
+    last.update_end_pos(current_position());
+    if(!last.as_error().more_context_required)
+	location_to_query_start();
 }
 void ParsingContext::location_to_query_start() {
-    auto& location = context_.location;
-     if (is_manual_IO()) {
-        location.reset();
-     } else {
-        location.on_query_start();
-     }
+    context_.location.on_query_start();
 }
 
 void ParsingContext::met_eof() {
     more_context_required_ = true;
 }
 
-size_t ParsingContext::now_at_char() const {
-    return context_.location.cur().chars_amount();
+Position ParsingContext::current_position() const {
+    return context_.location.cur();
 }
 
 }

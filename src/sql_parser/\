@@ -22,21 +22,24 @@ float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
 int "0"|([1-9][0-9]*{EXP}?)
 string_quote_q "'"
 string_quote_d "\""
+/* " */
 string_content_q ([^\\'\n]*(\\.)*)*
 string_content_d ([^\\"\n]*(\\.)*)*
+/* " */
+
 
 %{
     #define YY_USER_ACTION do { \
-	location.on_token_start(); \
+	if(yytext[0] == '\0') { \
+	    std::cout << "faced \"" << yytext[0] << "\"\n"; \
+	    location.on_token_start(); \
+	} else { \
+	    curloc.columns(1); \
+	    location.on_token_start(); \
+	    curloc.columns (yyleng - 1); \
+	} \
 	--left_ok; \
-	curloc.columns(yyleng); \
     } while(0);
-
-    #define MET_NEWLINE() do { \
-	curloc.columns(-yyleng); \
-	curloc.lines(yyleng); \
-    } while(0);
-	
 
     #define WHITESPACE_SEPARATED(TOKEN_NAME) \
     do { \
@@ -61,7 +64,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
     auto& location = context.location;
     auto& curloc = location.cur();
     auto& multiline_str = context.multiline_string_buffer;
-    // set to 1 when seen a whitespace; 
+    // 1 when seen a whitespace; 
     // decremented in YY_USER_ACTION; 
     // if == 0, it means the last character was a whitespace; 
     // if < 0, it wasn't
@@ -97,7 +100,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 {string_quote_q} { multiline_str += yytext; BEGIN STRING_Q; }
 <STRING_Q>{string_content_q} { multiline_str += yytext; }
-<STRING_Q>{EOL} { MET_NEWLINE(); multiline_str += yytext; }
+<STRING_Q>{EOL} { curloc.lines(); multiline_str += yytext; }
 <STRING_Q><<EOF>> {
     BEGIN INITIAL;
     ctx.met_eof();
@@ -111,7 +114,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 {string_quote_d} { multiline_str += yytext; BEGIN STRING_D; }
 <STRING_D>{string_content_d} { multiline_str += yytext; }
-<STRING_D>{EOL} { MET_NEWLINE(); multiline_str += yytext; }
+<STRING_D>{EOL} { curloc.lines(); multiline_str += yytext; }
 <STRING_D><<EOF>> {
     BEGIN INITIAL;
     ctx.met_eof();
@@ -123,7 +126,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
     return make_STRING(multiline_str, curloc);
 }
 
-{EOL} { MET_NEWLINE(); MET_WHITESPACE(); }
+{EOL} { MET_WHITESPACE(); curloc.lines(); }
 {blank}+ { MET_WHITESPACE(); }
 
 .    {

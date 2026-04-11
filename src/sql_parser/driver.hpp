@@ -14,7 +14,7 @@ public:
 private:
     void print_error(const ParsingError& error) const;
     void reset_before_parse_process();
-    void handle_results(ParsingContext::ParsingResults& results) const;
+    void handle_results(const ParsingContext::ParsingResults& results) const;
     void shrink_queries(const ParsingContext::ParsingResults& results);
 
     ParsingContext parse_ctx_;

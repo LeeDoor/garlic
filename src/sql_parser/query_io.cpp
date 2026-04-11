@@ -5,6 +5,7 @@
 namespace garlic::sql_parser {
 
 void QueryIO::reset() {
+    shrinked_characters_ = 0;
     query_.clear();
     input_line_.clear();
     more_ctx_available_ = true;
@@ -24,13 +25,15 @@ void QueryIO::readline() {
     query_ += input_line_;
     query_ += "\n";
 }
-void QueryIO::shrink_to_last_query() {
-    auto rightmost_semicolon = query_.rfind(';');
-    if(rightmost_semicolon == StringType::npos)
-	rightmost_semicolon = 0;
-    query_.erase(0, rightmost_semicolon);
+void QueryIO::shrink_n_characters(size_t n) {
+    n -= shrinked_characters_;
+    if(query_.size() < n) 
+	throw std::logic_error("Shrinking " + std::to_string(n) + " chars is out of query range.");
+    query_.erase(0, n);
+    shrinked_characters_ += n;
 }
 void QueryIO::clear_query() {
+    shrinked_characters_ += query_.size();
     query_.clear();
 }
 StringViewType QueryIO::get_query() const {

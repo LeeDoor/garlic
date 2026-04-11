@@ -8,16 +8,16 @@ void ParsingLocation::reset() {
     query_start_location_.initialize();
 }
 
-ParsingLocation::LocationType& ParsingLocation::cur() & {
+ParsingLocation::PositionType& ParsingLocation::cur() & {
     return current_location_;
 }
-const ParsingLocation::LocationType& ParsingLocation::cur() const& {
+const ParsingLocation::PositionType& ParsingLocation::cur() const& {
     return current_location_;
 }
-ParsingLocation::LocationType ParsingLocation::token_start() const {
+ParsingLocation::PositionType ParsingLocation::token_start() const {
     return token_start_location_;
 }
-ParsingLocation::LocationType ParsingLocation::query_start() const {
+ParsingLocation::PositionType ParsingLocation::query_start() const {
     return query_start_location_;
 }
 void ParsingLocation::reset_to_query_start() {

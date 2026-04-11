@@ -7,7 +7,7 @@ class SqlAstExecutor {
 public:
     SqlAstExecutor();
 
-    void execute_sql_ast(uptr<Query> query) const;
+    void execute_sql_ast(const uptr<Query>& query) const;
     
 private:
     std::ostream& os_;

@@ -21,29 +21,30 @@ void driver::shrink_queries(const ParsingContext::ParsingResults& results) {
     if(!results.empty()) {
 	auto& last = results.back();
 	if(last.is_error() && last.as_error().more_context_required) {
-	    query_io_.shrink_to_last_query();
+	    if(results.size() >= 2) {
+		const auto second_last = std::prev(std::prev(results.end()));
+		query_io_.shrink_n_characters(second_last->get_end_position().get_characters());
+	    }   
 	    return;
 	}
     }
-    return query_io_.clear_query();
+    query_io_.clear_query();
+}
+
+void driver::handle_results(const ParsingContext::ParsingResults& results) const {
+    std::for_each(results.begin(), results.end(), [this](const ParsingResult& result) {
+	if(result.is_query()) {
+	    ast_executor_.execute_sql_ast(result.as_query());
+	}
+	else if(result.is_error()) {
+	    print_error(result.as_error());
+	}
+    });
 }
 
 void driver::print_error(const ParsingError& error) const {
     if(!(error.more_context_required && query_io_.is_more_context_available()))
 	err_printer_.print_error(error);
-}
-
-void driver::handle_results(ParsingContext::ParsingResults& results) const {
-    std::for_each(results.begin(), results.end(), [this](ParsingResult& result) {
-	if(result.is_query()) {
-	    ast_executor_.execute_sql_ast(result.as_query());
-	}
-	else if(auto error = std::get_if<ParsingError>(&result)) {
-	    print_error(*error);
-	} else {
-	    throw std::logic_error("incoming std::variant couldn't be resolved");
-	}
-    });
 }
 
 void driver::reset_before_parse_process() {

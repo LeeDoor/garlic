@@ -9,7 +9,7 @@ public:
 
     void reset();
     void readline();
-    void shrink_to_last_query();
+    void shrink_n_characters(size_t n);
     void clear_query();
 
     StringViewType get_query() const;
@@ -21,8 +21,9 @@ private:
 
     std::istream& is_;
     bool more_ctx_available_ { false };
-    std::string query_ {};
-    std::string input_line_ {};
+    StringType query_ {};
+    StringType input_line_ {};
+    size_t shrinked_characters_ {};
 };
 
 }
