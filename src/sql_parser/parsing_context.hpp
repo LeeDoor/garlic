@@ -29,7 +29,6 @@ public:
     /// Driver API
     void reset_context();
     ParsingResults& parse(StringViewType query_string) &;
-    const Context& context() const& { return context_; }
 
     /// Parser/Lexer API
     Context& context() & { return context_; }
