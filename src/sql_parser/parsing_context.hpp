@@ -21,6 +21,7 @@ public:
 	StringType multiline_string_buffer {};
 	int left_ok {1};
 	bool recovery {};
+	bool waiting_query_content {};
     };
 
     explicit ParsingContext(bool debug = false);
@@ -28,6 +29,7 @@ public:
     /// Driver API
     void reset_context();
     ParsingResults& parse(StringViewType query_string) &;
+    const Context& context() const& { return context_; }
 
     /// Parser/Lexer API
     Context& context() & { return context_; }
@@ -35,13 +37,13 @@ public:
     void query_parsed(uptr<Query> query);
     void blank_parsed();
     void error_parsed();
-    void rewrite_query_start_position();
     void met_eof();
 
 private:
     void reset_before_parse();
     decltype(auto) create_parser(StringViewType query_string);
     Position current_position() const;
+    void finished_previous_query();
 
     void scan_begin(StringViewType query_string);
     void scan_end();

@@ -25,18 +25,42 @@ string_content_q ([^\\'\n]*(\\.)*)*
 string_content_d ([^\\"\n]*(\\.)*)*
 
 %{
+/// Executes before each rule
     #define YY_USER_ACTION do { \
 	location.on_token_start(); \
 	--left_ok; \
-	curloc.columns(yyleng); \
     } while(0);
 
+/// should be pasted in every newline 
+/// character; used for location accounting
     #define MET_NEWLINE() do { \
-	curloc.columns(-yyleng); \
 	curloc.lines(yyleng); \
+	location.on_line_start(); \
     } while(0);
-	
+    
+/// should be pasted in every meaningful token;
+/// used to track content query start location.
+    #define MET_CONTENT() do { \
+	if(waiting_query_content) { \
+	    waiting_query_content = false; \
+	    location.on_content_query_start(); \
+	} \
+	curloc.columns(yyleng); \
+    } while(0); 
 
+/// should be pasted in every space, \t or similar;
+/// used to modify location.
+    #define MET_SPACE() do { \
+	curloc.columns(yyleng); \
+    } while(0); 
+
+/// should be pasted in every word-separating whitespace;
+/// used to distinguish words like SELECT<>AND<>OR
+    #define MET_WHITESPACE() \
+    { left_ok = 1; }
+
+/// should be pasted if token should be whitespace separated;
+/// i.e. to avoid "true ANDOR false".
     #define WHITESPACE_SEPARATED(TOKEN_NAME) \
     do { \
 	if(left_ok < 0) { \
@@ -44,9 +68,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 	} \
     } while(0);
 
-    #define MET_WHITESPACE() \
-    { left_ok = 1; }
-
+/// triggers lexical error with given message
     #define LEXING_ERROR(msg) do { \
 	ctx.invoke_error(ErrorStage::Lexing, msg); \
 	return yy::parser::make_YYerror(curloc); \
@@ -65,36 +87,36 @@ string_content_d ([^\\"\n]*(\\.)*)*
     // if == 0, it means the last character was a whitespace; 
     // if < 0, it wasn't
     auto& left_ok = context.left_ok; 
-    auto& recovery = context.recovery;
+    auto& waiting_query_content = context.waiting_query_content;
 %}
 
-"SELECT"/({token_separator}) { WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
+"SELECT"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
 
-";"  { recovery = false; return yy::parser::make_SEMICOLON(curloc); }
-"-"  { return yy::parser::make_MINUS(curloc); }
-"+"  { return yy::parser::make_PLUS(curloc); }
-"*"  { return yy::parser::make_MUL(curloc); }
-"/"  { return yy::parser::make_DIV(curloc); }
-"%"  { return yy::parser::make_REMDIV(curloc); }
-"("  { return yy::parser::make_LPAREN(curloc); }
-")"  { return yy::parser::make_RPAREN(curloc); }
-"|"  { return yy::parser::make_ABS(curloc); }
+";"  { MET_CONTENT(); return yy::parser::make_SEMICOLON(curloc); }
+"-"  { MET_CONTENT(); return yy::parser::make_MINUS(curloc); }
+"+"  { MET_CONTENT(); return yy::parser::make_PLUS(curloc); }
+"*"  { MET_CONTENT(); return yy::parser::make_MUL(curloc); }
+"/"  { MET_CONTENT(); return yy::parser::make_DIV(curloc); }
+"%"  { MET_CONTENT(); return yy::parser::make_REMDIV(curloc); }
+"("  { MET_CONTENT(); return yy::parser::make_LPAREN(curloc); }
+")"  { MET_CONTENT(); return yy::parser::make_RPAREN(curloc); }
+"|"  { MET_CONTENT(); return yy::parser::make_ABS(curloc); }
 
-"="  { return yy::parser::make_ISEQ(curloc); }
-"!=" { return yy::parser::make_NOTEQ(curloc); }
-">=" { return yy::parser::make_MOREEQ(curloc); }
-"<=" { return yy::parser::make_LESSEQ(curloc); }
-">"  { return yy::parser::make_MORE(curloc); }
-"<"  { return yy::parser::make_LESS(curloc); }
+"="  { MET_CONTENT(); return yy::parser::make_ISEQ(curloc); }
+"!=" { MET_CONTENT(); return yy::parser::make_NOTEQ(curloc); }
+">=" { MET_CONTENT(); return yy::parser::make_MOREEQ(curloc); }
+"<=" { MET_CONTENT(); return yy::parser::make_LESSEQ(curloc); }
+">"  { MET_CONTENT(); return yy::parser::make_MORE(curloc); }
+"<"  { MET_CONTENT(); return yy::parser::make_LESS(curloc); }
 
-"AND"/({token_separator}) { WHITESPACE_SEPARATED("AND"); return yy::parser::make_LOGICAND(curloc); }
-"OR"/({token_separator})  { WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(curloc); }
-"!"			  { return yy::parser::make_NOT(curloc); }
+"AND"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AND"); return yy::parser::make_LOGICAND(curloc); }
+"OR"/({token_separator})  { MET_CONTENT(); WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(curloc); }
+"!"			  { MET_CONTENT(); return yy::parser::make_NOT(curloc); }
 
-{int}    { return make_INTEGER(yytext, curloc, ctx); }
-{float}  { return make_FLOAT(yytext, curloc, ctx); }
+{int}    { MET_CONTENT(); return make_INTEGER(yytext, curloc, ctx); }
+{float}  { MET_CONTENT(); return make_FLOAT(yytext, curloc, ctx); }
 
-{string_quote_q} { multiline_str += yytext; BEGIN STRING_Q; }
+{string_quote_q} { MET_CONTENT(); multiline_str += yytext; BEGIN STRING_Q; }
 <STRING_Q>{string_content_q} { multiline_str += yytext; }
 <STRING_Q>{EOL} { MET_NEWLINE(); multiline_str += yytext; }
 <STRING_Q><<EOF>> {
@@ -108,7 +130,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
     return make_STRING(multiline_str, curloc); 
 }
 
-{string_quote_d} { multiline_str += yytext; BEGIN STRING_D; }
+{string_quote_d} { MET_CONTENT(); multiline_str += yytext; BEGIN STRING_D; }
 <STRING_D>{string_content_d} { multiline_str += yytext; }
 <STRING_D>{EOL} { MET_NEWLINE(); multiline_str += yytext; }
 <STRING_D><<EOF>> {
@@ -123,10 +145,10 @@ string_content_d ([^\\"\n]*(\\.)*)*
 }
 
 {EOL} { MET_NEWLINE(); MET_WHITESPACE(); }
-{blank}+ { MET_WHITESPACE(); }
+{blank}+ { MET_SPACE(); MET_WHITESPACE(); }
 
 .    {
-	LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");
+	MET_CONTENT(); LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");
      }
 <<EOF>> {
     ctx.met_eof(); 

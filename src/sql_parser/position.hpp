@@ -41,7 +41,7 @@ public:
 	{ line_ = line; column_ = col; characters_ = chars; }
 
     inline Position operator-(const Position& other) const {
-	Position result{ get_line(), get_column(), other.get_characters() - get_characters() };
+	Position result{ 1, get_column(), other.get_characters() - get_characters() };
 	if(get_line() > other.get_line()) 
 	    result.line_ = get_line() - other.get_line() + 1;
 	else if(get_line() == other.get_line()) 
@@ -49,12 +49,33 @@ public:
 	else throw std::logic_error("substracting earlier Position from later one.");
 	return result;
     }
+    Position& operator-=(const Position& other) {
+	*this = *this - other;
+	return *this;
+    }
     inline Position operator+(const Position& other) const {
 	return Position{ 
 	    other.get_line() + get_line() - 1, 
 	    other.get_column() + get_column() - 1,
 	    other.get_characters() + get_characters() 
 	};
+    }
+    Position& operator+=(const Position& other) {
+	*this = *this + other;
+	return *this;
+    }
+    auto operator<=>(const Position& other) const {
+	if(get_line() < other.get_line())
+	    return -1;
+	if(get_line() > other.get_line())
+	    return 1;
+	if(get_column() < other.get_column())
+	    return -1;
+	if(get_column() > other.get_column())
+	    return 1;
+	if(get_column() == other.get_column())
+	    return 0;
+	throw std::logic_error("Position::operator<=> failed execution");
     }
 
 private:

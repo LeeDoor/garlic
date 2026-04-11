@@ -1,4 +1,5 @@
 #include "parsing_context.hpp"
+#include "manual_io.hpp"
 
 namespace garlic::sql_parser {
 
@@ -33,7 +34,9 @@ void ParsingContext::reset_before_parse() {
 	auto& last = parsing_results_.back();
 	if(last.is_error() && last.as_error().more_context_required) {
 	    context_.location.reset_to_query_start();
-	} 
+	} else {
+	    finished_previous_query();
+	}
     } 
     context_.multiline_string_buffer = "";
     context_.left_ok = 1;
@@ -45,19 +48,23 @@ void ParsingContext::reset_before_parse() {
 void ParsingContext::invoke_error(ErrorStage stage, const std::string& msg) {
     if(context_.recovery) return;
     context_.recovery = !more_context_required_;
+    auto& loc = context_.location;
+    auto error_relative_location = context_.location.token_start();
+    if(is_manual_IO())
+	error_relative_location -= std::min(loc.content_query_start(), loc.line_start());
     parsing_results_.push_back(
     ParsingResult{
 	ParsingError{ 
 	    .more_context_required = more_context_required_,
 	    .stage = stage, 
-	    .location = context_.location.token_start(),
+	    .location = error_relative_location,
 	    .message = msg
 	}, current_position()
     });
 }
 void ParsingContext::query_parsed(uptr<Query> query) {
     parsing_results_.push_back({ std::move(query), current_position() });
-    rewrite_query_start_position();
+    finished_previous_query();
 }
 void ParsingContext::blank_parsed() {
     auto current_chars_read = current_position();
@@ -66,19 +73,21 @@ void ParsingContext::blank_parsed() {
     } else {
 	parsing_results_.back().update_end_pos(current_chars_read);
     }
-    rewrite_query_start_position();
+    finished_previous_query();
 }
 void ParsingContext::error_parsed() {
     if(parsing_results_.empty() || !parsing_results_.back().is_error()) {
 	throw std::logic_error("ErrorParsed careset();lled but last parsing result is not an error");
     }
+    context_.recovery = false;
     auto& last = parsing_results_.back();
     last.update_end_pos(current_position());
     if(!last.as_error().more_context_required)
-	rewrite_query_start_position();
+	finished_previous_query();
 }
-void ParsingContext::rewrite_query_start_position() {
-    context_.location.on_query_start();
+void ParsingContext::finished_previous_query() {
+    context_.location.on_raw_query_start();
+    context_.waiting_query_content = true;
 }
 
 void ParsingContext::met_eof() {
