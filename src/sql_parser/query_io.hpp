@@ -9,7 +9,7 @@ public:
 
     void reset();
     void readline();
-    void shrink_n_characters(size_t n);
+    void should_be_shrinked(size_t n);
     void clear_query();
 
     StringViewType get_query() const;

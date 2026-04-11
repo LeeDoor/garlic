@@ -12,7 +12,6 @@
 
 %x STRING_Q
 %x STRING_D
-%x RECOVERY 
 
 EOL "\n"
 blank [ \t]

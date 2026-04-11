@@ -35,7 +35,7 @@ public:
     void query_parsed(uptr<Query> query);
     void blank_parsed();
     void error_parsed();
-    void location_to_query_start();
+    void rewrite_query_start_position();
     void met_eof();
 
 private:

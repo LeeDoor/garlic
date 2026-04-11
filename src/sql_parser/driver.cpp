@@ -23,7 +23,7 @@ void driver::shrink_queries(const ParsingContext::ParsingResults& results) {
 	if(last.is_error() && last.as_error().more_context_required) {
 	    if(results.size() >= 2) {
 		const auto second_last = std::prev(std::prev(results.end()));
-		query_io_.shrink_n_characters(second_last->get_end_position().get_characters());
+		query_io_.should_be_shrinked(second_last->get_end_position().get_characters());
 	    }   
 	    return;
 	}

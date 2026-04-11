@@ -51,13 +51,13 @@ void ParsingContext::invoke_error(ErrorStage stage, const std::string& msg) {
 	    .more_context_required = more_context_required_,
 	    .stage = stage, 
 	    .location = context_.location.token_start(),
-	    .message = std::move(msg) 
+	    .message = msg
 	}, current_position()
     });
 }
 void ParsingContext::query_parsed(uptr<Query> query) {
     parsing_results_.push_back({ std::move(query), current_position() });
-    location_to_query_start();
+    rewrite_query_start_position();
 }
 void ParsingContext::blank_parsed() {
     auto current_chars_read = current_position();
@@ -66,7 +66,7 @@ void ParsingContext::blank_parsed() {
     } else {
 	parsing_results_.back().update_end_pos(current_chars_read);
     }
-    location_to_query_start();
+    rewrite_query_start_position();
 }
 void ParsingContext::error_parsed() {
     if(parsing_results_.empty() || !parsing_results_.back().is_error()) {
@@ -75,9 +75,9 @@ void ParsingContext::error_parsed() {
     auto& last = parsing_results_.back();
     last.update_end_pos(current_position());
     if(!last.as_error().more_context_required)
-	location_to_query_start();
+	rewrite_query_start_position();
 }
-void ParsingContext::location_to_query_start() {
+void ParsingContext::rewrite_query_start_position() {
     context_.location.on_query_start();
 }
 

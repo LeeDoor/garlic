@@ -25,10 +25,14 @@ void QueryIO::readline() {
     query_ += input_line_;
     query_ += "\n";
 }
-void QueryIO::shrink_n_characters(size_t n) {
+void QueryIO::should_be_shrinked(size_t n) {
+    if(n < shrinked_characters_)
+	throw std::logic_error("Shrinking " + std::to_string(n) + " chars is less than shrinked before.");
+
     n -= shrinked_characters_;
     if(query_.size() < n) 
 	throw std::logic_error("Shrinking " + std::to_string(n) + " chars is out of query range.");
+
     query_.erase(0, n);
     shrinked_characters_ += n;
 }

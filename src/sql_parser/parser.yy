@@ -147,6 +147,6 @@ strings: STRING { $$ = $1; }
 %left UMINUS;
 
 %%
-void yy::parser::error (const location_type&, const std::string& m) {
+void yy::parser::error(const location_type&, const std::string& m) {
     ctx.invoke_error(ErrorStage::Parsing, m);
 }
