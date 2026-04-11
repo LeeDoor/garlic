@@ -3,6 +3,7 @@ set(GENERAL_LINK_LIBRARIES ${GENERAL_LINK_LIBRARIES} pch_gtest)
 set(DEPENDENCIES 
     table
     abstract_syntax_tree
+    sql_parser
 )
 
 add_executable(${TEST_EXECUTABLE_NAME} 
@@ -21,6 +22,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_compare_condition.cpp
     test_binary_logical_condition.cpp
     test_unary_logical_condition.cpp
+    test_sql_lexer_make_string.cpp
 )
 target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
     ${GENERAL_LINK_LIBRARIES}
