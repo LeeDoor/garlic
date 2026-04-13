@@ -2,14 +2,6 @@
 
 namespace garlic::sql_parser {
 
-void ParsingLocation::reset() {
-    current_position_.initialize();
-    token_start_position_.initialize();
-    query_raw_start_position.initialize();
-    query_content_start_position.initialize();
-    line_start_position_.initialize();
-}
-
 ParsingLocation::PositionType& ParsingLocation::cur() & {
     return current_position_;
 }

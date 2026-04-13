@@ -6,8 +6,6 @@ namespace garlic::sql_parser {
 class ParsingLocation {
     using PositionType = Position;
 public:
-    void reset();
-
     PositionType& cur() &;
     const PositionType& cur() const&;
     PositionType token_start() const;
