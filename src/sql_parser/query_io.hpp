@@ -3,13 +3,18 @@
 
 namespace garlic::sql_parser {
 
+/// Manages user's input and output. provides an interface to modify the buffer.
 class QueryIO {
 public:
     QueryIO() : is_{ std::cin } {}
 
+    /// TODO remove
     void reset();
+    /// Reads one line to buffer
     void readline();
+    /// Shrinks passed amount of characters
     void should_be_shrinked(size_t n);
+    /// Clears inner string buffer.
     void clear_query();
 
     StringViewType get_query() const;

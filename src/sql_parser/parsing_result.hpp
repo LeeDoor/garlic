@@ -5,6 +5,7 @@ namespace garlic { class Query; }
 
 namespace garlic::sql_parser {
 
+/// Defines a result of any Query. May be a correct query, error or just a blank.
 class ParsingResult { 
 public:
     using ValueType = std::variant<uptr<Query>, ParsingError, std::monostate>;

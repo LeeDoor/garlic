@@ -7,6 +7,9 @@ namespace garlic::sql_parser {
 static constexpr size_t DEFAULT_LINE = 1;
 static constexpr size_t DEFAULT_COLUMN = 1;
 static constexpr size_t DEFAULT_CHARACTERS = 0;
+
+/// Defines position in parsed text.
+/// Includes both: amount of characters read and row-column location.
 class Position {
 public:
     explicit Position(

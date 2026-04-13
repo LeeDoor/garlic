@@ -4,6 +4,7 @@
 
 namespace garlic::sql_parser {
 
+/// ErrorPrinter prints @ref ParsingError to given stream.
 class ErrorPrinter {
 public:
     explicit ErrorPrinter(std::ostream& os) : os_{ os } {}

@@ -3,6 +3,16 @@
 
 namespace garlic::sql_parser {
 
+/// Current location of parsing process and additional
+/// location anchors.
+///
+///    SELECT 1;      SELECT 2 + "Three";
+///^            ^     ^          ^      ^
+///|            |     |          |      current_position
+///line_start   |     |          token_start
+///             |     query_content_start
+///	        query_raw_start
+
 class ParsingLocation {
     using PositionType = Position;
 public:

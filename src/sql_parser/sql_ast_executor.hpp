@@ -3,6 +3,7 @@
 
 namespace garlic::sql_parser {
 
+/// Executes an AST and prints result to std::cout.
 class SqlAstExecutor {
 public:
     SqlAstExecutor();
