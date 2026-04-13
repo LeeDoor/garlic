@@ -3,3 +3,5 @@ build/
 compile_commands.json
 generated/
 debug.txt
+__pycache__/
+*.py[cod]
