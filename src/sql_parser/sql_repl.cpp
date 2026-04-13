@@ -1,12 +1,12 @@
-#include "driver.hpp"
+#include "sql_repl.hpp"
 
 namespace garlic::sql_parser {
 
-driver::driver(bool debug_mode)
+SqlRepl::SqlRepl(bool debug_mode)
 : parse_ctx_{ debug_mode }
 { }
 
-void driver::parse() {
+void SqlRepl::parse() {
     reset_before_parse_process();
     do {
 	query_io_.readline();
@@ -16,7 +16,7 @@ void driver::parse() {
     } while (query_io_.is_more_context_available() || !query_io_.is_query_empty());
 }
 
-void driver::shrink_queries(const ParsingContext::ParsingResults& results) {
+void SqlRepl::shrink_queries(const ParsingContext::ParsingResults& results) {
     if(!results.empty()) {
 	auto& last = results.back();
 	if(last.is_error() && last.as_error().more_context_required) {
@@ -30,7 +30,7 @@ void driver::shrink_queries(const ParsingContext::ParsingResults& results) {
     query_io_.clear_query();
 }
 
-void driver::handle_results(const ParsingContext::ParsingResults& results) const {
+void SqlRepl::handle_results(const ParsingContext::ParsingResults& results) const {
     std::for_each(results.begin(), results.end(), [this](const ParsingResult& result) {
 	if(result.is_query()) {
 	    ast_executor_.execute_sql_ast(result.as_query());
@@ -41,12 +41,12 @@ void driver::handle_results(const ParsingContext::ParsingResults& results) const
     });
 }
 
-void driver::print_error(const ParsingError& error) const {
+void SqlRepl::print_error(const ParsingError& error) const {
     if(!(error.more_context_required && query_io_.is_more_context_available()))
 	err_printer_.print_error(error);
 }
 
-void driver::reset_before_parse_process() {
+void SqlRepl::reset_before_parse_process() {
     query_io_.reset();
 }
 

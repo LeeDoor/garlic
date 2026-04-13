@@ -16,7 +16,7 @@ add_flex_bison_dependency(LEXER PARSER)
 add_library(sql_parser 
     ${GEN_DIR}/lexer.yy.cpp
     ${GEN_DIR}/parser.tab.cpp
-    driver.cpp
+    sql_repl.cpp
     query_io.cpp
     parsing_location.cpp
     error_printer.cpp

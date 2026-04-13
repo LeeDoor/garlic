@@ -6,9 +6,9 @@
 
 namespace garlic::sql_parser {
 
-class driver {
+class SqlRepl {
 public:
-    explicit driver(bool debug_mode = false);
+    explicit SqlRepl(bool debug_mode = false);
 
     void parse();
 private:
