@@ -135,12 +135,12 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 %%
 
-void ParsingContext::scan_begin(StringViewType query_string) {
+void ParserEngine::scan_begin(StringViewType query_string) {
     yy_flex_debug = debug_mode_;
     yy_scan_bytes(query_string.data(), query_string.size());
 }
 
-void ParsingContext::scan_end() {
+void ParserEngine::scan_end() {
     yy_delete_buffer(YY_CURRENT_BUFFER);
 }
 
