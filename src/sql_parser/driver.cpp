@@ -1,5 +1,4 @@
 #include "driver.hpp"
-#include "parser.tab.hpp"
 
 namespace garlic::sql_parser {
 
@@ -11,7 +10,7 @@ void driver::parse() {
     reset_before_parse_process();
     do {
 	query_io_.readline();
-	auto& queries_and_errors = parse_ctx_.parse(query_io_.get_query());
+	auto queries_and_errors = parse_ctx_.parse(query_io_.get_query());
 	handle_results(queries_and_errors);
 	shrink_queries(queries_and_errors);
     } while (query_io_.is_more_context_available() || !query_io_.is_query_empty());
@@ -49,7 +48,6 @@ void driver::print_error(const ParsingError& error) const {
 
 void driver::reset_before_parse_process() {
     query_io_.reset();
-    parse_ctx_.reset_context();
 }
 
 }

@@ -22,6 +22,7 @@ add_library(sql_parser
     error_printer.cpp
     sql_ast_executor.cpp
     parsing_context.cpp
+    parsing_session.cpp
     position.cpp
 )
 set(INCLUDE_DIRS 
