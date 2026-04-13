@@ -89,13 +89,21 @@ def estimate_output_limit(expected_output: Optional[str]) -> int:
     calculated = expected_chars + expected_error_lines * 200 + 1024
     return max(4096, min(calculated, 256 * 1024))
 
-def run_executable(executable: str, input_content: str, expected_output: Optional[str] = None) -> subprocess.CompletedProcess:
+def run_executable(
+    executable: str,
+    input_content: str,
+    expected_output: Optional[str] = None,
+    extra_args: Optional[List[str]] = None,
+) -> subprocess.CompletedProcess:
     max_output_bytes = estimate_output_limit(expected_output)
     max_runtime_seconds = 1.0
 
     try:
+        cmd = [executable]
+        if extra_args:
+            cmd.extend(extra_args)
         process = subprocess.Popen(
-            [executable],
+            cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -182,6 +190,16 @@ def run_executable(executable: str, input_content: str, expected_output: Optiona
 def normalize_lines(content: str) -> List[str]:
     return content.splitlines()
 
+def strip_cli_prompt_prefix(line: str) -> str:
+    # CLI prompt is an arbitrary token sequence that ends with a space.
+    # Strip repeated prompt chunks, but keep real output lines intact.
+    while line and not line.startswith("[") and not line[0].isdigit():
+        space_idx = line.find(" ")
+        if space_idx < 0:
+            break
+        line = line[space_idx + 1:]
+    return line
+
 def line_matches(expected_line: str, actual_line: str) -> bool:
     checker = ERROR_WILDCARDS.get(expected_line)
     if checker is not None:
@@ -206,6 +224,23 @@ def location_line_matches(expected_line: str, actual_line: str) -> bool:
 def location_outputs_match(expected: str, actual: str) -> bool:
     expected_lines = normalize_lines(expected)
     actual_lines = normalize_lines(actual)
+    if len(expected_lines) != len(actual_lines):
+        return False
+    return all(
+        location_line_matches(exp, act)
+        for exp, act in zip(expected_lines, actual_lines)
+    )
+
+def location_outputs_match_cli(expected: str, actual: str) -> bool:
+    expected_lines = normalize_lines(expected)
+    actual_lines = []
+    for line in normalize_lines(actual):
+        stripped = strip_cli_prompt_prefix(line)
+        # In CLI mode prompt can be printed before first input and after each '\n'.
+        # Such prompt-only lines should not participate in semantic output matching.
+        if stripped == "":
+            continue
+        actual_lines.append(stripped)
     if len(expected_lines) != len(actual_lines):
         return False
     return all(
@@ -265,13 +300,24 @@ def get_diff(actual: str, expected: str, width: int = 180) -> str:
     
     return '\n'.join(result)
 
-def run_test(executable: str, input_file: Path, expected_file: Path, max_input_lines: int = 10) -> bool:
+def run_test(
+    executable: str,
+    input_file: Path,
+    expected_file: Path,
+    max_input_lines: int = 10,
+    extra_args: Optional[List[str]] = None,
+) -> bool:
     test_name = input_file.stem
     input_content_full = read_file_content(input_file)
     input_content_preview = read_file_content(input_file, max_input_lines)
     expected_output_with_numbers = read_file_content_with_line_numbers(expected_file)
     expected_output = read_file_content(expected_file)
-    process = run_executable(executable, input_content_full, expected_output=expected_output)
+    process = run_executable(
+        executable,
+        input_content_full,
+        expected_output=expected_output,
+        extra_args=extra_args,
+    )
     actual_output = process.stdout
     if outputs_match(expected_output, actual_output):
         return True
@@ -295,16 +341,29 @@ def run_test(executable: str, input_file: Path, expected_file: Path, max_input_l
 
     return False
 
-def run_exact_test(executable: str, input_file: Path, expected_file: Path, max_input_lines: int = 10) -> bool:
+def run_exact_test(
+    executable: str,
+    input_file: Path,
+    expected_file: Path,
+    max_input_lines: int = 10,
+    extra_args: Optional[List[str]] = None,
+    cli_prompt_mode: bool = False,
+) -> bool:
     test_name = input_file.stem
     input_content_full = read_file_content(input_file)
     input_content_preview = read_file_content(input_file, max_input_lines)
     expected_output_with_numbers = read_file_content_with_line_numbers(expected_file)
     expected_output = read_file_content(expected_file)
-    process = run_executable(executable, input_content_full, expected_output=expected_output)
+    process = run_executable(
+        executable,
+        input_content_full,
+        expected_output=expected_output,
+        extra_args=extra_args,
+    )
     actual_output = process.stdout
 
-    if location_outputs_match(expected_output, actual_output):
+    matcher = location_outputs_match_cli if cli_prompt_mode else location_outputs_match
+    if matcher(expected_output, actual_output):
         return True
 
     print(f"test name: {test_name}")
@@ -359,11 +418,19 @@ def main():
 
     test_pairs = find_regular_test_pairs()
     location_test_pairs = find_directory_test_pairs("location_tests")
+    location_cli_test_pairs = find_directory_test_pairs("location_tests_cli")
     lexical_error_tests = find_error_tests("LEXICAL_ERROR")
     syntax_error_tests = find_error_tests("SYNTAX_ERROR")
     semantic_error_tests = find_error_tests("SEMANTIC_ERROR")
 
-    if not test_pairs and not location_test_pairs and not lexical_error_tests and not syntax_error_tests and not semantic_error_tests:
+    if (
+        not test_pairs
+        and not location_test_pairs
+        and not location_cli_test_pairs
+        and not lexical_error_tests
+        and not syntax_error_tests
+        and not semantic_error_tests
+    ):
         script_dir = Path(__file__).parent
         print(f"No test files found in {script_dir}")
         sys.exit(0)
@@ -371,6 +438,7 @@ def main():
     print(
         f"Found {len(test_pairs)} regular test(s), "
         f"{len(location_test_pairs)} location test(s), "
+        f"{len(location_cli_test_pairs)} CLI location test(s), "
         f"{len(lexical_error_tests)} lexical error test(s), "
         f"{len(syntax_error_tests)} syntax error test(s), "
         f"{len(semantic_error_tests)} semantic error test(s)"
@@ -385,6 +453,18 @@ def main():
     for i, (input_file, expected_file) in enumerate(location_test_pairs, 1):
         print(f"Running location test {i}: {input_file.name}")
         if not run_exact_test(executable, input_file, expected_file):
+            print(f"\nTest failed: {input_file.stem}")
+            sys.exit(1)
+
+    for i, (input_file, expected_file) in enumerate(location_cli_test_pairs, 1):
+        print(f"Running CLI location test {i}: {input_file.name}")
+        if not run_exact_test(
+            executable,
+            input_file,
+            expected_file,
+            extra_args=["--use-cli-output"],
+            cli_prompt_mode=True,
+        ):
             print(f"\nTest failed: {input_file.stem}")
             sys.exit(1)
 

@@ -1,0 +1,2 @@
+SELECT 1 = 1 AND
+2 = 2AND 3 = 3;

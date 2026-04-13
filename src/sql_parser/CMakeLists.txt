@@ -18,6 +18,7 @@ add_library(sql_parser
     ${GEN_DIR}/parser.tab.cpp
     sql_repl.cpp
     query_io.cpp
+    manual_io.cpp
     parsing_location.cpp
     error_printer.cpp
     sql_ast_executor.cpp
