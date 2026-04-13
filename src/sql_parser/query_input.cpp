@@ -19,19 +19,13 @@ void QueryInput::readline() {
     query_ += input_line_;
     query_ += "\n";
 }
-void QueryInput::should_be_shrinked(size_t n) {
-    if(n < shrinked_characters_)
-	throw std::logic_error("Shrinking " + std::to_string(n) + " chars is less than shrinked before.");
-
-    n -= shrinked_characters_;
+void QueryInput::shrink_n_characters(size_t n) {
     if(query_.size() < n) 
 	throw std::logic_error("Shrinking " + std::to_string(n) + " chars is out of query range.");
 
     query_.erase(0, n);
-    shrinked_characters_ += n;
 }
 void QueryInput::clear_query() {
-    shrinked_characters_ += query_.size();
     query_.clear();
 }
 StringViewType QueryInput::get_query() const {

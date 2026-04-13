@@ -6,11 +6,19 @@ namespace garlic::sql_parser {
 
 class ParserEngine {
 public:
-    using ParsingResults = ParsingSession::ParsingResults;
+    struct Results { 
+	ParsingSession::ParsingResults results;
+	size_t characters_parsed;
+
+	Results(ParsingSession::IntermediateResult&& inter)
+	: results{ std::move(inter.parsing_results) }
+	, characters_parsed{ inter.characters_parsed }
+	{}
+    };
     explicit ParserEngine(bool debug = false);
 
     /// Driver API
-    ParsingResults parse(StringViewType query_string);
+    Results parse(StringViewType query_string);
 
 private:
     using ContinuationState = ParsingSession::ContinuationState;

@@ -17,7 +17,7 @@ decltype(auto) ParserEngine::create_parser(ParsingSession& session, StringViewTy
     return parser;
 }
 
-ParserEngine::ParsingResults ParserEngine::parse(StringViewType query_string) {
+ParserEngine::Results ParserEngine::parse(StringViewType query_string) {
     ParsingSession session = [this] {
 	if(continuation_state_)
 	    return ParsingSession{ *continuation_state_ };
@@ -26,9 +26,9 @@ ParserEngine::ParsingResults ParserEngine::parse(StringViewType query_string) {
 
     auto parser = create_parser(session, query_string);
     (*parser)();
-    auto [results, continuation_state] = session.get_parsing_result();
-    continuation_state_ = std::move(continuation_state);
-    return results;
+    auto intermediate_result = session.get_parsing_result();
+    continuation_state_ = std::move(intermediate_result.continuation_state);
+    return Results{ std::move(intermediate_result) };
 }
 
 }

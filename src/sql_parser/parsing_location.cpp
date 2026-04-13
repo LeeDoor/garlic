@@ -2,11 +2,20 @@
 
 namespace garlic::sql_parser {
 
+ParsingLocation ParsingLocation::initialize_from(const ParsingLocation& other) {
+    ParsingLocation result = other;
+    result.initial_position_ = result.current_position_;
+    return result;
+}
+
 ParsingLocation::PositionType& ParsingLocation::cur() & {
     return current_position_;
 }
 const ParsingLocation::PositionType& ParsingLocation::cur() const& {
     return current_position_;
+}
+ParsingLocation::PositionType ParsingLocation::initial() const {
+    return initial_position_;
 }
 ParsingLocation::PositionType ParsingLocation::token_start() const {
     return token_start_position_;

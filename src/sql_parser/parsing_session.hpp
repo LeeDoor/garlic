@@ -28,17 +28,25 @@ public:
     ParsingSession() {}
     ParsingSession(ContinuationState cont_state)
     {
-	location_ = cont_state.location;
+	location_ = ParsingLocation::initialize_from(cont_state.location);
 	waiting_query_content_ = cont_state.waiting_query_content;
     }
     
-    std::tuple<ParsingResults, ContinuationState> get_parsing_result();
+    struct IntermediateResult {
+	ParsingResults parsing_results;
+	ContinuationState continuation_state;
+	size_t characters_parsed;
+    };
 
-    const ParsingLocation& location() const& { return location_; }
+    IntermediateResult get_parsing_result();
 
+    /// Called when valid non-empty query parsed.
     void query_parsed(uptr<Query> query);
+    /// Called when valid query without content parsed.
     void blank_parsed();
+    /// Called when reached a semicolon after an error.
     void error_parsed();
+    /// Called on any error occured.
     void invoke_error(ErrorStage stage, const std::string& msg);
 
     /// called in YY_USER_ACTION, i.e. before every rule
@@ -49,12 +57,13 @@ public:
     /// call in every meaningful token;
     /// used to track content query start location.
     void met_content(size_t token_len);
-    /// call in every space, t or similar;
-    /// used to modify location.
+    /// Call in every space, t or similar;
+    /// Used to modify location.
     void met_space(size_t token_len);
-    /// call in every word-separating whitespace;
-    /// used to distinguish words like SELECT<>AND<>OR
+    /// Call in every word-separating whitespace;
+    /// Used to distinguish words like SELECT<>AND<>OR
     void met_word_delimeter();
+    /// Called on any EOF match
     void met_eof();
 
     /// call if token should be whitespace separated;
@@ -69,6 +78,7 @@ public:
     StringType get_multiline_string();
     /// returns current position as object.
     Position current_position() const;
+    const ParsingLocation& location() const& { return location_; }
 
 private:
     /// Called if just finished a query and started a new  one.

@@ -18,8 +18,7 @@ public:
 private:
     void print_error(const ParsingError& error) const;
     void reset_before_parse_process();
-    void handle_results(const ParserEngine::ParsingResults& results) const;
-    void shrink_queries(const ParserEngine::ParsingResults& results);
+    void handle_results(const ParserEngine::Results& results) const;
 
     ParserEngine parse_ctx_;
     QueryInput query_input_;

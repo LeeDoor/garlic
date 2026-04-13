@@ -11,7 +11,7 @@ public:
     /// Reads one line to buffer
     void readline();
     /// Shrinks passed amount of characters
-    void should_be_shrinked(size_t n);
+    void shrink_n_characters(size_t n);
     /// Clears inner string buffer.
     void clear_query();
 
@@ -26,7 +26,6 @@ private:
     bool more_ctx_available_ { true };
     StringType query_ {};
     StringType input_line_ {};
-    size_t shrinked_characters_ {};
 };
 
 }

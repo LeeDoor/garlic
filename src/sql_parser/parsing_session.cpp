@@ -3,7 +3,7 @@
 
 namespace garlic::sql_parser {
 
-std::tuple<ParsingSession::ParsingResults, ParsingSession::ContinuationState> ParsingSession::get_parsing_result() {
+ParsingSession::IntermediateResult ParsingSession::get_parsing_result() {
     if(!parsing_results_.empty()) {
 	auto& last = parsing_results_.back();
 	if(last.is_error() && last.as_error().more_context_required) {
@@ -14,7 +14,8 @@ std::tuple<ParsingSession::ParsingResults, ParsingSession::ContinuationState> Pa
     }
     return {
 	std::move(parsing_results_),
-	ContinuationState{ location_, waiting_query_content_ }
+	ContinuationState{ location_, waiting_query_content_ },
+	(location_.cur() - location_.initial()).get_characters()
     };
 }
 

@@ -16,8 +16,12 @@ namespace garlic::sql_parser {
 class ParsingLocation {
     using PositionType = Position;
 public:
+    /// Used as copy constructor to store initial_position.
+    static ParsingLocation initialize_from(const ParsingLocation& other);
+
     PositionType& cur() &;
     const PositionType& cur() const&;
+    PositionType initial() const;
     PositionType token_start() const;
     PositionType raw_query_start() const;
     PositionType content_query_start() const;
@@ -30,6 +34,7 @@ public:
     void on_line_start();
 
 private:
+    PositionType initial_position_ {}; // position on initialization
     PositionType current_position_ {}; // position of unread character
     PositionType token_start_position_ {}; // position of the first character in current token
     PositionType query_raw_start_position {}; // position of the first character in current query; INCLUDING LEADING WHITESPACE

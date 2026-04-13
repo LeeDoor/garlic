@@ -44,7 +44,7 @@ public:
 	{ line_ = line; column_ = col; characters_ = chars; }
 
     inline Position operator-(const Position& other) const {
-	Position result{ 1, get_column(), other.get_characters() - get_characters() };
+	Position result{ 1, get_column(), get_characters() - other.get_characters() };
 	if(get_line() > other.get_line()) 
 	    result.line_ = get_line() - other.get_line() + 1;
 	else if(get_line() == other.get_line()) 

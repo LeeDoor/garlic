@@ -13,27 +13,14 @@ SqlRepl::SqlRepl(bool debug_mode, QueryInput query_input, ErrorPrinter error_pri
 void SqlRepl::run() {
     do {
 	query_input_.readline();
-	auto queries_and_errors = parse_ctx_.parse(query_input_.get_query());
-	handle_results(queries_and_errors);
-	shrink_queries(queries_and_errors);
+	auto parse_session_result = parse_ctx_.parse(query_input_.get_query());
+	handle_results(parse_session_result);
+	query_input_.shrink_n_characters(parse_session_result.characters_parsed);
     } while (query_input_.is_more_context_available() || !query_input_.is_query_empty());
 }
 
-void SqlRepl::shrink_queries(const ParserEngine::ParsingResults& results) {
-    if(!results.empty()) {
-	auto& last = results.back();
-	if(last.is_error() && last.as_error().more_context_required) {
-	    if(results.size() >= 2) {
-		const auto second_last = std::prev(std::prev(results.end()));
-		query_input_.should_be_shrinked(second_last->get_end_position().get_characters());
-	    }   
-	    return;
-	}
-    }
-    query_input_.clear_query();
-}
-
-void SqlRepl::handle_results(const ParserEngine::ParsingResults& results) const {
+void SqlRepl::handle_results(const ParserEngine::Results& parse_results) const {
+    const auto& results = parse_results.results;
     std::for_each(results.begin(), results.end(), [this](const ParsingResult& result) {
 	if(result.is_query()) {
 	    ast_executor_.execute_sql_ast(result.as_query());
