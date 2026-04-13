@@ -2,8 +2,6 @@
 #include "parsing_session.hpp"
 
 namespace garlic::sql_parser {
-    class ParsingResult;
-
 class ParsingContext {
 public:
     using ParsingResults = ParsingSession::ParsingResults;
