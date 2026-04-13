@@ -24,7 +24,7 @@ int main (int argc, char** argv) {
     handle_args(argc, argv, debug_mode);
     garlic::sql_parser::SqlRepl drv(debug_mode);
     try {
-	drv.parse();
+	drv.run();
     } catch (const std::logic_error& ex) {
 	std::cout << "[LOGIC_ERROR] " << ex.what() << std::endl;
 	return 1;

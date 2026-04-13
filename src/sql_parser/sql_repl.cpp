@@ -10,7 +10,7 @@ SqlRepl::SqlRepl(bool debug_mode, QueryInput query_input, ErrorPrinter error_pri
 , ast_executor_{ std::move(ast_executor) }
 { }
 
-void SqlRepl::parse() {
+void SqlRepl::run() {
     do {
 	query_input_.readline();
 	auto queries_and_errors = parse_ctx_.parse(query_input_.get_query());

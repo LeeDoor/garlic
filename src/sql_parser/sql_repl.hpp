@@ -14,7 +14,7 @@ public:
 	ErrorPrinter error_printer = {},
 	SqlAstExecutor ast_executor = {});
 
-    void parse();
+    void run();
 private:
     void print_error(const ParsingError& error) const;
     void reset_before_parse_process();
