@@ -69,15 +69,11 @@ void ParsingSession::on_each_token() {
     --left_ok_;
 }
 void ParsingSession::met_newline(size_t token_len) {
-    /// should be pasted in every newline 
-    /// character; used for location accounting
     location_.cur().lines(token_len);
     location_.on_line_start();
 
 }
 void ParsingSession::met_content(size_t token_len) {
-    /// should be pasted in every meaningful token;
-    /// used to track content query start location.
     if(waiting_query_content_) { 
 	waiting_query_content_ = false; 
 	location_.on_content_query_start(); 
@@ -86,24 +82,17 @@ void ParsingSession::met_content(size_t token_len) {
 
 }
 void ParsingSession::met_space(size_t token_len) {
-    /// should be pasted in every space, t or similar;
-    /// used to modify location.
     location_.cur().columns(token_len); 
 }
 void ParsingSession::met_word_delimeter() {
-    /// should be pasted in every word-separating whitespace;
-    /// used to distinguish words like SELECT<>AND<>OR
     { left_ok_ = 1; }
 
 }
 yy::parser::symbol_type ParsingSession::lexing_error(const StringType& msg) {
-    /// triggers lexical error with given message
     invoke_error(ErrorStage::Lexing, msg); 
     return yy::parser::make_YYerror(location_.cur()); 
 }
 std::optional<yy::parser::symbol_type> ParsingSession::whitespace_separated(const StringType& token_name) {
-    /// should be pasted if token should be whitespace separated;
-    /// i.e. to avoid "true ANDOR false".
     if(left_ok_ < 0) { 
 	return lexing_error("Token " + token_name + " should be whitespace-separated"); 
     }

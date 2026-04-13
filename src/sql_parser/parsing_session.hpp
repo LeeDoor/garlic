@@ -24,11 +24,8 @@ public:
 	bool waiting_query_content;
     };
 
-    ParsingSession(ParsingContext& ctx)
-    : context_{ ctx }
-    {}
-    ParsingSession(ParsingContext& ctx, ContinuationState cont_state)
-    : ParsingSession(ctx)
+    ParsingSession() {}
+    ParsingSession(ContinuationState cont_state)
     {
 	location_ = cont_state.location;
 	waiting_query_content_ = cont_state.waiting_query_content;
@@ -43,23 +40,39 @@ public:
     void error_parsed();
     void invoke_error(ErrorStage stage, const std::string& msg);
 
+    /// called in YY_USER_ACTION, i.e. before every rule
     void on_each_token();
+    /// call in every newline 
+    /// character; used for location accounting
     void met_newline(size_t token_len);
+    /// call in every meaningful token;
+    /// used to track content query start location.
     void met_content(size_t token_len);
+    /// call in every space, t or similar;
+    /// used to modify location.
     void met_space(size_t token_len);
+    /// call in every word-separating whitespace;
+    /// used to distinguish words like SELECT<>AND<>OR
     void met_word_delimeter();
     void met_eof();
 
+    /// call if token should be whitespace separated;
+    /// i.e. to avoid "true ANDOR false".
     std::optional<yy::parser::symbol_type> whitespace_separated(const StringType& token_name);
+    /// triggers lexical error with given message
     yy::parser::symbol_type lexing_error(const StringType& msg);
 
+    /// Appends line to inner buffer to build multiline string.
     void append_line(const StringType& str);
+    /// Returns moved string buffer.
     StringType get_multiline_string();
-    void finished_previous_query();
+    /// returns current position as object.
     Position current_position() const;
 
 private:
-    ParsingContext& context_;
+    /// Called if just finished a query and started a new  one.
+    void finished_previous_query();
+
     ParsingResults parsing_results_ {};
     ParsingLocation location_ {};
     StringType multiline_string_buffer_ {};

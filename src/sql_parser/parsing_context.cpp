@@ -20,8 +20,8 @@ decltype(auto) ParsingContext::create_parser(ParsingSession& session, StringView
 ParsingContext::ParsingResults ParsingContext::parse(StringViewType query_string) {
     ParsingSession session = [this] {
 	if(continuation_state_)
-	    return ParsingSession{ *this, *continuation_state_ };
-	return ParsingSession{ *this };
+	    return ParsingSession{ *continuation_state_ };
+	return ParsingSession{ };
     }();
 
     auto parser = create_parser(session, query_string);
