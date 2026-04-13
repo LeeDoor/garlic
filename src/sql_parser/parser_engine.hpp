@@ -4,10 +4,10 @@
 namespace garlic::sql_parser {
     class ParsingResult;
 
-class ParsingContext {
+class ParserEngine {
 public:
     using ParsingResults = ParsingSession::ParsingResults;
-    explicit ParsingContext(bool debug = false);
+    explicit ParserEngine(bool debug = false);
 
     /// Driver API
     ParsingResults parse(StringViewType query_string);

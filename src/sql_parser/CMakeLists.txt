@@ -22,7 +22,7 @@ add_library(sql_parser
     parsing_location.cpp
     error_printer.cpp
     sql_ast_executor.cpp
-    parsing_context.cpp
+    parser_engine.cpp
     parsing_session.cpp
     position.cpp
     literals_converter.cpp

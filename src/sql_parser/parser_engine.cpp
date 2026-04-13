@@ -1,12 +1,12 @@
-#include "parsing_context.hpp"
+#include "parser_engine.hpp"
 
 namespace garlic::sql_parser {
 
-ParsingContext::ParsingContext(bool debug)
+ParserEngine::ParserEngine(bool debug)
 : debug_mode_{ debug }
 {}
 
-decltype(auto) ParsingContext::create_parser(ParsingSession& session, StringViewType query_string) {
+decltype(auto) ParserEngine::create_parser(ParsingSession& session, StringViewType query_string) {
     auto deleter = [this](yy::parser* p) {
 	scan_end();
 	delete p;
@@ -17,7 +17,7 @@ decltype(auto) ParsingContext::create_parser(ParsingSession& session, StringView
     return parser;
 }
 
-ParsingContext::ParsingResults ParsingContext::parse(StringViewType query_string) {
+ParserEngine::ParsingResults ParserEngine::parse(StringViewType query_string) {
     ParsingSession session = [this] {
 	if(continuation_state_)
 	    return ParsingSession{ *continuation_state_ };

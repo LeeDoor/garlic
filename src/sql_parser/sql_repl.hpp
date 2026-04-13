@@ -1,6 +1,6 @@
 #pragma once
 #include "error_printer.hpp"
-#include "parsing_context.hpp"
+#include "parser_engine.hpp"
 #include "query_io.hpp"
 #include "sql_ast_executor.hpp"
 
@@ -14,10 +14,10 @@ public:
 private:
     void print_error(const ParsingError& error) const;
     void reset_before_parse_process();
-    void handle_results(const ParsingContext::ParsingResults& results) const;
-    void shrink_queries(const ParsingContext::ParsingResults& results);
+    void handle_results(const ParserEngine::ParsingResults& results) const;
+    void shrink_queries(const ParserEngine::ParsingResults& results);
 
-    ParsingContext parse_ctx_;
+    ParserEngine parse_ctx_;
     QueryIO query_io_ {};
     ErrorPrinter err_printer_ {};
     SqlAstExecutor ast_executor_ {};

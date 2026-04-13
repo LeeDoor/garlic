@@ -13,7 +13,7 @@ YY_DECL;
 namespace garlic { class Query; }
 namespace garlic::sql_parser {
 
-class ParsingContext;
+class ParserEngine;
 
 class ParsingSession {
 public:

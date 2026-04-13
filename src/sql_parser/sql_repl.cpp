@@ -16,7 +16,7 @@ void SqlRepl::parse() {
     } while (query_io_.is_more_context_available() || !query_io_.is_query_empty());
 }
 
-void SqlRepl::shrink_queries(const ParsingContext::ParsingResults& results) {
+void SqlRepl::shrink_queries(const ParserEngine::ParsingResults& results) {
     if(!results.empty()) {
 	auto& last = results.back();
 	if(last.is_error() && last.as_error().more_context_required) {
@@ -30,7 +30,7 @@ void SqlRepl::shrink_queries(const ParsingContext::ParsingResults& results) {
     query_io_.clear_query();
 }
 
-void SqlRepl::handle_results(const ParsingContext::ParsingResults& results) const {
+void SqlRepl::handle_results(const ParserEngine::ParsingResults& results) const {
     std::for_each(results.begin(), results.end(), [this](const ParsingResult& result) {
 	if(result.is_query()) {
 	    ast_executor_.execute_sql_ast(result.as_query());
