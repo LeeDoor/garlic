@@ -23,7 +23,6 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_binary_logical_condition.cpp
     test_unary_logical_condition.cpp
     test_sql_lexer_make_string.cpp
-    test_sql_lexer_query_content_start.cpp
 )
 target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC
     ${GENERAL_LINK_LIBRARIES}

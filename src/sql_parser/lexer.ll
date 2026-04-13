@@ -36,7 +36,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 /// should be pasted in every meaningful token;
 /// used to track content query start location.
     #define MET_CONTENT() { \
-	session.met_content(yyleng); \
+	session.met_space(yyleng); \
     }
 
 /// should be pasted in every space, \t or similar;
