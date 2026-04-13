@@ -17,7 +17,7 @@ add_library(sql_parser
     ${GEN_DIR}/lexer.yy.cpp
     ${GEN_DIR}/parser.tab.cpp
     sql_repl.cpp
-    query_io.cpp
+    query_input.cpp
     manual_io.cpp
     parsing_location.cpp
     error_printer.cpp

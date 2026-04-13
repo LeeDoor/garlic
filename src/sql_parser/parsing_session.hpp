@@ -15,6 +15,7 @@ namespace garlic::sql_parser {
 
 class ParserEngine;
 
+/// Handles each parse() call.
 class ParsingSession {
 public:
     using ParsingResults = std::list<ParsingResult>;
