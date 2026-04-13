@@ -24,6 +24,7 @@ add_library(sql_parser
     parsing_context.cpp
     parsing_session.cpp
     position.cpp
+    literals_converter.cpp
 )
 set(INCLUDE_DIRS 
     ../abstract_syntax_tree 

@@ -7,28 +7,28 @@ std::tuple<ParsingSession::ParsingResults, ParsingSession::ContinuationState> Pa
     if(!parsing_results_.empty()) {
 	auto& last = parsing_results_.back();
 	if(last.is_error() && last.as_error().more_context_required) {
-	    location.reset_to_query_start();
+	    location_.reset_to_query_start();
 	} else {
 	    finished_previous_query();
 	}
     }
     return {
 	std::move(parsing_results_),
-	ContinuationState{ location, waiting_query_content }
+	ContinuationState{ location_, waiting_query_content_ }
     };
 }
 
 void ParsingSession::invoke_error(ErrorStage stage, const std::string& msg) {
-    if(recovery) return;
-    recovery = !more_context_required;
-    auto& loc = location;
-    auto error_relative_location = location.token_start();
+    if(recovery_) return;
+    recovery_ = !more_context_required_;
+    auto& loc = location_;
+    auto error_relative_location = location_.token_start();
     if(is_manual_IO())
 	error_relative_location -= std::min(loc.content_query_start(), loc.line_start());
     parsing_results_.push_back(
     ParsingResult{
 	ParsingError{ 
-	    .more_context_required = more_context_required,
+	    .more_context_required = more_context_required_,
 	    .stage = stage, 
 	    .location = error_relative_location,
 	    .message = msg
@@ -52,7 +52,7 @@ void ParsingSession::error_parsed() {
     if(parsing_results_.empty() || !parsing_results_.back().is_error()) {
 	throw std::logic_error("ErrorParsed careset();lled but last parsing result is not an error");
     }
-    recovery = false;
+    recovery_ = false;
     auto& last = parsing_results_.back();
     last.update_end_pos(current_position());
     if(!last.as_error().more_context_required)
@@ -60,16 +60,68 @@ void ParsingSession::error_parsed() {
 }
 
 void ParsingSession::finished_previous_query() {
-    location.on_raw_query_start();
-    waiting_query_content = true;
+    location_.on_raw_query_start();
+    waiting_query_content_ = true;
 }
 
+void ParsingSession::on_each_token() {
+    location_.on_token_start();
+    --left_ok_;
+}
+void ParsingSession::met_newline(size_t token_len) {
+    /// should be pasted in every newline 
+    /// character; used for location accounting
+    location_.cur().lines(token_len);
+    location_.on_line_start();
+
+}
+void ParsingSession::met_content(size_t token_len) {
+    /// should be pasted in every meaningful token;
+    /// used to track content query start location.
+    if(waiting_query_content_) { 
+	waiting_query_content_ = false; 
+	location_.on_content_query_start(); 
+    } 
+    location_.cur().columns(token_len); 
+
+}
+void ParsingSession::met_space(size_t token_len) {
+    /// should be pasted in every space, t or similar;
+    /// used to modify location.
+    location_.cur().columns(token_len); 
+}
+void ParsingSession::met_word_delimeter() {
+    /// should be pasted in every word-separating whitespace;
+    /// used to distinguish words like SELECT<>AND<>OR
+    { left_ok_ = 1; }
+
+}
+yy::parser::symbol_type ParsingSession::lexing_error(const StringType& msg) {
+    /// triggers lexical error with given message
+    invoke_error(ErrorStage::Lexing, msg); 
+    return yy::parser::make_YYerror(location_.cur()); 
+}
+std::optional<yy::parser::symbol_type> ParsingSession::whitespace_separated(const StringType& token_name) {
+    /// should be pasted if token should be whitespace separated;
+    /// i.e. to avoid "true ANDOR false".
+    if(left_ok_ < 0) { 
+	return lexing_error("Token " + token_name + " should be whitespace-separated"); 
+    }
+    return std::nullopt;
+}
+
+void ParsingSession::append_line(const StringType& str) { 
+    multiline_string_buffer_ += str; 
+}
+StringType ParsingSession::get_multiline_string() { 
+    return std::move(multiline_string_buffer_); 
+}
 void ParsingSession::met_eof() {
-    more_context_required = true;
+    more_context_required_ = true;
 }
 
 Position ParsingSession::current_position() const {
-    return location.cur();
+    return location_.cur();
 }
 
 }

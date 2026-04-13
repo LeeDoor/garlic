@@ -1,7 +1,6 @@
 #include "parser.tab.hpp"
 #include "position.hpp"
-
-yy::parser::symbol_type make_STRING(std::string& s, garlic::sql_parser::Position& curloc);
+#include "literals_converter.hpp"
 
 namespace garlic::sql_parser {
 
@@ -16,7 +15,7 @@ TEST(test_sql_lexer_make_string, singleQuotedLiteralShouldUnquoteAndClearSourceB
 
     auto symbol = make_STRING(raw, pos);
     EXPECT_EQ(extract_string_token_value(symbol), "hello_world");
-    EXPECT_TRUE(raw.empty());
+    EXPECT_EQ(raw, "\'hello_world\'");
 }
 
 TEST(test_sql_lexer_make_string, doubleQuotedLiteralShouldUnquoteAndKeepInnerSingleQuotes) {

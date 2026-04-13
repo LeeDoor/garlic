@@ -6,9 +6,7 @@
 
 %option noyywrap nounput noinput batch debug
 %{
-    yy::parser::symbol_type make_FLOAT(std::string_view s, Position& curloc, ParsingSession& session);
-    yy::parser::symbol_type make_INTEGER(std::string_view s, Position& curloc, ParsingSession& session);
-    yy::parser::symbol_type make_STRING(std::string& s, Position& curloc);
+    #include "literals_converter.hpp"
 %}
 
 %x STRING_Q
@@ -27,67 +25,47 @@ string_content_d ([^\\"\n]*(\\.)*)*
 
 %{
 /// Executes before each rule
-    #define YY_USER_ACTION do { \
-	location.on_token_start(); \
-	--left_ok; \
-    } while(0);
-
+    #define YY_USER_ACTION { \
+	session.on_each_token(); \
+    }
 /// should be pasted in every newline 
 /// character; used for location accounting
-    #define MET_NEWLINE() do { \
-	curloc.lines(yyleng); \
-	location.on_line_start(); \
-    } while(0);
-    
+    #define MET_NEWLINE() { \
+	session.met_newline(yyleng); \
+    }    
 /// should be pasted in every meaningful token;
 /// used to track content query start location.
-    #define MET_CONTENT() do { \
-	if(waiting_query_content) { \
-	    waiting_query_content = false; \
-	    location.on_content_query_start(); \
-	} \
-	curloc.columns(yyleng); \
-    } while(0); 
+    #define MET_CONTENT() { \
+	session.met_space(yyleng); \
+    }
 
 /// should be pasted in every space, \t or similar;
 /// used to modify location.
-    #define MET_SPACE() do { \
-	curloc.columns(yyleng); \
-    } while(0); 
-
+    #define MET_SPACE() { \
+	session.met_space(yyleng); \
+    } 
 /// should be pasted in every word-separating whitespace;
 /// used to distinguish words like SELECT<>AND<>OR
     #define MET_WHITESPACE() \
-    { left_ok = 1; }
+	{ session.met_word_delimeter(); }
 
 /// should be pasted if token should be whitespace separated;
 /// i.e. to avoid "true ANDOR false".
-    #define WHITESPACE_SEPARATED(TOKEN_NAME) \
-    do { \
-	if(left_ok < 0) { \
-	    LEXING_ERROR("Token " TOKEN_NAME " should be whitespace-separated"); \
+    #define WHITESPACE_SEPARATED(TOKEN_NAME) { \
+	if(auto res = session.whitespace_separated(TOKEN_NAME)) { \
+	    return std::move(*res); \
 	} \
-    } while(0);
-
+    }
 /// triggers lexical error with given message
-    #define LEXING_ERROR(msg) do { \
-	session.invoke_error(ErrorStage::Lexing, msg); \
-	return yy::parser::make_YYerror(curloc); \
-    } while(0);
+    #define LEXING_ERROR(msg) { \
+	return session.lexing_error(msg); \
+    } 
 %}
 
 %%
 
 %{
-    auto& location = session.location;
-    auto& curloc = location.cur();
-    auto& multiline_str = session.multiline_string_buffer;
-    // set to 1 when seen a whitespace; 
-    // decremented in YY_USER_ACTION; 
-    // if == 0, it means the last character was a whitespace; 
-    // if < 0, it wasn't
-    auto& left_ok = session.left_ok; 
-    auto& waiting_query_content = session.waiting_query_content;
+    auto& curloc = session.location().cur();
 %}
 
 "SELECT"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
@@ -116,32 +94,32 @@ string_content_d ([^\\"\n]*(\\.)*)*
 {int}    { MET_CONTENT(); return make_INTEGER(yytext, curloc, session); }
 {float}  { MET_CONTENT(); return make_FLOAT(yytext, curloc, session); }
 
-{string_quote_q} { MET_CONTENT(); multiline_str += yytext; BEGIN STRING_Q; }
-<STRING_Q>{string_content_q} { multiline_str += yytext; }
-<STRING_Q>{EOL} { MET_NEWLINE(); multiline_str += yytext; }
+{string_quote_q} { MET_CONTENT(); session.append_line(yytext); BEGIN STRING_Q; }
+<STRING_Q>{string_content_q} { session.append_line(yytext); }
+<STRING_Q>{EOL} { MET_NEWLINE(); session.append_line(yytext); }
 <STRING_Q><<EOF>> {
     BEGIN INITIAL;
     session.met_eof();
     LEXING_ERROR("Unterminated string");
 }
 <STRING_Q>{string_quote_q} { 
-    multiline_str += yytext; 
+    session.append_line(yytext); 
     BEGIN INITIAL; 
-    return make_STRING(multiline_str, curloc); 
+    return make_STRING(session.get_multiline_string(), curloc); 
 }
 
-{string_quote_d} { MET_CONTENT(); multiline_str += yytext; BEGIN STRING_D; }
-<STRING_D>{string_content_d} { multiline_str += yytext; }
-<STRING_D>{EOL} { MET_NEWLINE(); multiline_str += yytext; }
+{string_quote_d} { MET_CONTENT(); session.append_line(yytext); BEGIN STRING_D; }
+<STRING_D>{string_content_d} { session.append_line(yytext); }
+<STRING_D>{EOL} { MET_NEWLINE(); session.append_line(yytext); }
 <STRING_D><<EOF>> {
     BEGIN INITIAL;
     session.met_eof();
     LEXING_ERROR("Unterminated string");
 }
 <STRING_D>{string_quote_d} { 
-    multiline_str += yytext; 
+    session.append_line(yytext); 
     BEGIN INITIAL; 
-    return make_STRING(multiline_str, curloc);
+    return make_STRING(session.get_multiline_string(), curloc);
 }
 
 {EOL} { MET_NEWLINE(); MET_WHITESPACE(); }
@@ -156,62 +134,6 @@ string_content_d ([^\\"\n]*(\\.)*)*
 }
 
 %%
-
-template<typename T> requires std::is_arithmetic_v<T>
-std::optional<T> make_number(std::string_view s) {
-    T result;
-    auto [ptr, ec] = std::from_chars(s.data(), s.data() + s.size(), result);
-    if (ec == std::errc::result_out_of_range) {
-	return std::nullopt;
-    } else if (ec == std::errc::invalid_argument) {
-	throw std::logic_error("Regular expression matched wrong number");
-    }
-    return result;
-}
-
-yy::parser::symbol_type make_FLOAT(std::string_view s, Position& curloc, ParsingSession& session) {
-    if(auto num = make_number<FloatType>(s)) {
-	return yy::parser::make_FLOAT(*num, curloc);
-    }
-    LEXING_ERROR("Failed to convert \"" + std::string(s) + "\" to float; too big value");
-}
-yy::parser::symbol_type make_INTEGER(std::string_view s, Position& curloc, ParsingSession& session) {
-    if(auto num = make_number<IntType>(s)) {
-	return yy::parser::make_INTEGER(*num, curloc);
-    }
-    LEXING_ERROR("Failed to convert \"" + std::string(s) + "\" to int; too big value");
-}
-yy::parser::symbol_type make_STRING(std::string& s, Position& curloc) {
-    std::string result; result.reserve(s.size() - 2);
-    for(size_t i = 1; i < s.size() - 1; ++i) {
-	if(s[i] == '\\') {
-	    switch(s[++i]) {
-		case 'n':
-		    result.push_back('\n');
-		    break;
-		case 't':
-		    result.push_back('\t');
-		    break;
-		case '\\':
-		    result.push_back('\\');
-		    break;
-		case '\'':
-		    result.push_back('\'');
-		    break;
-		case '\"': // " -- character to fix broken highlight in .ll file
-		    result.push_back('\"');// "
-		    break;
-		default:
-		    result.push_back(s[--i]);
-		    break;
-	    }
-	} else { 
-	    result.push_back(s[i]);
-	}
-    }
-    s.clear();
-    return yy::parser::make_STRING(std::move(result), curloc);
-}
 
 void ParsingContext::scan_begin(StringViewType query_string) {
     yy_flex_debug = debug_mode_;
