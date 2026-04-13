@@ -7,5 +7,7 @@ static bool IS_MANUAL_IO = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 #endif
 
 bool is_manual_IO() { return IS_MANUAL_IO; }
-void set_manual_IO(bool value) { IS_MANUAL_IO = value; }
 
+#ifndef NDEBUG
+void set_manual_IO(bool value) { IS_MANUAL_IO = value; }
+#endif

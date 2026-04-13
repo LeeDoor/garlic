@@ -7,9 +7,12 @@ void handle_args(int argc, char** argv, bool& debug_mode) {
 	if(std::strncmp("--use-cli-output", arg, 17) == 0) {
 	    set_manual_IO();
 	}
+#ifndef NDEBUG
 	else if(std::strncmp("--debug", arg, 8) == 0) {
 	    debug_mode = true;
-	} else {
+	}
+#endif
+	else {
 	    std::cout << "Unexpected cli argument: " << arg << std::endl;
 	    abort();
 	}
