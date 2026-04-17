@@ -35,4 +35,4 @@ target_include_directories(${TEST_EXECUTABLE_NAME} PUBLIC
     mocks
 )
 
-add_test(NAME run_all_tests COMMAND ${TEST_EXECUTABLE_NAME})
+add_test(NAME "unit tests" COMMAND ${TEST_EXECUTABLE_NAME})
