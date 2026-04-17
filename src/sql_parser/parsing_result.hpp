@@ -8,9 +8,7 @@ namespace garlic::sql_parser {
 /// Defines a result of any Query. May be a correct query, error or just a blank.
 class ParsingResult { 
 public:
-    using ValueType = std::variant<uptr<Query>, ParsingError, std::monostate>;
-
-    explicit ParsingResult() : value_{ std::monostate{} } {}
+    using ValueType = std::variant<uptr<Query>, ParsingError>;
 
     ParsingResult(uptr<Query> query) 
     : value_{ std::move(query) }{}
@@ -18,9 +16,6 @@ public:
     ParsingResult(ParsingError&& error) 
     : value_{ std::move(error) } {}
 
-    bool is_blank() const { 
-	return std::holds_alternative<std::monostate>(value_);
-    }
     bool is_error() const {
 	return std::holds_alternative<ParsingError>(value_);
     }

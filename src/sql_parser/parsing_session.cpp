@@ -41,9 +41,6 @@ void ParsingSession::query_parsed(uptr<Query> query) {
     finished_previous_query();
 }
 void ParsingSession::blank_parsed() {
-    if(parsing_results_.empty() || !parsing_results_.back().is_blank()) {
-	parsing_results_.push_back(ParsingResult{ });
-    } 
     finished_previous_query();
 }
 void ParsingSession::error_parsed() {
