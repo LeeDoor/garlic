@@ -12,8 +12,6 @@ public:
     void readline();
     /// Shrinks passed amount of characters
     void shrink_n_characters(size_t n);
-    /// Clears inner string buffer.
-    void clear_query();
 
     StringViewType get_query() const;
     bool is_more_context_available() const;

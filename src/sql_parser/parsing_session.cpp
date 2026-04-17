@@ -54,7 +54,6 @@ void ParsingSession::error_parsed() {
 }
 
 void ParsingSession::finished_previous_query() {
-    location_.on_raw_query_start();
     waiting_query_content_ = true;
 }
 

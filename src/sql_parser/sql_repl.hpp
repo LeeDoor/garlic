@@ -17,7 +17,6 @@ public:
     void run();
 private:
     void print_error(const ParsingError& error) const;
-    void reset_before_parse_process();
     void handle_results(const ParserEngine::Results& results) const;
 
     ParserEngine parse_ctx_;

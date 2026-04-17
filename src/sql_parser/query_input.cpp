@@ -25,9 +25,6 @@ void QueryInput::shrink_n_characters(size_t n) {
 
     query_.erase(0, n);
 }
-void QueryInput::clear_query() {
-    query_.clear();
-}
 StringViewType QueryInput::get_query() const {
     return query_;
 }
