@@ -27,7 +27,7 @@ public:
     PositionType content_query_start() const;
     PositionType line_start() const;
 
-    void reset_to_query_start();
+    void reset_to_query_content_start();
     void on_raw_query_start();
     void on_content_query_start();
     void on_token_start();
@@ -37,8 +37,8 @@ private:
     PositionType initial_position_ {}; // position on initialization
     PositionType current_position_ {}; // position of unread character
     PositionType token_start_position_ {}; // position of the first character in current token
-    PositionType query_raw_start_position {}; // position of the first character in current query; INCLUDING LEADING WHITESPACE
-    PositionType query_content_start_position {}; // position of the first MEANINGFUL character in current query; excludes leading whitespaces
+    PositionType query_raw_start_position_ {}; // position of the first character in current query; INCLUDING LEADING WHITESPACE
+    PositionType query_content_start_position_ {}; // position of the first MEANINGFUL character in current query; excludes leading whitespaces
     PositionType line_start_position_ {}; // position of the first character in current line
 };
 

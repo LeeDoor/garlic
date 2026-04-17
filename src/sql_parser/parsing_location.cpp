@@ -21,23 +21,23 @@ ParsingLocation::PositionType ParsingLocation::token_start() const {
     return token_start_position_;
 }
 ParsingLocation::PositionType ParsingLocation::raw_query_start() const {
-    return query_raw_start_position;
+    return query_raw_start_position_;
 }
 ParsingLocation::PositionType ParsingLocation::content_query_start() const {
-    return query_content_start_position;
+    return query_content_start_position_;
 }
 ParsingLocation::PositionType ParsingLocation::line_start() const {
     return line_start_position_;
 }
 
-void ParsingLocation::reset_to_query_start() {
-    current_position_ = query_raw_start_position;
+void ParsingLocation::reset_to_query_content_start() {
+    current_position_ = query_content_start_position_;
 }
 void ParsingLocation::on_raw_query_start() {
-    query_raw_start_position = current_position_;
+    query_raw_start_position_ = current_position_;
 }
 void ParsingLocation::on_content_query_start() {
-    query_content_start_position = current_position_;
+    query_content_start_position_ = current_position_;
 }
 void ParsingLocation::on_token_start() {
     token_start_position_ = current_position_;

@@ -95,7 +95,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 {float}  { MET_CONTENT(); return make_FLOAT(yytext, curloc, session); }
 
 {string_quote_q} { MET_CONTENT(); session.append_line(yytext); BEGIN STRING_Q; }
-<STRING_Q>{string_content_q} { session.append_line(yytext); }
+<STRING_Q>{string_content_q} { MET_CONTENT(); session.append_line(yytext); }
 <STRING_Q>{EOL} { MET_NEWLINE(); session.append_line(yytext); }
 <STRING_Q><<EOF>> {
     BEGIN INITIAL;
@@ -103,13 +103,14 @@ string_content_d ([^\\"\n]*(\\.)*)*
     LEXING_ERROR("Unterminated string");
 }
 <STRING_Q>{string_quote_q} { 
+    MET_CONTENT();
     session.append_line(yytext); 
     BEGIN INITIAL; 
     return make_STRING(session.get_multiline_string(), curloc); 
 }
 
 {string_quote_d} { MET_CONTENT(); session.append_line(yytext); BEGIN STRING_D; }
-<STRING_D>{string_content_d} { session.append_line(yytext); }
+<STRING_D>{string_content_d} { MET_CONTENT(); session.append_line(yytext); }
 <STRING_D>{EOL} { MET_NEWLINE(); session.append_line(yytext); }
 <STRING_D><<EOF>> {
     BEGIN INITIAL;
@@ -117,6 +118,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
     LEXING_ERROR("Unterminated string");
 }
 <STRING_D>{string_quote_d} { 
+    MET_CONTENT();
     session.append_line(yytext); 
     BEGIN INITIAL; 
     return make_STRING(session.get_multiline_string(), curloc);

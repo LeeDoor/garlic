@@ -7,7 +7,7 @@ ParsingSession::IntermediateResult ParsingSession::get_parsing_result() {
     if(!parsing_results_.empty()) {
 	auto& last = parsing_results_.back();
 	if(last.is_error() && last.as_error().more_context_required) {
-	    location_.reset_to_query_start();
+	    location_.reset_to_query_content_start();
 	} else {
 	    finished_previous_query();
 	}
