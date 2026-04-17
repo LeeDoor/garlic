@@ -10,16 +10,13 @@ class ParsingResult {
 public:
     using ValueType = std::variant<uptr<Query>, ParsingError, std::monostate>;
 
-    explicit ParsingResult(Position end_pos) : value_{ std::monostate{} }, end_pos_{ end_pos } {}
+    explicit ParsingResult() : value_{ std::monostate{} } {}
 
-    ParsingResult(uptr<Query> query, Position end_pos) 
-    : value_{ std::move(query) }, end_pos_{ end_pos } {}
+    ParsingResult(uptr<Query> query) 
+    : value_{ std::move(query) }{}
 
-    ParsingResult(ParsingError&& error, Position end_pos) 
-    : value_{ std::move(error) }, end_pos_{ end_pos } {}
-
-    Position get_end_position() const { return end_pos_; }
-    void update_end_pos(Position end_pos) { end_pos_ = end_pos; }
+    ParsingResult(ParsingError&& error) 
+    : value_{ std::move(error) } {}
 
     bool is_blank() const { 
 	return std::holds_alternative<std::monostate>(value_);
@@ -43,7 +40,6 @@ public:
 
 private:
     ValueType value_;
-    Position end_pos_;
 };
 
 }

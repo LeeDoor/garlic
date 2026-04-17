@@ -33,20 +33,17 @@ void ParsingSession::invoke_error(ErrorStage stage, const std::string& msg) {
 	    .stage = stage, 
 	    .location = error_relative_location,
 	    .message = msg
-	}, current_position()
+	}
     });
 }
 void ParsingSession::query_parsed(uptr<Query> query) {
-    parsing_results_.push_back({ std::move(query), current_position() });
+    parsing_results_.push_back({ std::move(query) });
     finished_previous_query();
 }
 void ParsingSession::blank_parsed() {
-    auto current_chars_read = current_position();
     if(parsing_results_.empty() || !parsing_results_.back().is_blank()) {
-	parsing_results_.push_back(ParsingResult{ current_chars_read });
-    } else {
-	parsing_results_.back().update_end_pos(current_chars_read);
-    }
+	parsing_results_.push_back(ParsingResult{ });
+    } 
     finished_previous_query();
 }
 void ParsingSession::error_parsed() {
@@ -55,7 +52,6 @@ void ParsingSession::error_parsed() {
     }
     recovery_ = false;
     auto& last = parsing_results_.back();
-    last.update_end_pos(current_position());
     if(!last.as_error().more_context_required)
 	finished_previous_query();
 }
