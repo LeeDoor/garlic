@@ -1,5 +1,7 @@
 # Garlic
 
+![Here will be the header](docs/img/README header.png)
+
 Garlic is an in-progress C++ database project with a custom SQL parser, AST, and REPL-style execution loop.
 
 ## Status
