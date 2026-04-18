@@ -3,7 +3,7 @@
 
 namespace garlic {
 
-class Validateable {
+class CanBeValidated {
 public:
     /// Checks if given node is valid and may be resolved without semantic errors.
     /*! @returns std::optional if expression is valid; StringType with error message overwise. */
@@ -27,7 +27,7 @@ protected:
 	return std::nullopt;
     }
 
-    Validateable(TypeRules::TypeOrError toe)
+    CanBeValidated(TypeRules::TypeOrError toe)
     : type_or_err_{ toe }
     {}
 

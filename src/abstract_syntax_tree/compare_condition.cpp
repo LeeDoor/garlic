@@ -33,7 +33,7 @@ bool CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
 }
 
 std::optional<StringType> CompareCondition::validate() const {
-    return Validateable::validate(lhs_->get_type(), rhs_->get_type());
+    return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
 }
 
 }

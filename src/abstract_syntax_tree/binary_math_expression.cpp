@@ -11,7 +11,7 @@ BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression
 {}
 
 std::optional<StringType> BinaryMathExpression::validate() const {
-    return Validateable::validate(lhs_->get_type(), rhs_->get_type());
+    return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
 }
 sptr<CellValue> BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
     sptr<CellAcceptMathOp> 
