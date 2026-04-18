@@ -5,7 +5,7 @@ namespace garlic {
 
 auto gatherer_mock = std::make_shared<::testing::StrictMock<TableValueGathererMock>>();
 
-static sptr<CellComparable> as_comparable(Expression::ExpectedCellValue result) {
+static sptr<CellComparable> as_comparable(ExpectedCellValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
     if(!result) return nullptr;
     auto value = std::dynamic_pointer_cast<CellComparable>(*result);

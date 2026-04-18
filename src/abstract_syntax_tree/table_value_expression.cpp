@@ -9,7 +9,7 @@ TableValueExpression::TableValueExpression(std::string column_name, CellType typ
 
 std::optional<StringType> TableValueExpression::validate() const { return std::nullopt; }
 
-TableValueExpression::ExpectedCellValue TableValueExpression::get_value(sptr<TableValueGatherer> gatherer) const {
+ExpectedCellValue TableValueExpression::get_value(sptr<TableValueGatherer> gatherer) const {
     return gatherer->get_table_value(column_name_);
 }
 

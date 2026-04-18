@@ -1,6 +1,7 @@
 #pragma once
 #include "table_value_gatherer.hpp"
 #include "validateable.hpp"
+#include "expected_cell_value.hpp"
 
 namespace garlic {
 
@@ -9,8 +10,6 @@ namespace garlic {
 class Expression : public CanBeValidated {
 public:
     virtual ~Expression() = default;
-    using ErrorType = StringType;
-    using ExpectedCellValue = std::expected<sptr<CellValue>, ErrorType>;
 
     Expression(TypeRules::TypeOrError type_or_err)
     : CanBeValidated{ type_or_err }

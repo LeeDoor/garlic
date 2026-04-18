@@ -13,7 +13,7 @@ BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression
 std::optional<StringType> BinaryMathExpression::validate() const {
     return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
 }
-BinaryMathExpression::ExpectedCellValue BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
+ExpectedCellValue BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
     const auto lvalue = lhs_->get_value(gatherer); if(!lvalue) return lvalue;
     const auto rvalue = rhs_->get_value(gatherer); if(!rvalue) return rvalue;
     sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);

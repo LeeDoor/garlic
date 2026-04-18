@@ -13,8 +13,6 @@ public:
     std::optional<StringType> validate() const override;
     ExpectedCellValue get_value(sptr<TableValueGatherer> gatherer) const override;
 private:
-    static std::expected<sptr<CellAcceptMathOp>, ErrorType> to_cell_accepting_math(ExpectedCellValue cell_value);
-
     sptr<Expression> lhs_, rhs_;
     BinaryMathOperator op_;
 };

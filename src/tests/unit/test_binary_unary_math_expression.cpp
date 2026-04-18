@@ -5,7 +5,7 @@
 
 namespace garlic {
 
-static sptr<CellValue> unwrap_value(Expression::ExpectedCellValue result) {
+static sptr<CellValue> unwrap_value(ExpectedCellValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
     return result ? *result : nullptr;
 }
