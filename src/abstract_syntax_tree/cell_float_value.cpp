@@ -28,30 +28,30 @@ bool CellFloatValue::gt(sptr<CellValue> other) const {
     return !fl_equals(other) && get_float() > number_to_float(other);
 }
 
-sptr<CellValue> CellFloatValue::add(sptr<CellValue> other) const {
+ExpectedCellValue CellFloatValue::add(sptr<CellValue> other) const {
     FloatType new_value = get_float() + number_to_float(other);
     return std::make_shared<CellFloatValue>(new_value);
 }
-sptr<CellValue> CellFloatValue::sub(sptr<CellValue> other) const {
+ExpectedCellValue CellFloatValue::sub(sptr<CellValue> other) const {
     FloatType new_value = get_float() - number_to_float(other);
     return std::make_shared<CellFloatValue>(new_value);
 }
-sptr<CellValue> CellFloatValue::mul(sptr<CellValue> other) const {
+ExpectedCellValue CellFloatValue::mul(sptr<CellValue> other) const {
     FloatType new_value = get_float() * number_to_float(other);
     return std::make_shared<CellFloatValue>(new_value);
 }
-sptr<CellValue> CellFloatValue::div(sptr<CellValue> other) const {
+ExpectedCellValue CellFloatValue::div(sptr<CellValue> other) const {
     FloatType new_value = get_float() / number_to_float(other);
     return std::make_shared<CellFloatValue>(new_value);
 }
-sptr<CellValue> CellFloatValue::remdiv(sptr<CellValue> other) const {
+ExpectedCellValue CellFloatValue::remdiv(sptr<CellValue> other) const {
     FloatType new_value = std::fmod(get_float(), number_to_float(other));
     return std::make_shared<CellFloatValue>(new_value);
 }
-sptr<CellValue> CellFloatValue::abs() const {
+ExpectedCellValue CellFloatValue::abs() const {
     return std::make_shared<CellFloatValue>(std::fabs(value_));
 }
-sptr<CellValue> CellFloatValue::neg() const {
+ExpectedCellValue CellFloatValue::neg() const {
     return std::make_shared<CellFloatValue>(value_ * -1.0f);
 }
 

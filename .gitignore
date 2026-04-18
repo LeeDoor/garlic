@@ -5,3 +5,4 @@ generated/
 debug.txt
 __pycache__/
 *.py[cod]
+.codex

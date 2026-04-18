@@ -4,6 +4,17 @@
 
 namespace garlic {
 
+static sptr<CellValue> unwrap_value(ExpectedCellValue value) {
+    EXPECT_TRUE(value.has_value()) << value.error();
+    return value ? *value : nullptr;
+}
+
+static sptr<CellAcceptMathOp> must_math(ExpectedCellValue value) {
+    auto math = std::dynamic_pointer_cast<CellAcceptMathOp>(unwrap_value(std::move(value)));
+    EXPECT_NE(math, nullptr);
+    return math;
+}
+
 static IntType as_int(const sptr<CellValue>& value) {
     auto p = std::dynamic_pointer_cast<CellIntValue>(value);
     EXPECT_NE(p, nullptr);
@@ -16,30 +27,24 @@ static FloatType as_float(const sptr<CellValue>& value) {
     return p->get_float();
 }
 
-static sptr<CellAcceptMathOp> as_math(const sptr<CellValue>& value) {
-    auto p = std::dynamic_pointer_cast<CellAcceptMathOp>(value);
-    EXPECT_NE(p, nullptr);
-    return p;
-}
-
 TEST(test_math_expression, simpleIntMath) {
     auto a = std::make_shared<CellIntValue>(9);
     auto b = std::make_shared<CellIntValue>(4);
 
-    EXPECT_EQ(as_int(a->add(b)), 13);
-    EXPECT_EQ(as_int(a->sub(b)), 5);
-    EXPECT_EQ(as_int(a->mul(b)), 36);
-    EXPECT_EQ(as_int(a->div(b)), 2);
+    EXPECT_EQ(as_int(unwrap_value(a->add(b))), 13);
+    EXPECT_EQ(as_int(unwrap_value(a->sub(b))), 5);
+    EXPECT_EQ(as_int(unwrap_value(a->mul(b))), 36);
+    EXPECT_EQ(as_int(unwrap_value(a->div(b))), 2);
 }
 
 TEST(test_math_expression, simpleFloatMath) {
     auto a = std::make_shared<CellFloatValue>(9.5f);
     auto b = std::make_shared<CellFloatValue>(4.0f);
 
-    EXPECT_FLOAT_EQ(as_float(a->add(b)), 13.5f);
-    EXPECT_FLOAT_EQ(as_float(a->sub(b)), 5.5f);
-    EXPECT_FLOAT_EQ(as_float(a->mul(b)), 38.0f);
-    EXPECT_FLOAT_EQ(as_float(a->div(b)), 2.375f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(a->add(b))), 13.5f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(a->sub(b))), 5.5f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(a->mul(b))), 38.0f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(a->div(b))), 2.375f);
 }
 
 TEST(test_math_expression, intDivisionShouldTruncate) {
@@ -47,8 +52,9 @@ TEST(test_math_expression, intDivisionShouldTruncate) {
     auto six = std::make_shared<CellIntValue>(6);
 
     auto result = five->div(six);
-    EXPECT_EQ(result->get_type(), Int);
-    EXPECT_EQ(as_int(result), 0);
+    ASSERT_TRUE(result.has_value()) << result.error();
+    EXPECT_EQ((*result)->get_type(), Int);
+    EXPECT_EQ(as_int(*result), 0);
 }
 
 TEST(test_math_expression, mixedIntAndFloatShouldReturnFloat) {
@@ -59,13 +65,17 @@ TEST(test_math_expression, mixedIntAndFloatShouldReturnFloat) {
     auto f_plus_i = f->add(i);
     auto i_div_f = i->div(f);
 
-    EXPECT_EQ(i_plus_f->get_type(), Float);
-    EXPECT_EQ(f_plus_i->get_type(), Float);
-    EXPECT_EQ(i_div_f->get_type(), Float);
+    ASSERT_TRUE(i_plus_f.has_value()) << i_plus_f.error();
+    ASSERT_TRUE(f_plus_i.has_value()) << f_plus_i.error();
+    ASSERT_TRUE(i_div_f.has_value()) << i_div_f.error();
 
-    EXPECT_FLOAT_EQ(as_float(i_plus_f), 7.0f);
-    EXPECT_FLOAT_EQ(as_float(f_plus_i), 7.0f);
-    EXPECT_FLOAT_EQ(as_float(i_div_f), 2.5f);
+    EXPECT_EQ((*i_plus_f)->get_type(), Float);
+    EXPECT_EQ((*f_plus_i)->get_type(), Float);
+    EXPECT_EQ((*i_div_f)->get_type(), Float);
+
+    EXPECT_FLOAT_EQ(as_float(*i_plus_f), 7.0f);
+    EXPECT_FLOAT_EQ(as_float(*f_plus_i), 7.0f);
+    EXPECT_FLOAT_EQ(as_float(*i_div_f), 2.5f);
 }
 
 TEST(test_math_expression, bigIntegerExpression) {
@@ -75,9 +85,14 @@ TEST(test_math_expression, bigIntegerExpression) {
     auto v4 = std::make_shared<CellIntValue>(4000000);
     auto v5 = std::make_shared<CellIntValue>(7);
 
-    auto result = as_math(as_math(as_math(v1->add(v2))->mul(v3))->sub(v4))->div(v5);
-    EXPECT_EQ(result->get_type(), Int);
-    EXPECT_EQ(as_int(result), 714285);
+    auto result = must_math(
+        must_math(
+            must_math(v1->add(v2))->mul(v3)
+        )->sub(v4)
+    )->div(v5);
+    ASSERT_TRUE(result.has_value()) << result.error();
+    EXPECT_EQ((*result)->get_type(), Int);
+    EXPECT_EQ(as_int(*result), 714285);
 }
 
 TEST(test_math_expression, bigFloatExpression) {
@@ -87,9 +102,14 @@ TEST(test_math_expression, bigFloatExpression) {
     auto v4 = std::make_shared<CellIntValue>(3);
     auto v5 = std::make_shared<CellIntValue>(7);
 
-    auto result = as_math(as_math(as_math(v1->add(v2))->mul(v3))->sub(v4))->div(v5);
-    EXPECT_EQ(result->get_type(), Float);
-    EXPECT_NEAR(as_float(result), 32.0f / 7.0f, 1e-6f);
+    auto result = must_math(
+        must_math(
+            must_math(v1->add(v2))->mul(v3)
+        )->sub(v4)
+    )->div(v5);
+    ASSERT_TRUE(result.has_value()) << result.error();
+    EXPECT_EQ((*result)->get_type(), Float);
+    EXPECT_NEAR(as_float(*result), 32.0f / 7.0f, 1e-6f);
 }
 
 TEST(test_math_expression, intRemainderShouldBehaveAsModulo) {
@@ -97,8 +117,9 @@ TEST(test_math_expression, intRemainderShouldBehaveAsModulo) {
     auto b = std::make_shared<CellIntValue>(5);
 
     auto result = a->remdiv(b);
-    EXPECT_EQ(result->get_type(), Int);
-    EXPECT_EQ(as_int(result), 2);
+    ASSERT_TRUE(result.has_value()) << result.error();
+    EXPECT_EQ((*result)->get_type(), Int);
+    EXPECT_EQ(as_int(*result), 2);
 }
 
 TEST(test_math_expression, arithmeticWithStringShouldThrow) {

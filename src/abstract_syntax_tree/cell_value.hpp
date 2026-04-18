@@ -23,8 +23,6 @@ const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function 
 class CellValue {
 public:
     virtual ~CellValue() = default;
-    using ErrorType = StringType;
-    using ExpectedCellValue = std::expected<sptr<CellValue>, ErrorType>;
 
     /// Get the enum type of underlying object.
     CellType get_type() const { return cell_type_; }

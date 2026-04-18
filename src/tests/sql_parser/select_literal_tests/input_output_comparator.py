@@ -12,6 +12,7 @@ ERROR_WILDCARDS = {
     "<LEXICAL_ERROR>": lambda line: line.startswith("[LEXICAL_ERROR]"),
     "<SYNTAX_ERROR>": lambda line: line.startswith("[SYNTAX_ERROR]"),
     "<SEMANTIC_ERROR>": lambda line: line.startswith("[SEMANTIC_ERROR]"),
+    "<RUNTIME_ERROR>": lambda line: line.startswith("[RUNTIME_ERROR]"),
 }
 LOCATION_ERROR_PREFIX_RE = re.compile(r"^\[[A-Z_]+_ERROR\] at \[\d+\.\d+\]$")
 
@@ -422,6 +423,7 @@ def main():
     lexical_error_tests = find_error_tests("LEXICAL_ERROR")
     syntax_error_tests = find_error_tests("SYNTAX_ERROR")
     semantic_error_tests = find_error_tests("SEMANTIC_ERROR")
+    runtime_error_tests = find_error_tests("RUNTIME_ERROR")
 
     if (
         not test_pairs
@@ -430,6 +432,7 @@ def main():
         and not lexical_error_tests
         and not syntax_error_tests
         and not semantic_error_tests
+        and not runtime_error_tests
     ):
         script_dir = Path(__file__).parent
         print(f"No test files found in {script_dir}")
@@ -441,7 +444,8 @@ def main():
         f"{len(location_cli_test_pairs)} CLI location test(s), "
         f"{len(lexical_error_tests)} lexical error test(s), "
         f"{len(syntax_error_tests)} syntax error test(s), "
-        f"{len(semantic_error_tests)} semantic error test(s)"
+        f"{len(semantic_error_tests)} semantic error test(s), "
+        f"{len(runtime_error_tests)} runtime error test(s)"
     )
 
     for i, (input_file, expected_file) in enumerate(test_pairs, 1):
@@ -483,6 +487,12 @@ def main():
     for i, input_file in enumerate(semantic_error_tests, 1):
         print(f"Running semantic error test {i}: {input_file.name}")
         if not run_error_prefix_test(executable, input_file, "[SEMANTIC_ERROR]"):
+            print(f"\nTest failed: {input_file.stem}")
+            sys.exit(1)
+
+    for i, input_file in enumerate(runtime_error_tests, 1):
+        print(f"Running runtime error test {i}: {input_file.name}")
+        if not run_error_prefix_test(executable, input_file, "[RUNTIME_ERROR]"):
             print(f"\nTest failed: {input_file.stem}")
             sys.exit(1)
 

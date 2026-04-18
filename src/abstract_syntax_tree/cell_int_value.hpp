@@ -21,13 +21,13 @@ public:
     bool gt(sptr<CellValue> other) const override;
     void format(std::ostream& os) const override;
 
-    sptr<CellValue> add(sptr<CellValue> other) const override;
-    sptr<CellValue> sub(sptr<CellValue> other) const override;
-    sptr<CellValue> mul(sptr<CellValue> other) const override;
-    sptr<CellValue> div(sptr<CellValue> other) const override;
-    sptr<CellValue> remdiv(sptr<CellValue> other) const override;
-    sptr<CellValue> abs() const override;
-    sptr<CellValue> neg() const override;
+    ExpectedCellValue add(sptr<CellValue> other) const override;
+    ExpectedCellValue sub(sptr<CellValue> other) const override;
+    ExpectedCellValue mul(sptr<CellValue> other) const override;
+    ExpectedCellValue div(sptr<CellValue> other) const override;
+    ExpectedCellValue remdiv(sptr<CellValue> other) const override;
+    ExpectedCellValue abs() const override;
+    ExpectedCellValue neg() const override;
 
 protected:
     IntType value_;

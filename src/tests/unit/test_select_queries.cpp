@@ -59,7 +59,7 @@ TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
     ConditionSelectQuery query(std::make_unique<ThrowingCondition>());
-    EXPECT_EQ(query.resolve(gatherer_)->format(), "condition resolve failed");
+    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] condition resolve failed");
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBasicNumber) {
@@ -114,7 +114,7 @@ TEST_F(TestSelectQueries, expressionStringFormatsVeryLargeValue) {
 
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
     ExpressionSelectQuery query(std::make_unique<ThrowingExpression>());
-    EXPECT_EQ(query.resolve(gatherer_)->format(), "expression evaluate failed");
+    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] expression evaluate failed");
 }
 
 }
