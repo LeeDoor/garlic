@@ -1,0 +1,2 @@
+SELECT 10 / 0;
+SELECT 10 % 0;

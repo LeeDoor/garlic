@@ -1,1 +1,0 @@
-SELECT 1 = 1 AND OR 2 = 2;
