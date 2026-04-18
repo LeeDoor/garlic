@@ -18,8 +18,8 @@ TEST(test_cell_string_value, temporaryStringShouldBeSafeAfterConstruction) {
 }
 
 TEST(test_cell_string_value, delegatedComparisonOperationsShouldWork) {
-    sptr<CellValue> lhs = std::make_shared<CellStringValue>(StringType("abc"));
-    sptr<CellValue> rhs = std::make_shared<CellStringViewValue>("abd"sv);
+    sptr<CellComparable> lhs = std::make_shared<CellStringValue>(StringType("abc"));
+    sptr<CellComparable> rhs = std::make_shared<CellStringViewValue>("abd"sv);
 
     EXPECT_FALSE(lhs->equals(rhs));
     EXPECT_TRUE(lhs->lt(rhs));

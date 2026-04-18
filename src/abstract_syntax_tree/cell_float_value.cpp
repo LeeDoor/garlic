@@ -3,7 +3,7 @@
 
 namespace garlic {
 CellFloatValue::CellFloatValue(FloatType value)
-: CellAcceptMathOp(Float)
+: CellValue{ Float }
 , value_{ value }
 {}
 

@@ -4,6 +4,7 @@
 #include "cell_string_view_value.hpp"
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
+#include "cell_comparable.hpp"
 
 namespace garlic {
 class TableValueGathererFixture : public ::testing::Test {
@@ -57,9 +58,16 @@ TEST_F(TableValueGathererFixture, accessingData_0ByDefault) {
     sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
     sptr<CellValue> cellint = tvg->get_table_value("Int field");
 
-    EXPECT_TRUE(cellstr->equals(std::make_shared<CellStringViewValue>(str_Aboba10)));
-    EXPECT_TRUE(cellfloat->equals(std::make_shared<CellFloatValue>(1.6f)));
-    EXPECT_TRUE(cellint->equals(std::make_shared<CellIntValue>(1)));
+    auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
+    auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
+    auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+    ASSERT_NE(cmp_str, nullptr);
+    ASSERT_NE(cmp_float, nullptr);
+    ASSERT_NE(cmp_int, nullptr);
+
+    EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_Aboba10)));
+    EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1.6f)));
+    EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(1)));
 }
 
 TEST_F(TableValueGathererFixture, accessingData_rowSelect) {
@@ -70,9 +78,16 @@ TEST_F(TableValueGathererFixture, accessingData_rowSelect) {
     sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
     sptr<CellValue> cellint = tvg->get_table_value("Int field");
 
-    EXPECT_TRUE(cellstr->equals(std::make_shared<CellStringViewValue>(str_TEST2026)));
-    EXPECT_TRUE(cellfloat->equals(std::make_shared<CellFloatValue>(1e10f + 5)));
-    EXPECT_TRUE(cellint->equals(std::make_shared<CellIntValue>(INT_MAX - 2024)));
+    auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
+    auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
+    auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+    ASSERT_NE(cmp_str, nullptr);
+    ASSERT_NE(cmp_float, nullptr);
+    ASSERT_NE(cmp_int, nullptr);
+
+    EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_TEST2026)));
+    EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1e10f + 5)));
+    EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(INT_MAX - 2024)));
 }
 
 TEST_F(TableValueGathererFixture, wrongRowNumber_shouldThrowLogic) {

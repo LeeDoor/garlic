@@ -17,8 +17,10 @@ sptr<CellValue> BinaryMathExpression::get_value(sptr<TableValueGatherer> gathere
     sptr<CellAcceptMathOp> 
 	lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(lhs_->get_value(gatherer)),
 	rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(rhs_->get_value(gatherer));
+
+    // TODO calculate lhs and rhs separately and if one of them is CellErrorType, return it.
     if(!lhs || !rhs)
-	throw std::logic_error("Invalid math operation on operands not allowing such actions");
+	throw std::logic_error("Invalid math operation on operands not allowing such actions"); 
     switch(op_) {
     case Add:
 	return lhs->add(rhs);

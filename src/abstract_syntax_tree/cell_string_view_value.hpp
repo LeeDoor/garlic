@@ -1,9 +1,10 @@
 #pragma once
+#include "cell_comparable.hpp"
 #include "cell_value.hpp"
 
 namespace garlic {
 
-class CellStringViewValue : public CellValue {
+class CellStringViewValue : public CellComparable {
 public:
     CellStringViewValue(StringViewType value);
     virtual ~CellStringViewValue() = default;

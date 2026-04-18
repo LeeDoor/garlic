@@ -1,5 +1,5 @@
 #include "compare_condition.hpp"
-#include "cell_value.hpp"
+#include "cell_comparable.hpp"
 #include "expression.hpp"
 
 namespace garlic {
@@ -12,8 +12,9 @@ CompareCondition::CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, B
 {}
 
 bool CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
-    auto lhs = lhs_->get_value(gatherer),
-	 rhs = rhs_->get_value(gatherer);
+    sptr<CellComparable> 
+	lhs = std::dynamic_pointer_cast<CellComparable>(lhs_->get_value(gatherer)),
+	rhs = std::dynamic_pointer_cast<CellComparable>(rhs_->get_value(gatherer));
     switch(operator_) {
     case Eq:
 	return lhs->equals(rhs);

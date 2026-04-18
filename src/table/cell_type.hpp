@@ -26,7 +26,7 @@ template<typename T>
 concept IsAnyColumnType = IsStoringColumnType<T> || IsReadonlyColumnType<T>;
 
 enum CellType {
-    String, Int, Float, Boolean
+    String, Int, Float, Boolean, Error
 };
 
 }

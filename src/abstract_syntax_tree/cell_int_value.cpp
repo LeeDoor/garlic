@@ -4,7 +4,7 @@
 namespace garlic {
 
 CellIntValue::CellIntValue(IntType value)
-: CellAcceptMathOp(Int)
+: CellValue{ Int }
 , value_{ value }
 {}
 

@@ -1,11 +1,12 @@
 #pragma once
 #include "cell_accept_math_op.hpp"
+#include "cell_comparable.hpp"
 
 namespace garlic {
 
 class CellFloatValue;
 
-class CellIntValue : public CellAcceptMathOp {
+class CellIntValue : public CellComparable, public CellAcceptMathOp {
 public:
     CellIntValue(IntType value);
 
