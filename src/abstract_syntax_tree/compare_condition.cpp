@@ -29,7 +29,7 @@ bool CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
     case Le:
 	return lhs->le(rhs);
     default:
-	throw std::logic_error("CompareCondition::resolve(gatherer) binary operator not implemented");
+	std::unreachable();
     }
 }
 
