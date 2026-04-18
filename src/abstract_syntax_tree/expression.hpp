@@ -9,6 +9,8 @@ namespace garlic {
 class Expression : public CanBeValidated {
 public:
     virtual ~Expression() = default;
+    using ErrorType = StringType;
+    using ExpectedCellValue = std::expected<sptr<CellValue>, ErrorType>;
 
     Expression(TypeRules::TypeOrError type_or_err)
     : CanBeValidated{ type_or_err }
@@ -16,7 +18,7 @@ public:
     
     /// Resolves underlying subexpressions or values and forms the @ref CellValue object.
     /*! @throws std::logic_error may throw if did not validate first. */
-    virtual sptr<CellValue> get_value(sptr<TableValueGatherer> gatherer) const = 0;
+    virtual ExpectedCellValue get_value(sptr<TableValueGatherer> gatherer) const = 0;
 };
 
 }

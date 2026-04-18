@@ -11,7 +11,7 @@ public:
 
     std::optional<StringType> validate() const override;
 
-    sptr<CellValue> get_value(sptr<TableValueGatherer> gatherer) const override;
+    ExpectedCellValue get_value(sptr<TableValueGatherer> gatherer) const override;
 
 private:
     sptr<Expression> operand_;

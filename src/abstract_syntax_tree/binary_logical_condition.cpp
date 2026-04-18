@@ -9,16 +9,18 @@ BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Conditi
 , op_{ op }
 {}
 
-bool BinaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
+BinaryLogicalCondition::ExpectedBoolean BinaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
+    auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return lvalue;
+    auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;
     switch(op_) {
 	case And:
-	    return lhs_->resolve(gatherer) && rhs_->resolve(gatherer);
+	    return *lvalue && *rvalue;
 	case Or:
-	    return lhs_->resolve(gatherer) || rhs_->resolve(gatherer);
+	    return *lvalue || *rvalue;
 	case Xor:
-	    return lhs_->resolve(gatherer) ^  rhs_->resolve(gatherer);
+	    return *lvalue ^  *rvalue;
 	case IfAndOnlyIf:
-	    return lhs_->resolve(gatherer) == rhs_->resolve(gatherer);
+	    return *lvalue == *rvalue;
     }
     throw std::logic_error("BinaryLogicalCondition: not all switch cases populated");
 }

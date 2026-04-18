@@ -13,12 +13,12 @@ BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression
 std::optional<StringType> BinaryMathExpression::validate() const {
     return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
 }
-sptr<CellValue> BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
-    sptr<CellAcceptMathOp> 
-	lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(lhs_->get_value(gatherer)),
-	rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(rhs_->get_value(gatherer));
+BinaryMathExpression::ExpectedCellValue BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
+    const auto lvalue = lhs_->get_value(gatherer); if(!lvalue) return lvalue;
+    const auto rvalue = rhs_->get_value(gatherer); if(!rvalue) return rvalue;
+    sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);
+    sptr<CellAcceptMathOp> rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*rvalue);
 
-    // TODO calculate lhs and rhs separately and if one of them is CellErrorType, return it.
     if(!lhs || !rhs)
 	throw std::logic_error("Invalid math operation on operands not allowing such actions"); 
     switch(op_) {
@@ -29,7 +29,7 @@ sptr<CellValue> BinaryMathExpression::get_value(sptr<TableValueGatherer> gathere
     case Div:
 	return lhs->div(rhs);
     case Mul:
-	return lhs->mul(rhs);
+	return lhs->mul(rhs);	
     case Remdiv:
 	return lhs->remdiv(rhs);
     }

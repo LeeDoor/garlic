@@ -26,7 +26,9 @@ TEST_F(TestValueExpressionFixture, getValue) {
     EXPECT_CALL(*gatherer_, get_table_value("Name column"))
         .WillOnce(Return(test_int_value_));
 
-    auto comparable_value = std::dynamic_pointer_cast<CellComparable>(expr.get_value(gatherer_));
+    auto value = expr.get_value(gatherer_);
+    ASSERT_TRUE(value.has_value()) << value.error();
+    auto comparable_value = std::dynamic_pointer_cast<CellComparable>(*value);
     EXPECT_TRUE(comparable_value);
     EXPECT_TRUE(comparable_value->equals(test_int_value_));
 }

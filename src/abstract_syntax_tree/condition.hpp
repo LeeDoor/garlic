@@ -12,9 +12,12 @@ public:
 
     Condition(TypeRules::TypeOrError toe) : CanBeValidated{ toe } {}
 
+    using ErrorType = StringType;
+    using ExpectedBoolean = std::expected<bool, ErrorType>;
+
     /// Performs logical operations on underlying objects.
     /*! @throws std::logic_error may throw if did not validate first. */
-    virtual bool resolve(sptr<TableValueGatherer> gatherer) const = 0;
+    virtual ExpectedBoolean resolve(sptr<TableValueGatherer> gatherer) const = 0;
 };
 
 }

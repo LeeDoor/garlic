@@ -7,7 +7,10 @@
 
 namespace garlic {
 
-
+static bool unwrap_bool(Condition::ExpectedBoolean result) {
+    EXPECT_TRUE(result.has_value()) << result.error();
+    return result ? *result : false;
+}
 
 auto gatherer = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
 
@@ -41,12 +44,12 @@ TEST_F(TestCompareCondition, intComparison) {
     sptr<Condition> condle = create_condition(5, 12, Le);
     sptr<Condition> condlt = create_condition(5, 12, Lt);
 
-    EXPECT_FALSE(condeq->resolve(gatherer));
-    EXPECT_TRUE(condne->resolve(gatherer));
-    EXPECT_FALSE(condge->resolve(gatherer));
-    EXPECT_FALSE(condgt->resolve(gatherer));
-    EXPECT_TRUE(condle->resolve(gatherer));
-    EXPECT_TRUE(condlt->resolve(gatherer));
+    EXPECT_FALSE(unwrap_bool(condeq->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condne->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condge->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condgt->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condle->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condlt->resolve(gatherer)));
 }
 
 TEST_F(TestCompareCondition, floatComparison) {
@@ -63,17 +66,17 @@ TEST_F(TestCompareCondition, floatComparison) {
     sptr<Condition> condsamegt = create_condition(5.f, 5.f + half_ep, Gt);
     sptr<Condition> condsamelt = create_condition(5.f, 5.f + half_ep, Lt);
 
-    EXPECT_FALSE(condeq->resolve(gatherer));
-    EXPECT_TRUE(condne->resolve(gatherer));
-    EXPECT_FALSE(condge->resolve(gatherer));
-    EXPECT_FALSE(condgt->resolve(gatherer));
-    EXPECT_TRUE(condle->resolve(gatherer));
-    EXPECT_TRUE(condlt->resolve(gatherer));
-    EXPECT_TRUE(condsameeq->resolve(gatherer));
-    EXPECT_TRUE(condsamele->resolve(gatherer));
-    EXPECT_TRUE(condsamege->resolve(gatherer));
-    EXPECT_FALSE(condsamelt->resolve(gatherer));
-    EXPECT_FALSE(condsamegt->resolve(gatherer));
+    EXPECT_FALSE(unwrap_bool(condeq->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condne->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condge->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condgt->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condle->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condlt->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condsameeq->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condsamele->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condsamege->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condsamelt->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condsamegt->resolve(gatherer)));
 }
 
 TEST_F(TestCompareCondition, stringComparison) {
@@ -85,12 +88,12 @@ TEST_F(TestCompareCondition, stringComparison) {
     sptr<Condition> condlt = create_condition("Hello"s, "Test"s, Lt);
     sptr<Condition> condgt = create_condition("Hello"s, "Test"s, Gt);
 
-    EXPECT_FALSE(condeq->resolve(gatherer));
-    EXPECT_TRUE(condne->resolve(gatherer));
-    EXPECT_TRUE(condle->resolve(gatherer));
-    EXPECT_FALSE(condge->resolve(gatherer));
-    EXPECT_TRUE(condlt->resolve(gatherer));
-    EXPECT_FALSE(condgt->resolve(gatherer));
+    EXPECT_FALSE(unwrap_bool(condeq->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condne->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condle->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condge->resolve(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condlt->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condgt->resolve(gatherer)));
 }
 
 }

@@ -15,8 +15,8 @@ public:
     std::optional<StringType> validate() const override { 
 	throw std::logic_error("Unexpected call"); 
     }
-    bool resolve(sptr<TableValueGatherer>) const override {
-        throw std::logic_error("condition resolve failed");
+    ExpectedBoolean resolve(sptr<TableValueGatherer>) const override {
+        return std::unexpected("condition resolve failed");
     }
 };
 
@@ -26,8 +26,8 @@ public:
     std::optional<StringType> validate() const override { 
 	throw std::logic_error("Unexpected call"); 
     }
-    sptr<CellValue> get_value(sptr<TableValueGatherer>) const override {
-        throw std::logic_error("expression evaluate failed");
+    ExpectedCellValue get_value(sptr<TableValueGatherer>) const override {
+        return std::unexpected("expression evaluate failed");
     }
 };
 
@@ -59,8 +59,7 @@ TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
     ConditionSelectQuery query(std::make_unique<ThrowingCondition>());
-
-    EXPECT_THROW(query.resolve(gatherer_), std::logic_error);
+    EXPECT_EQ(query.resolve(gatherer_)->format(), "condition resolve failed");
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBasicNumber) {
@@ -115,8 +114,7 @@ TEST_F(TestSelectQueries, expressionStringFormatsVeryLargeValue) {
 
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
     ExpressionSelectQuery query(std::make_unique<ThrowingExpression>());
-
-    EXPECT_THROW(query.resolve(gatherer_), std::logic_error);
+    EXPECT_EQ(query.resolve(gatherer_)->format(), "expression evaluate failed");
 }
 
 }

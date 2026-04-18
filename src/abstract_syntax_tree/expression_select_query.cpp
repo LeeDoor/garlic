@@ -10,8 +10,10 @@ ExpressionSelectQuery::ExpressionSelectQuery(sptr<Expression> expr)
 
 sptr<QueryResult> ExpressionSelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
     auto result = expression_->get_value(gatherer);
+    if(!result) return std::make_unique<StringQueryResult>(result.error());
+
     std::stringstream ss;
-    result->format(ss);
+    (*result)->format(ss);
     return std::make_unique<StringQueryResult>(ss.str());
 }
 

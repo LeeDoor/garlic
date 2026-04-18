@@ -3,6 +3,12 @@
 #include "table_value_gatherer_mock.hpp"
 
 namespace garlic {
+
+static bool unwrap_bool(Condition::ExpectedBoolean result) {
+    EXPECT_TRUE(result.has_value()) << result.error();
+    return result ? *result : false;
+}
+
 std::ostream& operator<<(std::ostream& os, UnaryLogicalOperator op) {
     switch(op) {
         case IsTrue:
@@ -37,7 +43,7 @@ protected:
         for(int i = 0; i < TABLE_SIZE; ++i) {
             auto& inp = table_inp[i];
             auto cond = create(inp, op);
-            actual[i] = cond->resolve(gatherer);
+            actual[i] = unwrap_bool(cond->resolve(gatherer));
             failed |= actual[i] != table_expected[i];
         }
         if(failed) {

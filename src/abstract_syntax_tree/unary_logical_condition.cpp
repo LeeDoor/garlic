@@ -8,12 +8,13 @@ UnaryLogicalCondition::UnaryLogicalCondition(sptr<Condition> condition, UnaryLog
 , op_{ op }
 {}
 
-bool UnaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
+UnaryLogicalCondition::ExpectedBoolean UnaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
+    auto value = cond_->resolve(gatherer); if(!value) return value;
     switch(op_) {
     case IsTrue:
-	return cond_->resolve(gatherer);
+	return value.value();
     case IsFalse:
-	return !cond_->resolve(gatherer);
+	return !value.value();
     }
     throw std::logic_error("UnaryLogicalCondition: not all switch cases populated");
 }

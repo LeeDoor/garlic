@@ -5,6 +5,11 @@
 
 namespace garlic {
 
+static sptr<CellValue> unwrap_value(Expression::ExpectedCellValue result) {
+    EXPECT_TRUE(result.has_value()) << result.error();
+    return result ? *result : nullptr;
+}
+
 static IntType as_int(const sptr<CellValue>& value) {
     auto p = std::dynamic_pointer_cast<CellIntValue>(value);
     EXPECT_NE(p, nullptr);
@@ -22,11 +27,11 @@ TEST(test_binary_math_expression, intOperators) {
     auto lhs = std::make_shared<IntConstExpr>(17);
     auto rhs = std::make_shared<IntConstExpr>(5);
 
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Add).get_value(g)), 22);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Sub).get_value(g)), 12);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Mul).get_value(g)), 85);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Div).get_value(g)), 3);
-    EXPECT_EQ(as_int(BinaryMathExpression(lhs, rhs, Remdiv).get_value(g)), 2);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Add).get_value(g))), 22);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Sub).get_value(g))), 12);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Mul).get_value(g))), 85);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Div).get_value(g))), 3);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Remdiv).get_value(g))), 2);
 }
 
 TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
@@ -38,12 +43,16 @@ TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
     auto div_res = BinaryMathExpression(lhs, rhs, Div).get_value(g);
     auto rem_res = BinaryMathExpression(lhs, rhs, Remdiv).get_value(g);
 
-    EXPECT_EQ(add_res->get_type(), Float);
-    EXPECT_EQ(div_res->get_type(), Float);
-    EXPECT_EQ(rem_res->get_type(), Float);
-    EXPECT_FLOAT_EQ(as_float(add_res), 7.0f);
-    EXPECT_FLOAT_EQ(as_float(div_res), 2.5f);
-    EXPECT_FLOAT_EQ(as_float(rem_res), 1.0f);
+    ASSERT_TRUE(add_res.has_value()) << add_res.error();
+    ASSERT_TRUE(div_res.has_value()) << div_res.error();
+    ASSERT_TRUE(rem_res.has_value()) << rem_res.error();
+
+    EXPECT_EQ((*add_res)->get_type(), Float);
+    EXPECT_EQ((*div_res)->get_type(), Float);
+    EXPECT_EQ((*rem_res)->get_type(), Float);
+    EXPECT_FLOAT_EQ(as_float(*add_res), 7.0f);
+    EXPECT_FLOAT_EQ(as_float(*div_res), 2.5f);
+    EXPECT_FLOAT_EQ(as_float(*rem_res), 1.0f);
 }
 
 TEST(test_binary_math_expression, operandWithoutMathSupportShouldThrow) {
@@ -59,16 +68,16 @@ TEST(test_unary_math_expression, absAndNegForInt) {
     auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
     auto val = std::make_shared<IntConstExpr>(-17);
 
-    EXPECT_EQ(as_int(UnaryMathExpression(val, Abs).get_value(g)), 17);
-    EXPECT_EQ(as_int(UnaryMathExpression(val, Neg).get_value(g)), 17);
+    EXPECT_EQ(as_int(unwrap_value(UnaryMathExpression(val, Abs).get_value(g))), 17);
+    EXPECT_EQ(as_int(unwrap_value(UnaryMathExpression(val, Neg).get_value(g))), 17);
 }
 
 TEST(test_unary_math_expression, absAndNegForFloat) {
     auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
     auto val = std::make_shared<FloatConstExpr>(-2.5f);
 
-    EXPECT_FLOAT_EQ(as_float(UnaryMathExpression(val, Abs).get_value(g)), 2.5f);
-    EXPECT_FLOAT_EQ(as_float(UnaryMathExpression(val, Neg).get_value(g)), 2.5f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(UnaryMathExpression(val, Abs).get_value(g))), 2.5f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(UnaryMathExpression(val, Neg).get_value(g))), 2.5f);
 }
 
 TEST(test_unary_math_expression, operandWithoutMathSupportShouldThrow) {
@@ -91,8 +100,9 @@ TEST(test_binary_unary_math_expression, composedBigExpression) {
     auto rem = BinaryMathExpression(mul, std::make_shared<IntConstExpr>(7), Remdiv);
 
     auto result = rem.get_value(g);
-    EXPECT_EQ(result->get_type(), Int);
-    EXPECT_EQ(as_int(result), 6);
+    ASSERT_TRUE(result.has_value()) << result.error();
+    EXPECT_EQ((*result)->get_type(), Int);
+    EXPECT_EQ(as_int(*result), 6);
 }
 
 }

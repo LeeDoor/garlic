@@ -12,9 +12,9 @@ UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOper
 std::optional<StringType> UnaryMathExpression::validate() const { 
     return CanBeValidated::validate(operand_->get_type()); 
 }
-sptr<CellValue> UnaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
-    sptr<CellAcceptMathOp> 
-	operand = std::dynamic_pointer_cast<CellAcceptMathOp>(operand_->get_value(gatherer));
+UnaryMathExpression::ExpectedCellValue UnaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
+    const auto value = operand_->get_value(gatherer); if(!value) return value;
+    sptr<CellAcceptMathOp> operand = std::dynamic_pointer_cast<CellAcceptMathOp>(*value);
     if(!operand)
 	throw std::logic_error("Invalid math operation on operands not allowing such actions");
     switch(op_) {
