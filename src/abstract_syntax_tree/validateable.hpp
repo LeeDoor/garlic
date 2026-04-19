@@ -3,11 +3,14 @@
 
 namespace garlic {
 
+using InvalidError = StringType;
+using ExpectedValid = std::expected<void, InvalidError>;
+
 class CanBeValidated {
 public:
     /// Checks if given node is valid and may be resolved without semantic errors.
     /*! @returns std::optional if expression is valid; StringType with error message overwise. */
-    virtual std::optional<StringType> validate() const = 0;
+    virtual ExpectedValid validate() const = 0;
 
     /// Returns the type of underlying value or resulting type after some operation
     /// made by this Expression.
@@ -20,16 +23,16 @@ public:
     }
 
 protected:
-    std::optional<StringType> validate(CellType lhs, std::optional<CellType> rhs = std::nullopt) const {
-	if(auto error = std::get_if<TypeRules::OperationError>(&type_or_err_)) {
-	    return TypeRules::write_error(*error, lhs, rhs);
-	}
-	return std::nullopt;
-    }
-
     CanBeValidated(TypeRules::TypeOrError toe)
     : type_or_err_{ toe }
     {}
+
+    ExpectedValid validate(CellType lhs, std::optional<CellType> rhs = std::nullopt) const {
+	if(auto error = std::get_if<TypeRules::OperationError>(&type_or_err_)) {
+	    return std::unexpected(TypeRules::write_error(*error, lhs, rhs));
+	}
+	return ExpectedValid{};
+    }
 
     TypeRules::TypeOrError type_or_err_;
 };

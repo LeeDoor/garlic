@@ -37,8 +37,8 @@
     std::unique_ptr<T> mk_v(ParsingSession& session, Args&&... args) {
 	auto obj = std::make_unique<T>(std::forward<Args>(args)...);
 	if constexpr (requires (const T& t) { t.validate(); }) {
-	    if(auto error = obj->validate()) {
-		session.invoke_error(ErrorStage::SemanticAnalysis, *error);
+	    if(auto notanerror = obj->validate(); !notanerror) {
+		session.invoke_error(ErrorStage::SemanticAnalysis, notanerror.error());
 		return nullptr;
 	    }
 	}

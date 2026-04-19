@@ -9,7 +9,7 @@ UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOper
 , op_{ op }
 {}
 
-std::optional<StringType> UnaryMathExpression::validate() const { 
+ExpectedValid UnaryMathExpression::validate() const { 
     return CanBeValidated::validate(operand_->get_type()); 
 }
 ExpectedCellValue UnaryMathExpression::resolve(sptr<TableValueGatherer> gatherer) const {

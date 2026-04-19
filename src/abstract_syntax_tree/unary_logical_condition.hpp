@@ -9,7 +9,7 @@ public:
     UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
 
     ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const override;
-    std::optional<StringType> validate() const override { return std::nullopt; }
+    ExpectedValid validate() const override { return ExpectedValid{}; }
 
 protected:
     sptr<Condition> cond_;

@@ -9,7 +9,7 @@ public:
 
     ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const override;
     
-    std::optional<StringType> validate() const override;
+    ExpectedValid validate() const override;
     
 private:
     std::string column_name_;

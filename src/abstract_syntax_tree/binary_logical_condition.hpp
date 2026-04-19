@@ -9,8 +9,8 @@ public:
     BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
 
     ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const override;
-    std::optional<StringType> validate() const override
-	{ return std::nullopt; }
+    ExpectedValid validate() const override
+	{ return ExpectedValid{}; }
 
 protected:
     sptr<Condition> lhs_;

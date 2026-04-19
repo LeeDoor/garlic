@@ -6,7 +6,6 @@ namespace garlic {
 class TypeRules {
 public:
     TypeRules() = delete;
-    
 
     enum OperationError {
 	BinaryMath, UnaryMath, Comparison

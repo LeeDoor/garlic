@@ -17,7 +17,7 @@ public:
     , value_(std::move(value))
     {}
 
-    std::optional<StringType> validate() const override { return std::nullopt; }
+    ExpectedValid validate() const override { return ExpectedValid{}; }
 
     ExpectedCellValue resolve(sptr<TableValueGatherer>) const override {
         return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);

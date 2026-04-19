@@ -9,7 +9,7 @@ class UnaryMathExpression : public Expression {
 public:
     UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op);
 
-    std::optional<StringType> validate() const override;
+    ExpectedValid validate() const override;
 
     ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const override;
 

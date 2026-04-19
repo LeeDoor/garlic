@@ -10,7 +10,7 @@ BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression
 , op_ { op }
 {}
 
-std::optional<StringType> BinaryMathExpression::validate() const {
+ExpectedValid BinaryMathExpression::validate() const {
     return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
 }
 ExpectedCellValue BinaryMathExpression::resolve(sptr<TableValueGatherer> gatherer) const {
