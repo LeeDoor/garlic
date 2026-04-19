@@ -10,7 +10,7 @@ public:
     enum OperationError {
 	BinaryMath, UnaryMath, Comparison
     };
-    using TypeOrError = std::variant<CellType, OperationError>;
+    using TypeOrError = std::expected<CellType, OperationError>;
 
     template<CellType cell>
     static constexpr size_t get_type_size() {
@@ -72,13 +72,13 @@ public:
 	};
 	if(map.contains({ lhs, rhs }))
 	    return map.at({ lhs, rhs });
-	return BinaryMath;
+	return std::unexpected(BinaryMath);
     }
     static TypeOrError unary_math_comp(CellType op) {
 	std::vector<CellType> acceptable = { Int, Float };
 	if(std::find(acceptable.begin(), acceptable.end(), op) != acceptable.end())
 	    return op;
-	return UnaryMath;
+	return std::unexpected(UnaryMath);
     }
     static TypeOrError comparison_comp(CellType lhs, CellType rhs) {
 	static std::set<std::pair<CellType, CellType>> acceptable {
@@ -90,7 +90,7 @@ public:
 	};
 	if(acceptable.contains({ lhs, rhs }))
 	    return Boolean;
-	return Comparison;
+	return std::unexpected(Comparison);
     }
 };
 

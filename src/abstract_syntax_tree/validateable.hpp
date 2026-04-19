@@ -17,9 +17,7 @@ public:
     /*! @returns @ref CellType if type is valid. 
      *  @throws std::logic_error if type was not recognized. */
     virtual CellType get_type() const { 
-	if(auto res = std::get_if<CellType>(&type_or_err_)) 
-	    return *res; 
-	throw std::logic_error("trying to get type of invalid expression");
+	return type_or_err_.value();
     }
 
 protected:
@@ -28,10 +26,9 @@ protected:
     {}
 
     ExpectedValid validate(CellType lhs, std::optional<CellType> rhs = std::nullopt) const {
-	if(auto error = std::get_if<TypeRules::OperationError>(&type_or_err_)) {
-	    return std::unexpected(TypeRules::write_error(*error, lhs, rhs));
-	}
-	return ExpectedValid{};
+	if(type_or_err_.has_value())
+	    return ExpectedValid{};
+	return std::unexpected(TypeRules::write_error(type_or_err_.error(), lhs, rhs));
     }
 
     TypeRules::TypeOrError type_or_err_;
