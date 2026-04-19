@@ -27,11 +27,11 @@ TEST(test_binary_math_expression, intOperators) {
     auto lhs = std::make_shared<IntConstExpr>(17);
     auto rhs = std::make_shared<IntConstExpr>(5);
 
-    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Add).get_value(g))), 22);
-    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Sub).get_value(g))), 12);
-    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Mul).get_value(g))), 85);
-    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Div).get_value(g))), 3);
-    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Remdiv).get_value(g))), 2);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Add).resolve(g))), 22);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Sub).resolve(g))), 12);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Mul).resolve(g))), 85);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Div).resolve(g))), 3);
+    EXPECT_EQ(as_int(unwrap_value(BinaryMathExpression(lhs, rhs, Remdiv).resolve(g))), 2);
 }
 
 TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
@@ -39,9 +39,9 @@ TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
     auto lhs = std::make_shared<IntConstExpr>(5);
     auto rhs = std::make_shared<FloatConstExpr>(2.0f);
 
-    auto add_res = BinaryMathExpression(lhs, rhs, Add).get_value(g);
-    auto div_res = BinaryMathExpression(lhs, rhs, Div).get_value(g);
-    auto rem_res = BinaryMathExpression(lhs, rhs, Remdiv).get_value(g);
+    auto add_res = BinaryMathExpression(lhs, rhs, Add).resolve(g);
+    auto div_res = BinaryMathExpression(lhs, rhs, Div).resolve(g);
+    auto rem_res = BinaryMathExpression(lhs, rhs, Remdiv).resolve(g);
 
     ASSERT_TRUE(add_res.has_value()) << add_res.error();
     ASSERT_TRUE(div_res.has_value()) << div_res.error();
@@ -61,23 +61,23 @@ TEST(test_binary_math_expression, operandWithoutMathSupportShouldThrow) {
     auto rhs = std::make_shared<IntConstExpr>(2);
 
     BinaryMathExpression expr(lhs, rhs, Add);
-    EXPECT_THROW(expr.get_value(g), std::logic_error);
+    EXPECT_THROW(std::ignore = expr.resolve(g), std::logic_error);
 }
 
 TEST(test_unary_math_expression, absAndNegForInt) {
     auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
     auto val = std::make_shared<IntConstExpr>(-17);
 
-    EXPECT_EQ(as_int(unwrap_value(UnaryMathExpression(val, Abs).get_value(g))), 17);
-    EXPECT_EQ(as_int(unwrap_value(UnaryMathExpression(val, Neg).get_value(g))), 17);
+    EXPECT_EQ(as_int(unwrap_value(UnaryMathExpression(val, Abs).resolve(g))), 17);
+    EXPECT_EQ(as_int(unwrap_value(UnaryMathExpression(val, Neg).resolve(g))), 17);
 }
 
 TEST(test_unary_math_expression, absAndNegForFloat) {
     auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
     auto val = std::make_shared<FloatConstExpr>(-2.5f);
 
-    EXPECT_FLOAT_EQ(as_float(unwrap_value(UnaryMathExpression(val, Abs).get_value(g))), 2.5f);
-    EXPECT_FLOAT_EQ(as_float(unwrap_value(UnaryMathExpression(val, Neg).get_value(g))), 2.5f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(UnaryMathExpression(val, Abs).resolve(g))), 2.5f);
+    EXPECT_FLOAT_EQ(as_float(unwrap_value(UnaryMathExpression(val, Neg).resolve(g))), 2.5f);
 }
 
 TEST(test_unary_math_expression, operandWithoutMathSupportShouldThrow) {
@@ -85,7 +85,7 @@ TEST(test_unary_math_expression, operandWithoutMathSupportShouldThrow) {
     auto val = std::make_shared<StringConstExpr>("abc");
 
     UnaryMathExpression expr(val, Neg);
-    EXPECT_THROW(expr.get_value(g), std::logic_error);
+    EXPECT_THROW(std::ignore = expr.resolve(g), std::logic_error);
 }
 
 TEST(test_binary_unary_math_expression, composedBigExpression) {
@@ -99,7 +99,7 @@ TEST(test_binary_unary_math_expression, composedBigExpression) {
     auto mul = std::make_shared<BinaryMathExpression>(plus, std::make_shared<IntConstExpr>(3), Mul);
     auto rem = BinaryMathExpression(mul, std::make_shared<IntConstExpr>(7), Remdiv);
 
-    auto result = rem.get_value(g);
+    auto result = rem.resolve(g);
     ASSERT_TRUE(result.has_value()) << result.error();
     EXPECT_EQ((*result)->get_type(), Int);
     EXPECT_EQ(as_int(*result), 6);

@@ -12,8 +12,8 @@ CompareCondition::CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, B
 {}
 
 CompareCondition::ExpectedBoolean CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
-    auto lvalue = lhs_->get_value(gatherer); if(!lvalue) return std::unexpected(std::move(lvalue.error()));
-    auto rvalue = rhs_->get_value(gatherer); if(!rvalue) return std::unexpected(std::move(rvalue.error()));
+    auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return std::unexpected(std::move(lvalue.error()));
+    auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return std::unexpected(std::move(rvalue.error()));
     sptr<CellComparable> 
 	lhs = std::dynamic_pointer_cast<CellComparable>(*lvalue),
 	rhs = std::dynamic_pointer_cast<CellComparable>(*rvalue);

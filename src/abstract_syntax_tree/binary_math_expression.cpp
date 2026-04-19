@@ -13,9 +13,9 @@ BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression
 std::optional<StringType> BinaryMathExpression::validate() const {
     return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
 }
-ExpectedCellValue BinaryMathExpression::get_value(sptr<TableValueGatherer> gatherer) const {
-    const auto lvalue = lhs_->get_value(gatherer); if(!lvalue) return lvalue;
-    const auto rvalue = rhs_->get_value(gatherer); if(!rvalue) return rvalue;
+ExpectedCellValue BinaryMathExpression::resolve(sptr<TableValueGatherer> gatherer) const {
+    const auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return lvalue;
+    const auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;
     sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);
     sptr<CellAcceptMathOp> rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*rvalue);
 

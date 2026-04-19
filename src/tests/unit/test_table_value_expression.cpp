@@ -26,7 +26,7 @@ TEST_F(TestValueExpressionFixture, getValue) {
     EXPECT_CALL(*gatherer_, get_table_value("Name column"))
         .WillOnce(Return(test_int_value_));
 
-    auto value = expr.get_value(gatherer_);
+    auto value = expr.resolve(gatherer_);
     ASSERT_TRUE(value.has_value()) << value.error();
     auto comparable_value = std::dynamic_pointer_cast<CellComparable>(*value);
     EXPECT_TRUE(comparable_value);
@@ -39,7 +39,7 @@ TEST_F(TestValueExpressionFixture, thrownExceptionInGatherer_ShouldThrowToo) {
     EXPECT_CALL(*gatherer_, get_table_value("Name column"))
         .WillOnce(::testing::Throw(std::logic_error("manually generated exception")));
 
-    EXPECT_THROW(expr.get_value(gatherer_), std::logic_error);
+    EXPECT_THROW(expr.resolve(gatherer_), std::logic_error);
 }
 
 }

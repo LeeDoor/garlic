@@ -19,7 +19,7 @@ public:
 
     std::optional<StringType> validate() const override { return std::nullopt; }
 
-    ExpectedCellValue get_value(sptr<TableValueGatherer>) const override {
+    ExpectedCellValue resolve(sptr<TableValueGatherer>) const override {
         return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);
     }
 

@@ -8,7 +8,7 @@ ExpressionSelectQuery::ExpressionSelectQuery(sptr<Expression> expr)
 {}
 
 sptr<QueryResult> ExpressionSelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
-    auto result = expression_->get_value(gatherer);
+    auto result = expression_->resolve(gatherer);
     if(!result) return execute_error(result.error());
     std::stringstream ss;
     (*result)->format(ss);

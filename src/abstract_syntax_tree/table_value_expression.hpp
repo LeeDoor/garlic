@@ -7,7 +7,7 @@ class TableValueExpression : public Expression {
 public:
     TableValueExpression(std::string column_name, CellType type);
 
-    ExpectedCellValue get_value(sptr<TableValueGatherer> gatherer) const override;
+    ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const override;
     
     std::optional<StringType> validate() const override;
     

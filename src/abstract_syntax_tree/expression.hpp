@@ -17,7 +17,7 @@ public:
     
     /// Resolves underlying subexpressions or values and forms the @ref CellValue object.
     /*! @throws std::logic_error may throw if did not validate first. */
-    virtual ExpectedCellValue get_value(sptr<TableValueGatherer> gatherer) const = 0;
+    virtual ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const = 0;
 };
 
 }
