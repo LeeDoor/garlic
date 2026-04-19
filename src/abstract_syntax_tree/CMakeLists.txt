@@ -3,6 +3,7 @@ add_library(abstract_syntax_tree STATIC
     cell_float_value.cpp
     cell_int_value.cpp
     cell_string_view_value.cpp
+    cell_boolean_value.cpp
     compare_condition.cpp
     condition_select_query.cpp
     expression_select_query.cpp
