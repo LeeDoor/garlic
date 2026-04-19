@@ -8,12 +8,10 @@
 
 namespace garlic {
 
-static bool unwrap_bool(ExpectedCellValue result) {
+static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
     if(!result) return false;
-    auto bool_value = std::dynamic_pointer_cast<CellBooleanValue>(*result);
-    EXPECT_NE(bool_value, nullptr);
-    return bool_value ? bool_value->get_bool() : false;
+    return (*result)->get_bool();
 }
 
 auto gatherer = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
@@ -48,12 +46,12 @@ TEST_F(TestCompareCondition, intComparison) {
     sptr<Condition> condle = create_condition(5, 12, Le);
     sptr<Condition> condlt = create_condition(5, 12, Lt);
 
-    EXPECT_FALSE(unwrap_bool(condeq->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condne->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condge->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condgt->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condle->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condlt->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condne->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condge->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condle->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(gatherer)));
 }
 
 TEST_F(TestCompareCondition, floatComparison) {
@@ -70,17 +68,17 @@ TEST_F(TestCompareCondition, floatComparison) {
     sptr<Condition> condsamegt = create_condition(5.f, 5.f + half_ep, Gt);
     sptr<Condition> condsamelt = create_condition(5.f, 5.f + half_ep, Lt);
 
-    EXPECT_FALSE(unwrap_bool(condeq->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condne->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condge->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condgt->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condle->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condlt->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condsameeq->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condsamele->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condsamege->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condsamelt->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condsamegt->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condne->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condge->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condle->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condsameeq->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condsamele->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condsamege->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condsamelt->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condsamegt->resolve_bool(gatherer)));
 }
 
 TEST_F(TestCompareCondition, stringComparison) {
@@ -92,12 +90,12 @@ TEST_F(TestCompareCondition, stringComparison) {
     sptr<Condition> condlt = create_condition("Hello"s, "Test"s, Lt);
     sptr<Condition> condgt = create_condition("Hello"s, "Test"s, Gt);
 
-    EXPECT_FALSE(unwrap_bool(condeq->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condne->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condle->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condge->resolve(gatherer)));
-    EXPECT_TRUE(unwrap_bool(condlt->resolve(gatherer)));
-    EXPECT_FALSE(unwrap_bool(condgt->resolve(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condne->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condle->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condge->resolve_bool(gatherer)));
+    EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(gatherer)));
+    EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(gatherer)));
 }
 
 }

@@ -10,26 +10,21 @@ BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Conditi
 , op_{ op }
 {}
 
-ExpectedCellValue BinaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
-    auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return lvalue;
-    auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;
-    sptr<CellBooleanValue> lhs = std::dynamic_pointer_cast<CellBooleanValue>(*lvalue);
-    sptr<CellBooleanValue> rhs = std::dynamic_pointer_cast<CellBooleanValue>(*rvalue);
-    if(!lhs || !rhs)
-	throw std::logic_error("Invalid binary logical operation on operands not allowing such actions"); 
-
+BinaryLogicalCondition::ExpectedCellBooleanValue BinaryLogicalCondition::resolve_bool(sptr<TableValueGatherer> gatherer) const {
+    auto lhs = lhs_->resolve_bool(gatherer); if(!lhs) return std::unexpected(lhs.error());
+    auto rhs = rhs_->resolve_bool(gatherer); if(!rhs) return std::unexpected(rhs.error());
     bool result;
     switch(op_) {
 	case And:
-	    result = lhs->conjunction(rhs); break;
+	    result = (*lhs)->conjunction(*rhs); break;
 	case Or:
-	    result = lhs->disjunction(rhs); break;
+	    result = (*lhs)->disjunction(*rhs); break;
 	case Xor:
-	    result = lhs->exclusiveor(rhs); break;
+	    result = (*lhs)->exclusiveor(*rhs); break;
 	case IfAndOnlyIf:
-	    result = lhs->equivalence(rhs); break;
+	    result = (*lhs)->equivalence(*rhs); break;
 	case Follows:
-	    result = lhs->implication(rhs); break;
+	    result = (*lhs)->implication(*rhs); break;
 	default:
 	    std::unreachable();
     }

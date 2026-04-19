@@ -10,7 +10,6 @@
     #include "cell_type.hpp"
     #include "string_query_result.hpp"
     #include "expression_select_query.hpp"
-    #include "condition_select_query.hpp"
     #include "compare_condition.hpp"
     #include "binary_logical_condition.hpp"
     #include "unary_logical_condition.hpp"
@@ -103,7 +102,7 @@ queries: /**/
     | queries SEMICOLON { session.blank_parsed(); }
     ;
 
-query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ConditionSelectQuery>(session, std::move($2))); }
+query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ExpressionSelectQuery>(session, std::move($2))); }
      | SELECT expr { ASSIGN_OR_ABORT($$, mk_v<ExpressionSelectQuery>(session, std::move($2))); }
      ;
 

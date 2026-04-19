@@ -8,7 +8,7 @@ ConditionSelectQuery::ConditionSelectQuery(sptr<Condition> condition)
 {}
 
 sptr<QueryResult> ConditionSelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
-    auto result = condition_->resolve(gatherer);
+    auto result = condition_->resolve_bool(gatherer);
     if(!result)	return execute_error(result.error());
     std::stringstream ss;
     (*result)->format(ss);

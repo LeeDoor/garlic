@@ -1,4 +1,3 @@
-#include "condition_select_query.hpp"
 #include "expression_select_query.hpp"
 #include "query_result.hpp"
 #include "constant_expression.hpp"
@@ -15,7 +14,7 @@ public:
     std::optional<StringType> validate() const override { 
 	throw std::logic_error("Unexpected call"); 
     }
-    ExpectedCellValue resolve(sptr<TableValueGatherer>) const override {
+    ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer>) const override {
         return std::unexpected("condition resolve failed");
     }
 };
@@ -44,21 +43,21 @@ protected:
 };
 
 TEST_F(TestSelectQueries, conditionTrueFormatsAsOne) {
-    ConditionSelectQuery query(std::make_unique<ConditionMock>(true));
+    ExpressionSelectQuery query(std::make_unique<ConditionMock>(true));
 
     auto result = query.resolve(gatherer_);
     EXPECT_EQ(result->format(), "true");
 }
 
 TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
-    ConditionSelectQuery query(std::make_unique<ConditionMock>(false));
+    ExpressionSelectQuery query(std::make_unique<ConditionMock>(false));
 
     auto result = query.resolve(gatherer_);
     EXPECT_EQ(result->format(), "false");
 }
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
-    ConditionSelectQuery query(std::make_unique<ThrowingCondition>());
+    ExpressionSelectQuery query(std::make_unique<ThrowingCondition>());
     EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] condition resolve failed");
 }
 

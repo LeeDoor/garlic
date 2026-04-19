@@ -19,6 +19,7 @@ public:
 
     virtual ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const = 0;
 
+private:
     /// Performs logical operations on underlying objects.
     /*! @throws std::logic_error may throw if did not validate first. */
     ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const override {

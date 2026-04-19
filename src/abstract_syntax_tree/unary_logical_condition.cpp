@@ -9,18 +9,14 @@ UnaryLogicalCondition::UnaryLogicalCondition(sptr<Condition> condition, UnaryLog
 , op_{ op }
 {}
 
-ExpectedCellValue UnaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
-    auto value = cond_->resolve(gatherer); if(!value) return value;
-    auto bool_value = std::dynamic_pointer_cast<CellBooleanValue>(*value);
-    if(!bool_value)
-	throw std::logic_error("Invalid unary logical operation on operand not allowing such actions"); 
-
+UnaryLogicalCondition::ExpectedCellBooleanValue UnaryLogicalCondition::resolve_bool(sptr<TableValueGatherer> gatherer) const {
+    auto value = cond_->resolve_bool(gatherer); if(!value) return value;
     bool result;
     switch(op_) {
     case IsTrue:
-	result = bool_value->get_bool(); break;
+	result = (*value)->get_bool(); break;
     case IsFalse:
-	result = !bool_value->get_bool(); break;
+	result = !(*value)->get_bool(); break;
     default:
 	std::unreachable();
     }

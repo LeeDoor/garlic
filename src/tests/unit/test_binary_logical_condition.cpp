@@ -5,12 +5,10 @@
 
 namespace garlic {
 
-static bool unwrap_bool(ExpectedCellValue result) {
+static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
     if(!result) return false;
-    auto bool_value = std::dynamic_pointer_cast<CellBooleanValue>(*result);
-    EXPECT_NE(bool_value, nullptr);
-    return bool_value ? bool_value->get_bool() : false;
+    return (*result)->get_bool();
 }
 
 std::ostream& operator<<(std::ostream& os, BinaryLogicalOperator op) {
@@ -61,7 +59,7 @@ protected:
         for(int i = 0; i < TABLE_SIZE; ++i) {
             auto& inp = table_inp[i];
             auto cond = create(inp.first, inp.second, op);
-            actual[i] = unwrap_bool(cond->resolve(gatherer));
+            actual[i] = unwrap_bool(cond->resolve_bool(gatherer));
             failed |= actual[i] != table_expected[i];
         }
         if(failed) {

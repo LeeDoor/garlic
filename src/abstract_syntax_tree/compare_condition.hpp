@@ -9,7 +9,7 @@ class CompareCondition : public Condition {
 public:
     CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op);
 
-    ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const override;
+    ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const override;
     std::optional<StringType> validate() const override;
 
 private:
