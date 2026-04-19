@@ -1,6 +1,7 @@
 #pragma once
 #include "table_value_gatherer.hpp"
 #include "validateable.hpp"
+#include "expected_cell_value.hpp"
 
 namespace garlic {
 
@@ -12,12 +13,9 @@ public:
 
     Condition(TypeRules::TypeOrError toe) : CanBeValidated{ toe } {}
 
-    using ErrorType = StringType;
-    using ExpectedBoolean = std::expected<bool, ErrorType>;
-
     /// Performs logical operations on underlying objects.
     /*! @throws std::logic_error may throw if did not validate first. */
-    virtual ExpectedBoolean resolve(sptr<TableValueGatherer> gatherer) const = 0;
+    virtual ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const = 0;
 };
 
 }

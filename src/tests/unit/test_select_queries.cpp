@@ -15,7 +15,7 @@ public:
     std::optional<StringType> validate() const override { 
 	throw std::logic_error("Unexpected call"); 
     }
-    ExpectedBoolean resolve(sptr<TableValueGatherer>) const override {
+    ExpectedCellValue resolve(sptr<TableValueGatherer>) const override {
         return std::unexpected("condition resolve failed");
     }
 };

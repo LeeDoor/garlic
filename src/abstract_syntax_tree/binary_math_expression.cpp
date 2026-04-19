@@ -18,9 +18,9 @@ ExpectedCellValue BinaryMathExpression::resolve(sptr<TableValueGatherer> gathere
     const auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;
     sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);
     sptr<CellAcceptMathOp> rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*rvalue);
-
     if(!lhs || !rhs)
 	throw std::logic_error("Invalid math operation on operands not allowing such actions"); 
+
     switch(op_) {
     case Add:
 	return lhs->add(rhs);

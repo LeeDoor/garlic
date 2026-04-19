@@ -1,4 +1,5 @@
 #include "compare_condition.hpp"
+#include "cell_boolean_value.hpp"
 #include "cell_int_value.hpp"
 #include "cell_float_value.hpp"
 #include "cell_string_view_value.hpp"
@@ -7,9 +8,12 @@
 
 namespace garlic {
 
-static bool unwrap_bool(Condition::ExpectedBoolean result) {
+static bool unwrap_bool(ExpectedCellValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
-    return result ? *result : false;
+    if(!result) return false;
+    auto bool_value = std::dynamic_pointer_cast<CellBooleanValue>(*result);
+    EXPECT_NE(bool_value, nullptr);
+    return bool_value ? bool_value->get_bool() : false;
 }
 
 auto gatherer = std::make_shared<testing::StrictMock<TableValueGathererMock>>();

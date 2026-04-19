@@ -2,7 +2,7 @@
 
 namespace garlic {
 
-enum BinaryLogicalOperator { And, Or, Xor, IfAndOnlyIf };
+enum BinaryLogicalOperator { And, Or, Xor, IfAndOnlyIf, Follows };
 enum UnaryLogicalOperator { IsTrue, IsFalse };
 
 }

@@ -10,7 +10,9 @@ ConditionSelectQuery::ConditionSelectQuery(sptr<Condition> condition)
 sptr<QueryResult> ConditionSelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
     auto result = condition_->resolve(gatherer);
     if(!result)	return execute_error(result.error());
-    return std::make_unique<StringQueryResult>(static_cast<int>(*result));
+    std::stringstream ss;
+    (*result)->format(ss);
+    return std::make_unique<StringQueryResult>(ss.str());
 }
 
 }

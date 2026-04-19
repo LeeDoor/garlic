@@ -1,4 +1,5 @@
 #include "compare_condition.hpp"
+#include "cell_boolean_value.hpp"
 #include "cell_comparable.hpp"
 #include "expression.hpp"
 
@@ -11,29 +12,31 @@ CompareCondition::CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, B
 , operator_  { op }
 {}
 
-CompareCondition::ExpectedBoolean CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
-    auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return std::unexpected(std::move(lvalue.error()));
-    auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return std::unexpected(std::move(rvalue.error()));
+ExpectedCellValue CompareCondition::resolve(sptr<TableValueGatherer> gatherer) const {
+    auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return lvalue;
+    auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;
     sptr<CellComparable> 
 	lhs = std::dynamic_pointer_cast<CellComparable>(*lvalue),
 	rhs = std::dynamic_pointer_cast<CellComparable>(*rvalue);
 
+    bool result;
     switch(operator_) {
     case Eq:
-	return lhs->equals(rhs);
+	result = lhs->equals(rhs); break;
     case Ne:
-	return lhs->ne(rhs);
+	result = lhs->ne(rhs); break;
     case Gt:
-	return lhs->gt(rhs);
+	result = lhs->gt(rhs); break;
     case Ge:
-	return lhs->ge(rhs);
+	result = lhs->ge(rhs); break;
     case Lt:
-	return lhs->lt(rhs);
+	result = lhs->lt(rhs); break;
     case Le:
-	return lhs->le(rhs);
+	result = lhs->le(rhs); break;
     default:
 	std::unreachable();
     }
+    return std::make_shared<CellBooleanValue>(result);
 }
 
 std::optional<StringType> CompareCondition::validate() const {

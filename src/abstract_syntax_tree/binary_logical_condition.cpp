@@ -1,4 +1,5 @@
 #include "binary_logical_condition.hpp"
+#include "cell_boolean_value.hpp"
 
 namespace garlic {
 
@@ -9,20 +10,30 @@ BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Conditi
 , op_{ op }
 {}
 
-BinaryLogicalCondition::ExpectedBoolean BinaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
+ExpectedCellValue BinaryLogicalCondition::resolve(sptr<TableValueGatherer> gatherer) const {
     auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return lvalue;
     auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;
+    sptr<CellBooleanValue> lhs = std::dynamic_pointer_cast<CellBooleanValue>(*lvalue);
+    sptr<CellBooleanValue> rhs = std::dynamic_pointer_cast<CellBooleanValue>(*rvalue);
+    if(!lhs || !rhs)
+	throw std::logic_error("Invalid binary logical operation on operands not allowing such actions"); 
+
+    bool result;
     switch(op_) {
 	case And:
-	    return *lvalue && *rvalue;
+	    result = lhs->conjunction(rhs); break;
 	case Or:
-	    return *lvalue || *rvalue;
+	    result = lhs->disjunction(rhs); break;
 	case Xor:
-	    return *lvalue ^  *rvalue;
+	    result = lhs->exclusiveor(rhs); break;
 	case IfAndOnlyIf:
-	    return *lvalue == *rvalue;
+	    result = lhs->equivalence(rhs); break;
+	case Follows:
+	    result = lhs->implication(rhs); break;
+	default:
+	    std::unreachable();
     }
-    throw std::logic_error("BinaryLogicalCondition: not all switch cases populated");
+    return std::make_shared<CellBooleanValue>(result);
 }
 
 }

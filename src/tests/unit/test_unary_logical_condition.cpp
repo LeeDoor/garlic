@@ -1,12 +1,16 @@
 #include "unary_logical_condition.hpp"
+#include "cell_boolean_value.hpp"
 #include "condition_mock.hpp"
 #include "table_value_gatherer_mock.hpp"
 
 namespace garlic {
 
-static bool unwrap_bool(Condition::ExpectedBoolean result) {
+static bool unwrap_bool(ExpectedCellValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
-    return result ? *result : false;
+    if(!result) return false;
+    auto bool_value = std::dynamic_pointer_cast<CellBooleanValue>(*result);
+    EXPECT_NE(bool_value, nullptr);
+    return bool_value ? bool_value->get_bool() : false;
 }
 
 std::ostream& operator<<(std::ostream& os, UnaryLogicalOperator op) {
