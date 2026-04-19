@@ -47,14 +47,14 @@ TEST_F(TestSelectQueries, conditionTrueFormatsAsOne) {
     ConditionSelectQuery query(std::make_unique<ConditionMock>(true));
 
     auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format(), "1");
+    EXPECT_EQ(result->format(), "true");
 }
 
 TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
     ConditionSelectQuery query(std::make_unique<ConditionMock>(false));
 
     auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format(), "0");
+    EXPECT_EQ(result->format(), "false");
 }
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
