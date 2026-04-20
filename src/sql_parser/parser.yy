@@ -102,8 +102,8 @@ queries: /**/
     | queries SEMICOLON { session.blank_parsed(); }
     ;
 
-query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<ExpressionSelectQuery>(session, std::move($2))); }
-     | SELECT expr { ASSIGN_OR_ABORT($$, mk_v<ExpressionSelectQuery>(session, std::move($2))); }
+query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
+     | SELECT expr { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
      ;
 
 cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), And)); }

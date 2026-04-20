@@ -3,17 +3,17 @@
 
 namespace garlic {
 
-ExpressionSelectQuery::ExpressionSelectQuery()
+SelectQuery::SelectQuery()
 : columns_{}
 {}
-ExpressionSelectQuery::ExpressionSelectQuery(sptr<Expression> column_expression)
+SelectQuery::SelectQuery(sptr<Expression> column_expression)
 : columns_{}
 { columns_.push_back(create_column(column_expression)); }
 
-void ExpressionSelectQuery::append_column(sptr<Expression> column_expression) {
+void SelectQuery::append_column(sptr<Expression> column_expression) {
     columns_.push_back(create_column(column_expression));
 }
-sptr<QueryResult> ExpressionSelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
+sptr<QueryResult> SelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
     /// Complete mess free to edit
     std::stringstream ss;
     bool is_first = true;
@@ -41,7 +41,7 @@ sptr<QueryResult> ExpressionSelectQuery::resolve(sptr<TableValueGatherer> gather
     return std::make_shared<StringQueryResult>(ss.str());
 }
 
-ExpressionSelectQuery::Column ExpressionSelectQuery::create_column(sptr<Expression> column_content) {
+SelectQuery::Column SelectQuery::create_column(sptr<Expression> column_content) {
     std::stringstream ss; TypeRules::as_str(ss, column_content->get_type());
     return Column{ ss.str(), column_content };
 }

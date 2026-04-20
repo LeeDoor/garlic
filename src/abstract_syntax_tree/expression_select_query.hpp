@@ -4,10 +4,10 @@
 
 namespace garlic {
 
-class ExpressionSelectQuery : public Query {
+class SelectQuery : public Query {
 public:
-    ExpressionSelectQuery();
-    ExpressionSelectQuery(sptr<Expression> column_expression);
+    SelectQuery();
+    SelectQuery(sptr<Expression> column_expression);
 
     void append_column(sptr<Expression> column_expression);
 

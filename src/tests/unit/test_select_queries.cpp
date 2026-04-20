@@ -47,34 +47,34 @@ protected:
 };
 
 TEST_F(TestSelectQueries, conditionTrueFormatsAsOne) {
-    ExpressionSelectQuery query(std::make_unique<ConditionMock>(true));
+    SelectQuery query(std::make_unique<ConditionMock>(true));
 
     auto result = query.resolve(gatherer_);
     EXPECT_EQ(result->format(), format_single_value_table("Boolean", "true"));
 }
 
 TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
-    ExpressionSelectQuery query(std::make_unique<ConditionMock>(false));
+    SelectQuery query(std::make_unique<ConditionMock>(false));
 
     auto result = query.resolve(gatherer_);
     EXPECT_EQ(result->format(), format_single_value_table("Boolean", "false"));
 }
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
-    ExpressionSelectQuery query(std::make_unique<ThrowingCondition>());
+    SelectQuery query(std::make_unique<ThrowingCondition>());
     EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] condition resolve failed");
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBasicNumber) {
-    ExpressionSelectQuery query(std::make_unique<IntConstExpr>(42));
+    SelectQuery query(std::make_unique<IntConstExpr>(42));
 
     auto result = query.resolve(gatherer_);
     EXPECT_EQ(result->format(), format_single_value_table("Int", "42"));
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBoundaryNumbers) {
-    ExpressionSelectQuery max_q(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::max()));
-    ExpressionSelectQuery min_q(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::min()));
+    SelectQuery max_q(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::max()));
+    SelectQuery min_q(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::min()));
 
     EXPECT_EQ(
         max_q.resolve(gatherer_)->format(),
@@ -87,7 +87,7 @@ TEST_F(TestSelectQueries, expressionIntFormatsBoundaryNumbers) {
 }
 
 TEST_F(TestSelectQueries, expressionFloatFormatsBasicNumber) {
-    ExpressionSelectQuery query(std::make_unique<FloatConstExpr>(1.25f));
+    SelectQuery query(std::make_unique<FloatConstExpr>(1.25f));
 
     auto result = query.resolve(gatherer_);
     EXPECT_EQ(result->format(), format_single_value_table("Float", "1.25"));
@@ -104,7 +104,7 @@ TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
     };
 
     for(const auto v : values) {
-        ExpressionSelectQuery query(std::make_unique<FloatConstExpr>(v));
+        SelectQuery query(std::make_unique<FloatConstExpr>(v));
         auto result = query.resolve(gatherer_);
         EXPECT_EQ(result->format(), format_single_value_table("Float", format_float_like_query(v)));
     }
@@ -114,14 +114,14 @@ TEST_F(TestSelectQueries, expressionStringFormatsVeryLargeValue) {
     StringType huge(1 << 20, 'X');
     huge.replace(0, 5, "BEGIN");
     huge.replace(huge.size() - 3, 3, "END");
-    ExpressionSelectQuery query(std::make_unique<StringConstExpr>(huge));
+    SelectQuery query(std::make_unique<StringConstExpr>(huge));
 
     auto result = query.resolve(gatherer_);
     EXPECT_EQ(result->format(), format_single_value_table("String", huge));
 }
 
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
-    ExpressionSelectQuery query(std::make_unique<ThrowingExpression>());
+    SelectQuery query(std::make_unique<ThrowingExpression>());
     EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] expression evaluate failed");
 }
 
