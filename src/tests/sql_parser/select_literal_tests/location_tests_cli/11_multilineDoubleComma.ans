@@ -1,0 +1,4 @@
+Int	Int	Int
+1	2	3
+[SYNTAX_ERROR] at [1.10]
+[SYNTAX_ERROR] at [1.1]
