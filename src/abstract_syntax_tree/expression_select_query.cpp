@@ -19,14 +19,18 @@ sptr<QueryResult> ExpressionSelectQuery::resolve(sptr<TableValueGatherer> gather
     for(const Column& column : columns_) { ss << column.column_name << "\t"; }
     ss << std::endl;
 
+    bool is_first = true;
     for(const Column& column : columns_) {
+	if(!is_first) {
+	    ss << "\t";
+	    is_first = false;
+	}
+
 	auto result = column.content->resolve(gatherer);
 	if(!result)
 	    return execute_error(result.error());
 	(*result)->format(ss);
-	ss << "\t";
     }
-    ss << std::endl;
     return std::make_shared<StringQueryResult>(ss.str());
 }
 

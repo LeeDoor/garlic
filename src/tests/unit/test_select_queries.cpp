@@ -35,6 +35,10 @@ protected:
     sptr<testing::StrictMock<TableValueGathererMock>> gatherer_ =
         std::make_shared<testing::StrictMock<TableValueGathererMock>>();
 
+    static std::string format_single_value_table(std::string_view column_name, std::string_view value) {
+        return std::string(column_name) + "\n" + std::string(value) + "\n";
+    }
+
     static std::string format_float_like_query(FloatType value) {
         std::ostringstream os;
         os << value;
@@ -46,14 +50,14 @@ TEST_F(TestSelectQueries, conditionTrueFormatsAsOne) {
     ExpressionSelectQuery query(std::make_unique<ConditionMock>(true));
 
     auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format(), "true");
+    EXPECT_EQ(result->format(), format_single_value_table("Boolean", "true"));
 }
 
 TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
     ExpressionSelectQuery query(std::make_unique<ConditionMock>(false));
 
     auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format(), "false");
+    EXPECT_EQ(result->format(), format_single_value_table("Boolean", "false"));
 }
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
@@ -65,22 +69,28 @@ TEST_F(TestSelectQueries, expressionIntFormatsBasicNumber) {
     ExpressionSelectQuery query(std::make_unique<IntConstExpr>(42));
 
     auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format(), "42");
+    EXPECT_EQ(result->format(), format_single_value_table("Int", "42"));
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBoundaryNumbers) {
     ExpressionSelectQuery max_q(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::max()));
     ExpressionSelectQuery min_q(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::min()));
 
-    EXPECT_EQ(max_q.resolve(gatherer_)->format(), std::to_string(std::numeric_limits<IntType>::max()));
-    EXPECT_EQ(min_q.resolve(gatherer_)->format(), std::to_string(std::numeric_limits<IntType>::min()));
+    EXPECT_EQ(
+        max_q.resolve(gatherer_)->format(),
+        format_single_value_table("Int", std::to_string(std::numeric_limits<IntType>::max()))
+    );
+    EXPECT_EQ(
+        min_q.resolve(gatherer_)->format(),
+        format_single_value_table("Int", std::to_string(std::numeric_limits<IntType>::min()))
+    );
 }
 
 TEST_F(TestSelectQueries, expressionFloatFormatsBasicNumber) {
     ExpressionSelectQuery query(std::make_unique<FloatConstExpr>(1.25f));
 
     auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format(), "1.25");
+    EXPECT_EQ(result->format(), format_single_value_table("Float", "1.25"));
 }
 
 TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
@@ -96,7 +106,7 @@ TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
     for(const auto v : values) {
         ExpressionSelectQuery query(std::make_unique<FloatConstExpr>(v));
         auto result = query.resolve(gatherer_);
-        EXPECT_EQ(result->format(), format_float_like_query(v));
+        EXPECT_EQ(result->format(), format_single_value_table("Float", format_float_like_query(v)));
     }
 }
 
@@ -107,8 +117,7 @@ TEST_F(TestSelectQueries, expressionStringFormatsVeryLargeValue) {
     ExpressionSelectQuery query(std::make_unique<StringConstExpr>(huge));
 
     auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format().size(), huge.size());
-    EXPECT_TRUE(std::ranges::equal(result->format(), huge));
+    EXPECT_EQ(result->format(), format_single_value_table("String", huge));
 }
 
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
