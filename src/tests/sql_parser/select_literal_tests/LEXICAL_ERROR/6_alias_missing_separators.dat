@@ -1,0 +1,8 @@
+SELECT 5AS "hello";
+SELECT 5 AS"hello";
+SELECT 5AS"hello";
+SELECT 1,2AS "x";
+SELECT 1 AS 'a',2AS 'b';
+SELECT 1AS 'a', 2;
+SELECT 'x'AS 'y';
+SELECT 1 ASA 'x';

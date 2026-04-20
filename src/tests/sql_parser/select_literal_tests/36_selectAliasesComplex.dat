@@ -1,0 +1,5 @@
+SELECT (2 + 3) * (4 + 5) AS 'big_math';
+SELECT |-(10 - 3)| AS 'absolute_gap';
+SELECT !(1 = 2) AND 3 = 3 AS 'logic_result';
+SELECT 'ab' 'cd' AS 'merged_string';
+SELECT 5 / 2.0 AS 'ratio_value';

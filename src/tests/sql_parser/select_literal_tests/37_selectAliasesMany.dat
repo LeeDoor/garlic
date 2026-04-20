@@ -1,0 +1,2 @@
+SELECT 1 AS 'one', 2 + 3 AS 'five', 'hello' AS 'greet', !(1 = 2) AS 'flag', 5 / 2.0 AS 'ratio';
+SELECT 10 AS 'very_long_first_column_name', 20 AS 'very_long_second_column_name', 30 AS 'very_long_third_column_name', 40 AS 'very_long_fourth_column_name', 50 AS 'very_long_fifth_column_name', 60 AS 'very_long_sixth_column_name';

@@ -1,0 +1,10 @@
+SELECT 1 AS 'x' + 2;
+SELECT (1 AS 'x');
+SELECT 1 + (2 AS 'x');
+SELECT (1 = 1) AS 'flag' = 1;
+SELECT 1 = (2 AS 'x');
+SELECT (1 AS 'x') = 1;
+SELECT 1 AS 'a' AS 'b';
+SELECT 1 AS 'a', 2 AS 'b' AS 'c';
+SELECT 1 AS 'a' + 2 AS 'b';
+SELECT 1 AS 'a' = 1;
