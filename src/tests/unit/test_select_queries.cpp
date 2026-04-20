@@ -36,7 +36,7 @@ protected:
         std::make_shared<testing::StrictMock<TableValueGathererMock>>();
 
     static std::string format_single_value_table(std::string_view column_name, std::string_view value) {
-        return std::string(column_name) + "\n" + std::string(value) + "\n";
+        return std::string(column_name) + "\n" + std::string(value);
     }
 
     static std::string format_float_like_query(FloatType value) {
