@@ -5,6 +5,7 @@ namespace garlic {
 using CharType = char;
 using StringType = std::basic_string<CharType>;
 using StringViewType = std::basic_string_view<CharType>;
+using ColumnNameType = StringType;
 using IntType = int;
 using FloatType = float;
 template<typename T>

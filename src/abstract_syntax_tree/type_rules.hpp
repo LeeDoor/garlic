@@ -18,6 +18,8 @@ public:
 	    return sizeof(IntType);
 	} else if constexpr (cell == CellType::Float) {
 	    return sizeof(FloatType);
+	} else if constexpr (cell == CellType::Boolean) {
+	    return sizeof(bool);
 	} else {
 	    throw std::logic_error("Unknown type to get size of");
 	}
@@ -33,15 +35,19 @@ public:
 	switch(cell) {
 	    case CellType::Int: return get_type_size<CellType::Int>();
 	    case CellType::Float: return get_type_size<CellType::Float>();
-	    default: throw std::logic_error("Unknown type to get size of");
+	    case CellType::Boolean: return get_type_size<CellType::Boolean>();
+	    default: std::unreachable();
 	}
     }
     static void as_str(std::ostream& os, CellType ct) {
 	static std::unordered_map<CellType, StringType> map {
 	    { String, "String" },
 	    { Int, "Int" },
-	    { Float, "Float" }
+	    { Float, "Float" },
+	    { Boolean, "Boolean" }
 	};
+	if(!map.contains(ct)) 
+	    throw std::logic_error("Unimplemented type in TypeRules::as_str");
 	os << map[ct];
     }
 

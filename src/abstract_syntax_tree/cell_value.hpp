@@ -9,7 +9,6 @@ const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function 
 
 /// Multitype value wrapper. Populated by @ref Expression .
 /*! Base class for values of each type. One child - one type. 
- *  Child should implement comparing operations with other object.
  *  To get the underlying type name, use:
  *  ```
  *  typename get_cell_type<IntType>::Type // AKA @ref CellIntValue
