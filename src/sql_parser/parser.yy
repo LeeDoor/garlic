@@ -57,6 +57,7 @@
 
 %token
     SELECT
+    AS
     ;
 %token 
     SEMICOLON
@@ -93,6 +94,8 @@
 %token <StringType> STRING "string"
 %nterm <uptr<Query>> query
 %nterm <SelectQuery::ColumnsContainer> selectors 
+%nterm <StringType> columnname 
+%nterm <Selector> selector 
 %nterm <uptr<Expression>> evaluateable
 %nterm <uptr<Condition>> cond
 %nterm <uptr<Expression>> expr 
@@ -110,9 +113,15 @@ queries: /**/
 query: SELECT selectors { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
      ;
 
-selectors: evaluateable { $$.push_back(SelectColumn{ std::move($1) }); }
-	 | selectors COLON evaluateable { $$ = std::move($1); $$.push_back(SelectColumn{ std::move($3) }); }
+selectors: selector { $$.push_back(std::move($1)); }
+	 | selectors COLON selector { $$ = std::move($1); $$.push_back(std::move($3)); }
 	 ;
+
+selector: evaluateable AS columnname { $$ = Selector{ $3, std::move($1) }; }
+	| evaluateable { $$ = Selector{ std::move($1) }; }
+
+columnname: STRING
+	  ;
 
 evaluateable: cond { $$ = std::move($1); }
 	    | expr { $$ = std::move($1); }

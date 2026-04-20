@@ -10,14 +10,11 @@ SelectQuery::SelectQuery(ColumnsContainer columns)
 : columns_{ std::move(columns) }
 { }
 
-void SelectQuery::append_column(sptr<Expression> column_expression) {
-    columns_.push_back(SelectColumn{ column_expression });
-}
 sptr<QueryResult> SelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
     /// Complete mess free to edit
     std::stringstream ss;
     bool is_first = true;
-    for(const SelectColumn& column : columns_) { 
+    for(const Selector& column : columns_) { 
 	if(!is_first) {
 	    ss << "\t";
 	}
@@ -27,7 +24,7 @@ sptr<QueryResult> SelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
     }
     ss << std::endl;
     is_first = true;
-    for(const SelectColumn& column : columns_) {
+    for(const Selector& column : columns_) {
 	if(!is_first) {
 	    ss << "\t";
 	}

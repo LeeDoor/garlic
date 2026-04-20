@@ -4,27 +4,30 @@
 
 namespace garlic {
 
-struct SelectColumn { 
+struct Selector { 
     ColumnNameType column_name;
-    sptr<Expression> content;
+    uptr<Expression> content;
 
-    explicit SelectColumn(sptr<Expression> expression)
-    : content{ expression }
+    Selector() : column_name{ "" }, content{ nullptr } {}
+    explicit Selector(uptr<Expression> expression)
+    : content{ std::move(expression) }
     {
 	std::stringstream ss; TypeRules::as_str(ss, content->get_type());
 	column_name = ss.str();
     }
+    Selector(const ColumnNameType& column_name, uptr<Expression> expression)
+    : column_name{ column_name }
+    , content{ std::move(expression) }
+    {}
 };
 
 
 class SelectQuery : public Query {
 public:
-    using ColumnsContainer = std::list<SelectColumn>;
+    using ColumnsContainer = std::list<Selector>;
 
     SelectQuery();
     SelectQuery(ColumnsContainer columns);
-
-    void append_column(sptr<Expression> column_expression);
 
     sptr<QueryResult> resolve(sptr<TableValueGatherer> gatherer) override;
 

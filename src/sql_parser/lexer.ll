@@ -69,6 +69,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 %}
 
 "SELECT"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
+"AS"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AS"); return yy::parser::make_AS(curloc); }
 
 ","  { MET_CONTENT(); return yy::parser::make_COLON(curloc); }
 ";"  { MET_CONTENT(); return yy::parser::make_SEMICOLON(curloc); }
