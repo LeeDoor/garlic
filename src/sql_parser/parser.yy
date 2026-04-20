@@ -88,6 +88,7 @@
 %token <IntType> INTEGER "integer"
 %token <StringType> STRING "string"
 %nterm <uptr<Query>> query
+%nterm <uptr<Expression>> evaluateable
 %nterm <uptr<Condition>> cond
 %nterm <uptr<Expression>> expr 
 %nterm <uptr<Expression>> value 
@@ -102,9 +103,12 @@ queries: /**/
     | queries SEMICOLON { session.blank_parsed(); }
     ;
 
-query: SELECT cond { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
-     | SELECT expr { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
+query: SELECT evaluateable { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
      ;
+
+evaluateable: cond { $$ = std::move($1); }
+	    | expr { $$ = std::move($1); }
+	    ;
 
 cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), And)); }
     | cond LOGICOR cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Or)); }
