@@ -1,0 +1,6 @@
+SELECT 1, 2;
+SELECT 1, 2, 3;
+SELECT 5.5, 1, "hello";
+SELECT 1 + 2, 3 * 4, 5 % 2, 7 / 2;
+SELECT 'left', "right", 2 + 3 * 4, !(1 = 2), 7 % 4;
+SELECT (2 + 3) * (4 + 5), |-(10 - 3)|, 'abc' 'def', 5 / 2.0, 1 != 2;

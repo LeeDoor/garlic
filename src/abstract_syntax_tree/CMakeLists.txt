@@ -5,7 +5,7 @@ add_library(abstract_syntax_tree STATIC
     cell_string_view_value.cpp
     cell_boolean_value.cpp
     compare_condition.cpp
-    expression_select_query.cpp
+    select_query.cpp
     string_query_result.cpp
     table_value_expression.cpp
     table_value_gatherer_impl.cpp

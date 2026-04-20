@@ -9,7 +9,7 @@
 %code requires {
     #include "cell_type.hpp"
     #include "string_query_result.hpp"
-    #include "expression_select_query.hpp"
+    #include "select_query.hpp"
     #include "compare_condition.hpp"
     #include "binary_logical_condition.hpp"
     #include "unary_logical_condition.hpp"
@@ -58,7 +58,10 @@
 %token
     SELECT
     ;
-%token SEMICOLON;
+%token 
+    SEMICOLON
+    COLON
+    ;
 %token
     MINUS   
     PLUS    
@@ -69,6 +72,7 @@
     RPAREN  
     ABS
     ;
+
 %token
     ISEQ    
     NOTEQ    
@@ -88,12 +92,12 @@
 %token <IntType> INTEGER "integer"
 %token <StringType> STRING "string"
 %nterm <uptr<Query>> query
+%nterm <SelectQuery::ColumnsContainer> selectors 
 %nterm <uptr<Expression>> evaluateable
 %nterm <uptr<Condition>> cond
 %nterm <uptr<Expression>> expr 
 %nterm <uptr<Expression>> value 
 %nterm <StringType> strings 
-%printer { yyo << $$; } <*>;
 
 %%
 
@@ -103,8 +107,12 @@ queries: /**/
     | queries SEMICOLON { session.blank_parsed(); }
     ;
 
-query: SELECT evaluateable { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
+query: SELECT selectors { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
      ;
+
+selectors: evaluateable { $$.push_back(SelectColumn{ std::move($1) }); }
+	 | selectors COLON evaluateable { $$ = std::move($1); $$.push_back(SelectColumn{ std::move($3) }); }
+	 ;
 
 evaluateable: cond { $$ = std::move($1); }
 	    | expr { $$ = std::move($1); }
