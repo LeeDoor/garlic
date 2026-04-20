@@ -8,7 +8,7 @@ namespace garlic {
 class CellBooleanValue;
 
 /// Base class for all Conditions in query.
-/*! Condition is a logical entity that can be resolved as True or False. */
+/*! Condition is a logical entity that can be resolved as @ref CellBooleanValue. */
 class Condition : public Expression {
 public:
     virtual ~Condition() = default;
@@ -17,6 +17,7 @@ public:
 
     using ExpectedCellBooleanValue = std::expected<sptr<CellBooleanValue>, UnexpectedCellValue>;
 
+    /// Same as @ref Expression::resolve(), but ensures the boolean return type (or error).
     virtual ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const = 0;
 
 private:

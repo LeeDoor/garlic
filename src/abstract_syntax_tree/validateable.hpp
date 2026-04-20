@@ -9,7 +9,7 @@ using ExpectedValid = std::expected<void, InvalidError>;
 class CanBeValidated {
 public:
     /// Checks if given node is valid and may be resolved without semantic errors.
-    /*! @returns std::optional if expression is valid; StringType with error message overwise. */
+    /*! @returns nothing if OK or StringType with error message. */
     virtual ExpectedValid validate() const = 0;
 
     /// Returns the type of underlying value or resulting type after some operation
@@ -17,6 +17,8 @@ public:
     /*! @returns @ref CellType if type is valid. 
      *  @throws std::logic_error if type was not recognized. */
     virtual CellType get_type() const { 
+	if(!type_or_err_.has_value()) // Throwing std::logic_error (not std::bad_expected_access)
+	    throw std::logic_error("Calling get_type of Validateable object which is invalid");
 	return type_or_err_.value();
     }
 
