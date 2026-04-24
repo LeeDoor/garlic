@@ -175,11 +175,10 @@ def run_executable(executable: str, input_content: str, expected_output: str, ex
 
 
 def strip_cli_prompt_prefix(line: str) -> str:
-    while line and not line.startswith("[") and not line[0].isdigit():
-        space_idx = line.find(" ")
-        if space_idx < 0:
-            break
-        line = line[space_idx + 1:]
+    while line.startswith("#>"):
+        line = line[2:]
+        if line.startswith(" "):
+            line = line[1:]
     return line
 
 
@@ -202,7 +201,7 @@ def prepare_expected_lines(mode: str, expected_output: str) -> list[str]:
     lines = normalize_lines(expected_output)
     if mode != "location_cli":
         return lines
-    return [re.sub(r"^#> ?", "", line) for line in lines]
+    return [re.sub(r"^(#> ?)+", "", line) for line in lines]
 
 
 def line_matches(expected_line: str, actual_line: str, mode: str) -> bool:

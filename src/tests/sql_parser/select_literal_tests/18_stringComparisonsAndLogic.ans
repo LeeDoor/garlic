@@ -1,33 +1,55 @@
-String
-alpha
-
-String
-beta
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-false
-
-Boolean
-true
-
-Boolean
-false
-
++--------+
+| String |
++--------+
+| alpha  |
++--------+
++--------+
+| String |
++--------+
+| beta   |
++--------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| false   |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| false   |
++---------+

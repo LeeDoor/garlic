@@ -50,7 +50,13 @@ protected:
     }
 
     static std::string format_single_value_table(std::string_view column_name, std::string_view value) {
-        return std::string(column_name) + "\n" + std::string(value) + "\n\n";
+        const auto width = std::max(column_name.size(), value.size());
+        const std::string border = "+" + std::string(width + 2, '-') + "+\n";
+        return border
+            + "| " + std::string(column_name) + std::string(width - column_name.size(), ' ') + " |\n"
+            + border
+            + "| " + std::string(value) + std::string(width - value.size(), ' ') + " |\n"
+            + border;
     }
 
     static std::string format_float_like_query(FloatType value) {

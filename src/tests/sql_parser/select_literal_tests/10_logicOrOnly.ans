@@ -1,6 +1,10 @@
-Boolean
-true
-
-Boolean
-false
-
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| false   |
++---------+

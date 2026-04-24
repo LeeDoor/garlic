@@ -1,21 +1,35 @@
-Boolean
-true
-
-Boolean
-false
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-false
-
-Boolean
-true
-
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| false   |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| false   |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+

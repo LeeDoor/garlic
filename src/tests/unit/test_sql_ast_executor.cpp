@@ -42,6 +42,16 @@ uptr<Query> make_query(uptr<Expression> expression) {
     return std::make_unique<SelectQuery>(std::move(columns));
 }
 
+std::string format_single_value_table(std::string_view column_name, std::string_view value) {
+    const auto width = std::max(column_name.size(), value.size());
+    const std::string border = "+" + std::string(width + 2, '-') + "+\n";
+    return border
+        + "| " + std::string(column_name) + std::string(width - column_name.size(), ' ') + " |\n"
+        + border
+        + "| " + std::string(value) + std::string(width - value.size(), ' ') + " |\n"
+        + border;
+}
+
 }
 
 TEST(test_sql_ast_executor, successfulQueryWritesOnlyToStdout) {
@@ -56,7 +66,7 @@ TEST(test_sql_ast_executor, successfulQueryWritesOnlyToStdout) {
 
     executor.execute_sql_ast(query);
 
-    EXPECT_EQ(stdout_stream.str(), "Int\n5\n\n");
+    EXPECT_EQ(stdout_stream.str(), format_single_value_table("Int", "5"));
     EXPECT_TRUE(stderr_stream.str().empty());
 }
 

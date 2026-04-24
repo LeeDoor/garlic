@@ -1,15 +1,25 @@
-String
-hello
-
-String
-world
-
-Boolean
-true
-
-Boolean
-true
-
-Boolean
-true
-
++--------+
+| String |
++--------+
+| hello  |
++--------+
++--------+
+| String |
++--------+
+| world  |
++--------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
++---------+
+| Boolean |
++---------+
+| true    |
++---------+
