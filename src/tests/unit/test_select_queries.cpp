@@ -1,4 +1,5 @@
 #include "select_query.hpp"
+#include "query_result.hpp"
 #include "constant_expression.hpp"
 #include "condition_mock.hpp"
 #include "table_value_gatherer_mock.hpp"
@@ -41,6 +42,13 @@ protected:
         return SelectQuery(std::move(columns));
     }
 
+    static sptr<QueryResult> unwrap_query_result(Query::ExpectedQueryResult result) {
+        EXPECT_TRUE(result.has_value()) << result.error();
+        if(!result)
+            return nullptr;
+        return *result;
+    }
+
     static std::string format_single_value_table(std::string_view column_name, std::string_view value) {
         return std::string(column_name) + "\n" + std::string(value) + "\n\n";
     }
@@ -55,39 +63,46 @@ protected:
 TEST_F(TestSelectQueries, conditionTrueFormatsAsOne) {
     auto query = make_query(std::make_unique<ConditionMock>(true));
 
-    auto result = query.resolve(gatherer_);
+    auto result = unwrap_query_result(query.resolve(gatherer_));
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Boolean", "true"));
 }
 
 TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
     auto query = make_query(std::make_unique<ConditionMock>(false));
 
-    auto result = query.resolve(gatherer_);
+    auto result = unwrap_query_result(query.resolve(gatherer_));
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Boolean", "false"));
 }
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
     auto query = make_query(std::make_unique<ThrowingCondition>());
-    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] condition resolve failed\n\n");
+    auto result = query.resolve(gatherer_);
+    ASSERT_FALSE(result.has_value());
+    EXPECT_EQ(result.error(), "condition resolve failed");
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBasicNumber) {
     auto query = make_query(std::make_unique<IntConstExpr>(42));
 
-    auto result = query.resolve(gatherer_);
+    auto result = unwrap_query_result(query.resolve(gatherer_));
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Int", "42"));
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBoundaryNumbers) {
     auto max_q = make_query(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::max()));
     auto min_q = make_query(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::min()));
+    auto max_res = unwrap_query_result(max_q.resolve(gatherer_));
+    auto min_res = unwrap_query_result(min_q.resolve(gatherer_));
 
     EXPECT_EQ(
-        max_q.resolve(gatherer_)->format(),
+        max_res->format(),
         format_single_value_table("Int", std::to_string(std::numeric_limits<IntType>::max()))
     );
     EXPECT_EQ(
-        min_q.resolve(gatherer_)->format(),
+        min_res->format(),
         format_single_value_table("Int", std::to_string(std::numeric_limits<IntType>::min()))
     );
 }
@@ -95,7 +110,8 @@ TEST_F(TestSelectQueries, expressionIntFormatsBoundaryNumbers) {
 TEST_F(TestSelectQueries, expressionFloatFormatsBasicNumber) {
     auto query = make_query(std::make_unique<FloatConstExpr>(1.25f));
 
-    auto result = query.resolve(gatherer_);
+    auto result = unwrap_query_result(query.resolve(gatherer_));
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Float", "1.25"));
 }
 
@@ -111,14 +127,17 @@ TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
 
     for(const auto v : values) {
         auto query = make_query(std::make_unique<FloatConstExpr>(v));
-        auto result = query.resolve(gatherer_);
+        auto result = unwrap_query_result(query.resolve(gatherer_));
+        ASSERT_NE(result, nullptr);
         EXPECT_EQ(result->format(), format_single_value_table("Float", format_float_like_query(v)));
     }
 }
 
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
     auto query = make_query(std::make_unique<ThrowingExpression>());
-    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] expression evaluate failed\n\n");
+    auto result = query.resolve(gatherer_);
+    ASSERT_FALSE(result.has_value());
+    EXPECT_EQ(result.error(), "expression evaluate failed");
 }
 
 }

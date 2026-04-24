@@ -1,6 +1,7 @@
 #pragma once
 #include "error_stage.hpp"
 #include "parsing_error.hpp"
+#include "runtime_error.hpp"
 
 namespace garlic::sql_parser {
 
@@ -11,6 +12,7 @@ public:
     ErrorPrinter();
 
     void print_error(const ParsingError& error) const;
+    void print_error(const RuntimeError& error) const;
 
 private:
     static const std::unordered_map<ErrorStage, std::string> stage_str; 

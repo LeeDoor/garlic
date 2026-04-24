@@ -9,10 +9,10 @@ namespace garlic::sql_parser {
 class SqlRepl {
 public:
     explicit SqlRepl(
-	bool debug_mode = false, 
-	QueryInput query_input = {}, 
-	ErrorPrinter error_printer = {},
-	SqlAstExecutor ast_executor = {});
+	bool debug_mode, 
+	QueryInput query_input, 
+	ErrorPrinter error_printer,
+	SqlAstExecutor ast_executor);
 
     void run();
 private:

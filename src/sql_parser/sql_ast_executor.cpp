@@ -4,14 +4,19 @@
 
 namespace garlic::sql_parser {
 
-SqlAstExecutor::SqlAstExecutor()
+SqlAstExecutor::SqlAstExecutor(ErrorPrinter& error_printer)
 : os_{ std::cout }
+, err_{ error_printer }
 , gatherer_{ std::make_unique<DumbTableValueGatherer>() }
 {}
 
 void SqlAstExecutor::execute_sql_ast(const uptr<Query>& query) const {
-    sptr<QueryResult> q_result = query->resolve(gatherer_);
-    os_ << q_result->format();
+    auto q_result = query->resolve(gatherer_);
+    if(q_result) {
+	os_ << (*q_result)->format();
+    } else {
+	err_.print_error(q_result.error());
+    }
 }
 
 }

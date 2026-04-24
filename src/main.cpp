@@ -22,7 +22,8 @@ void handle_args(int argc, char** argv, bool& debug_mode) {
 int main (int argc, char** argv) {
     bool debug_mode = false;
     handle_args(argc, argv, debug_mode);
-    garlic::sql_parser::SqlRepl drv(debug_mode);
+    ErrorPrinter err_p;
+    garlic::sql_parser::SqlRepl drv(debug_mode,	QueryInput {}, err_p, SqlAstExecutor { err_p });
     try {
 	drv.run();
     } catch (const std::logic_error& ex) {
