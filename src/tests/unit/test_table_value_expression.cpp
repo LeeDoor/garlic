@@ -1,6 +1,7 @@
 #include "cell_int_value.hpp"
 #include "table_value_expression.hpp"
 #include "table_value_gatherer_mock.hpp"
+#include "tables_gatherer_mock.hpp"
 
 namespace garlic {
 
@@ -17,11 +18,11 @@ protected:
 };
 
 TEST_F(TestValueExpressionFixture, init) {
-    TableValueExpression expr("Name column", Int);
+    TableValueExpression expr(TablesGathererMock{ Int }, "Table name", "Name column");
 }
 
 TEST_F(TestValueExpressionFixture, getValue) {
-    TableValueExpression expr("Name column", Int);
+    TableValueExpression expr(TablesGathererMock{ Int }, "Table name", "Name column");
 
     EXPECT_CALL(*gatherer_, get_table_value("Name column"))
         .WillOnce(Return(test_int_value_));
@@ -34,7 +35,7 @@ TEST_F(TestValueExpressionFixture, getValue) {
 }
 
 TEST_F(TestValueExpressionFixture, thrownExceptionInGatherer_ShouldThrowToo) {
-    TableValueExpression expr("Name column", Int);
+    TableValueExpression expr(TablesGathererMock{ Int }, "Table name", "Name column");
 
     EXPECT_CALL(*gatherer_, get_table_value("Name column"))
         .WillOnce(::testing::Throw(std::logic_error("manually generated exception")));

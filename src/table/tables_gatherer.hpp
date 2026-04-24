@@ -9,7 +9,6 @@ using ExpectedColumnType = std::expected<CellType, UnexpectedColumnType>;
 template<typename T>
 concept TablesGatherer = requires (const T& tables_gatherer) {
     { tables_gatherer.get_tables_column_type(TableNameType{}, ColumnNameType{}) } -> std::convertible_to<ExpectedColumnType>;
-    { tables_gatherer.get_table(TableNameType{}) } -> std::convertible_to<ExpectedTable>;
 };
 
 }

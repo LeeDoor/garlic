@@ -12,7 +12,6 @@ public:
     }
 
     MOCK_METHOD(ExpectedCellBooleanValue, resolve_bool, (sptr<TableValueGatherer> gatherer), (const, override));
-    MOCK_METHOD(ExpectedValid, validate, (), (const, override));
 };
 
 }
