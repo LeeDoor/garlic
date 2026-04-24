@@ -17,7 +17,8 @@ void QueryInput::readline() {
     std::getline(is_, input_line_);
     more_ctx_available_ = !is_.eof(); 
     query_ += input_line_;
-    query_ += "\n";
+    if(!is_.eof()) 
+	query_.push_back('\n');
 }
 void QueryInput::shrink_n_characters(size_t n) {
     if(query_.size() < n) 

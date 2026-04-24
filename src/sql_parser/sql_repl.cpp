@@ -16,7 +16,7 @@ void SqlRepl::run() {
 	auto parse_session_result = parse_ctx_.parse(query_input_.get_query());
 	handle_results(parse_session_result);
 	query_input_.shrink_n_characters(parse_session_result.characters_parsed);
-    } while (query_input_.is_more_context_available() || !query_input_.is_query_empty());
+    } while (query_input_.is_more_context_available());
 }
 
 void SqlRepl::handle_results(const ParserEngine::Results& parse_results) const {

@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass
+from itertools import zip_longest
 from pathlib import Path
 from typing import Iterable
 
@@ -197,6 +198,13 @@ def prepare_actual_lines(mode: str, actual_output: str) -> list[str]:
     return prepared
 
 
+def prepare_expected_lines(mode: str, expected_output: str) -> list[str]:
+    lines = normalize_lines(expected_output)
+    if mode != "location_cli":
+        return lines
+    return [re.sub(r"^#> ?", "", line) for line in lines]
+
+
 def line_matches(expected_line: str, actual_line: str, mode: str) -> bool:
     if mode in {"location", "location_cli"} and LOCATION_ERROR_PREFIX_RE.match(expected_line):
         return actual_line.startswith(expected_line)
@@ -209,10 +217,8 @@ def line_matches(expected_line: str, actual_line: str, mode: str) -> bool:
 
 
 def outputs_match(expected_output: str, actual_output: str, mode: str) -> bool:
-    expected_lines = normalize_lines(expected_output)
+    expected_lines = prepare_expected_lines(mode, expected_output)
     actual_lines = prepare_actual_lines(mode, actual_output)
-    if len(expected_lines) == 1 and expected_lines[0] in ERROR_WILDCARDS:
-        return bool(actual_lines) and line_matches(expected_lines[0], actual_lines[0], mode)
     if len(expected_lines) != len(actual_lines):
         return False
     return all(line_matches(expected, actual, mode) for expected, actual in zip(expected_lines, actual_lines))
@@ -232,11 +238,8 @@ def truncate_for_width(text: str, width: int) -> str:
 
 def get_diff(actual_output: str, expected_output: str, mode: str, width: int = 180) -> str:
     actual_lines = prepare_actual_lines(mode, actual_output)
-    expected_lines = normalize_lines(expected_output)
-
-    max_len = max(len(actual_lines), len(expected_lines))
-    actual_lines.extend([""] * (max_len - len(actual_lines)))
-    expected_lines.extend([""] * (max_len - len(expected_lines)))
+    expected_lines = prepare_expected_lines(mode, expected_output)
+    missing = object()
 
     marker_width = 8
     content_width = max(40, width - marker_width)
@@ -249,20 +252,28 @@ def get_diff(actual_output: str, expected_output: str, mode: str, width: int = 1
         "-" * left_width + "-" * marker_width + "-" * right_width,
     ]
 
-    for actual_line, expected_line in zip(actual_lines, expected_lines):
-        if line_matches(expected_line, actual_line, mode):
-            marker = style("~OK~", ANSI_BOLD, ANSI_GREEN) if expected_line in ERROR_WILDCARDS else style(" OK ", ANSI_GREEN)
-        elif actual_line == "":
-            marker = style(" << ", ANSI_BOLD, ANSI_YELLOW)
-        elif expected_line == "":
+    for actual_line, expected_line in zip_longest(actual_lines, expected_lines, fillvalue=missing):
+        if expected_line is missing:
             marker = style(" >> ", ANSI_BOLD, ANSI_YELLOW)
+            actual_text = actual_line
+            expected_text = "<no line>"
+        elif actual_line is missing:
+            marker = style(" << ", ANSI_BOLD, ANSI_YELLOW)
+            actual_text = "<no line>"
+            expected_text = expected_line
+        elif line_matches(expected_line, actual_line, mode):
+            marker = style("~OK~", ANSI_BOLD, ANSI_GREEN) if expected_line in ERROR_WILDCARDS else style(" OK ", ANSI_GREEN)
+            actual_text = actual_line
+            expected_text = expected_line
         else:
             marker = style(" !! ", ANSI_BOLD, ANSI_RED)
+            actual_text = actual_line
+            expected_text = expected_line
 
         result.append(
-            f"{truncate_for_width(actual_line, left_width):<{left_width}} "
+            f"{truncate_for_width(actual_text, left_width):<{left_width}} "
             f"{marker} "
-            f"{truncate_for_width(expected_line, right_width):<{right_width}}"
+            f"{truncate_for_width(expected_text, right_width):<{right_width}}"
         )
 
     return "\n".join(result)

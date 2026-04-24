@@ -7,14 +7,10 @@ namespace garlic::sql_parser {
 /// ErrorPrinter prints @ref ParsingError to given stream.
 class ErrorPrinter {
 public:
-    explicit ErrorPrinter(std::ostream& os) : os_{ os } {}
-    ErrorPrinter() : ErrorPrinter(std::cerr) {}
+    explicit ErrorPrinter(std::ostream& os);
+    ErrorPrinter();
 
-    void print_error(const ParsingError& error) const {
-	os_ << "[" << stage_str.at(error.stage) << "] "
-	    << "at [" << error.location << "] "
-	    << error.message << std::endl << std::endl;
-    }
+    void print_error(const ParsingError& error) const;
 
 private:
     static const std::unordered_map<ErrorStage, std::string> stage_str; 

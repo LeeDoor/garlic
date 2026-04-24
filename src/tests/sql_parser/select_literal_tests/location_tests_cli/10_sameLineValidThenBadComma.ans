@@ -1,5 +1,6 @@
-Int	Int	Int
-1	2	3
+#> Int	Int	Int
+#> 1	2	3
 
-[SYNTAX_ERROR] at [1.24]
+#> [SYNTAX_ERROR] at [1.24]
 
+#>
