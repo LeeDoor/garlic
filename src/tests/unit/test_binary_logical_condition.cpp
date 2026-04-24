@@ -22,11 +22,11 @@ std::ostream& operator<<(std::ostream& os, BinaryLogicalOperator op) {
         case Xor:
             os << "^";
             break;
-        case IfAndOnlyIf:
+        case Iff:
             os << "<=>";
             break;
-        case Follows:
-            os << "=>";
+        case Implication:
+            os << "->";
             break;
     };
     return os;
@@ -84,7 +84,8 @@ TEST_F(TestBinaryLogicalCondition, Operators) {
     matches_truth_table({0, 0, 0, 1}, And);
     matches_truth_table({0, 1, 1, 1}, Or);
     matches_truth_table({0, 1, 1, 0}, Xor);
-    matches_truth_table({1, 0, 0, 1}, IfAndOnlyIf);
+    matches_truth_table({1, 0, 0, 1}, Iff);
+    matches_truth_table({1, 1, 0, 1}, Implication);
 }
 
 }

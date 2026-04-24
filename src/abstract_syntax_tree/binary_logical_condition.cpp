@@ -21,9 +21,9 @@ BinaryLogicalCondition::ExpectedCellBooleanValue BinaryLogicalCondition::resolve
 	    result = (*lhs)->disjunction(*rhs); break;
 	case Xor:
 	    result = (*lhs)->exclusiveor(*rhs); break;
-	case IfAndOnlyIf:
+	case Iff:
 	    result = (*lhs)->equivalence(*rhs); break;
-	case Follows:
+	case Implication:
 	    result = (*lhs)->implication(*rhs); break;
 	default:
 	    std::unreachable();

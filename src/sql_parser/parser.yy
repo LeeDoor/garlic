@@ -138,8 +138,8 @@ evaluateable: cond { $$ = std::move($1); }
 
 cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), And)); }
     | cond LOGICOR cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Or)); }
-    | cond IFF cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), IfAndOnlyIf)); }
-    | cond IMPLICATION cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Follows)); }
+    | cond IFF cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Iff)); }
+    | cond IMPLICATION cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Implication)); }
     | cond XOR cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Xor)); }
     | LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(session, std::move($2), IsTrue)); }
     | NOT LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(session, std::move($3), IsFalse)); }

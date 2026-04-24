@@ -1,1 +1,2 @@
 You can suggest me any addition, but never edit C++ code by your own. You can do anything with test cases, python scripts, bash scripts once i ask, but never touch non-testing C++ code.
+When i ask you to make tests of something, unless i ask the opposite, do following: make simple tests to ensure some feature is working; make complex tests to make sure it works safe with other features; make tests with errors to validate them; make location tests; make whitespace-separation tests to make sure new word, operator or any token is correctly whitespace separated.

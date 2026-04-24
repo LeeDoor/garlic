@@ -1,0 +1,7 @@
+SELECT true = false;
+SELECT 1 <=> false;
+SELECT 1 ^ false;
+SELECT true -> ;
+SELECT true <=> ;
+SELECT true ^ ;
+SELECT true -> 1;

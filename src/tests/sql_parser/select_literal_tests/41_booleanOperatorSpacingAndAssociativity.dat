@@ -1,0 +1,6 @@
+SELECT true^false;
+SELECT true<=>false;
+SELECT true->false;
+SELECT false->true->false;
+SELECT true<=>false<=>true;
+SELECT true^false^true;

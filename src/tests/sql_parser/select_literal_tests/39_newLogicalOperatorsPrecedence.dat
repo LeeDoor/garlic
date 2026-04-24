@@ -1,0 +1,10 @@
+SELECT true ^ false OR true;
+SELECT (true ^ false) OR true;
+SELECT false <=> false OR true;
+SELECT (false <=> false) OR true;
+SELECT false -> false AND false;
+SELECT (false -> false) AND false;
+SELECT true ^ false AND false;
+SELECT (true ^ false) AND false;
+SELECT !(true -> false);
+SELECT !(true <=> false);
