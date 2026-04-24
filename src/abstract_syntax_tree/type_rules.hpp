@@ -3,6 +3,7 @@
 
 namespace garlic {
 
+/// Static class to determine the rules of operations.
 class TypeRules {
 public:
     TypeRules() = delete;
@@ -12,6 +13,7 @@ public:
     };
     using TypeOrError = std::expected<CellType, OperationError>;
 
+    /// Constexpr function to define type size at compile time.
     template<CellType cell>
     static constexpr size_t get_type_size() {
 	if constexpr (cell == CellType::Int) {
@@ -21,16 +23,10 @@ public:
 	} else if constexpr (cell == CellType::Boolean) {
 	    return sizeof(bool);
 	} else {
-	    throw std::logic_error("Unknown type to get size of");
+	    static_assert(false, "Unknown type to get size of");
 	}
     }
-    template<IsStoringColumnType T>
-    static constexpr CellType get_cell_from_type() {
-	if constexpr (std::is_same_v<T, IntType>) { return Int; }
-	if constexpr (std::is_same_v<T, FloatType>) { return Float; }
-	if constexpr (std::is_same_v<T, StringType>) { return String; }
-    }
-
+    /// Runtime function to get type size;
     static constexpr size_t get_type_size(CellType cell) {
 	switch(cell) {
 	    case CellType::Int: return get_type_size<CellType::Int>();
@@ -39,6 +35,15 @@ public:
 	    default: std::unreachable();
 	}
     }
+    /// Constexpr function to get @ref CellType enum from template parameter.
+    template<IsStoringColumnType T>
+    static constexpr CellType get_cell_from_type() {
+	if constexpr (std::is_same_v<T, IntType>) { return Int; }
+	if constexpr (std::is_same_v<T, FloatType>) { return Float; }
+	if constexpr (std::is_same_v<T, StringType>) { return String; }
+    }
+
+    /// Converts @ref CellType to string using given ostream.
     static void as_str(std::ostream& os, CellType ct) {
 	static std::unordered_map<CellType, StringType> map {
 	    { String, "String" },
@@ -51,6 +56,7 @@ public:
 	os << map[ct];
     }
 
+    /// Formats error to string.
     static StringType write_error(OperationError err, 
 	    CellType lhs, std::optional<CellType> rhs = std::nullopt) {
 	static std::unordered_map<OperationError, StringType> map {
@@ -69,6 +75,8 @@ public:
 	return ss.str();
     }
 
+    /// Defines the resulting type on binary math operation using given types.
+    /*! @returns resulting type or error */
     static TypeOrError binary_math_comp(CellType lhs, CellType rhs) {
 	static std::map<std::pair<CellType, CellType>, CellType> map {
 	    { { Int, Int }, Int },
@@ -80,12 +88,16 @@ public:
 	    return map.at({ lhs, rhs });
 	return std::unexpected(BinaryMath);
     }
+    /// Defines the resulting type on unary math operation using given types.
+    /*! @returns resulting type or error */
     static TypeOrError unary_math_comp(CellType op) {
 	std::vector<CellType> acceptable = { Int, Float };
 	if(std::find(acceptable.begin(), acceptable.end(), op) != acceptable.end())
 	    return op;
 	return std::unexpected(UnaryMath);
     }
+    /// Defines the resulting type on comparison operation using given types.
+    /*! @returns resulting type or error */
     static TypeOrError comparison_comp(CellType lhs, CellType rhs) {
 	static std::set<std::pair<CellType, CellType>> acceptable {
 	    { Int, Int },
