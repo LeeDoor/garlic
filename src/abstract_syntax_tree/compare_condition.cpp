@@ -39,8 +39,4 @@ CompareCondition::ExpectedCellBooleanValue CompareCondition::resolve_bool(sptr<T
     return std::make_shared<CellBooleanValue>(result);
 }
 
-ExpectedValid CompareCondition::validate() const {
-    return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
-}
-
 }

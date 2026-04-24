@@ -8,9 +8,17 @@ using ExpectedValid = std::expected<void, InvalidError>;
 
 class CanBeValidated {
 public:
+    CanBeValidated(TypeRules::TypeOrError toe)
+    : type_or_err_{ toe }
+    {}
+
     /// Checks if given node is valid and may be resolved without semantic errors.
     /*! @returns nothing if OK or StringType with error message. */
-    virtual ExpectedValid validate() const = 0;
+    ExpectedValid validate() const {
+	if(type_or_err_.has_value())
+	    return ExpectedValid{};
+	return std::unexpected(type_or_err_.error());
+    }
 
     /// Returns the type of underlying value or resulting type after some operation
     /// made by this Expression.
@@ -23,16 +31,6 @@ public:
     }
 
 protected:
-    CanBeValidated(TypeRules::TypeOrError toe)
-    : type_or_err_{ toe }
-    {}
-
-    ExpectedValid validate(CellType lhs, std::optional<CellType> rhs = std::nullopt) const {
-	if(type_or_err_.has_value())
-	    return ExpectedValid{};
-	return std::unexpected(TypeRules::write_error(type_or_err_.error(), lhs, rhs));
-    }
-
     TypeRules::TypeOrError type_or_err_;
 };
 

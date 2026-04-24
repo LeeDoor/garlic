@@ -9,7 +9,6 @@ public:
     UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
 
     ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const override;
-    ExpectedValid validate() const override { return ExpectedValid{}; }
 
 protected:
     sptr<Condition> cond_;

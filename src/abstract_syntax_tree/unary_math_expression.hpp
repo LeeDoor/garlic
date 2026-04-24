@@ -9,8 +9,6 @@ class UnaryMathExpression : public Expression {
 public:
     UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op);
 
-    ExpectedValid validate() const override;
-
     ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const override;
 
 private:

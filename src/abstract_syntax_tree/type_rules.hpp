@@ -11,7 +11,7 @@ public:
     enum OperationError {
 	BinaryMath, UnaryMath, Comparison
     };
-    using TypeOrError = std::expected<CellType, OperationError>;
+    using TypeOrError = std::expected<CellType, StringType>;
 
     /// Constexpr function to get @ref CellType enum from template parameter.
     template<IsStoringColumnType T>

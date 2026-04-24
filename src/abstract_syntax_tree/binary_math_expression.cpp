@@ -10,9 +10,6 @@ BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression
 , op_ { op }
 {}
 
-ExpectedValid BinaryMathExpression::validate() const {
-    return CanBeValidated::validate(lhs_->get_type(), rhs_->get_type());
-}
 ExpectedCellValue BinaryMathExpression::resolve(sptr<TableValueGatherer> gatherer) const {
     const auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return lvalue;
     const auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;

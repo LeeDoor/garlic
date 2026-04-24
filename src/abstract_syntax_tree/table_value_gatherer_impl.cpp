@@ -11,7 +11,7 @@ TableValueGathererImpl::TableValueGathererImpl(sptr<TypedTable> table)
 , row_number_{ 0 }
 {}
 
-sptr<CellValue> TableValueGathererImpl::get_table_value(const std::string& column_name) {
+sptr<CellValue> TableValueGathererImpl::get_table_value(const ColumnNameType& column_name) {
     size_t column_number = table_->get_column_number_by_name(column_name);
     CellType type = table_->get_column_type(column_number);
     switch(type) {

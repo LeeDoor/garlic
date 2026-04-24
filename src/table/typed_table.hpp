@@ -1,5 +1,6 @@
 #pragma once
 #include "column_info.hpp"
+#include "table_header_gatherer.hpp"
 #include "type_rules.hpp"
 #include "public_column_info.hpp"
 #include "byte_matrix.hpp"
@@ -33,8 +34,7 @@ concept IterableContainer = requires(Container c) {
 class TypedTable {
 public:
     /// Testing override for initializer list. Unpreferrable in project.
-    TypedTable(std::initializer_list<PublicColumnInfo> container) 
-    : TypedTable(container.begin(), container.end()) {}
+    TypedTable(std::initializer_list<PublicColumnInfo> container);
 
     /// Override for iterable containers.
     template<IterableContainer<PublicColumnInfo> Container>
@@ -52,28 +52,17 @@ public:
 
     /// Returns index of the column with given name.
     /*! @throws std::logic_error if no such column in table. */
-    size_t get_column_number_by_name(const std::string& column_name) const {
-        auto find_result = 
-            std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
-                return ci.name == column_name;
-            });
-        if(find_result == header_.end()) 
-            throw std::logic_error("trying to get id of incorrect column name");
-        return std::distance(header_.begin(), find_result);
-    }
+    size_t get_column_number_by_name(const std::string& column_name) const;
 
     /// Returns @ref CellType type of column with given id.
     /*! @throws std::logic_error if column parameter is invalid. */
-    CellType get_column_type(size_t column) const {
-        if(column >= header_.size())
-            throw std::logic_error("trying to get column type with invalid column");
-        return header_[column].type;
+    CellType get_column_type(size_t column) const;
+    CellType get_column_type(const ColumnNameType& column) const { 
+	return get_column_type(get_column_number_by_name(column));
     }
 
     /// Creates empty row. You can't access a row without creating it.
-    size_t create_empty_row() {
-        return content_.create_empty_row();
-    }
+    size_t create_empty_row();
 
     /// Sets some value T to given row at given column. Overload for numbers.
     /*! @param row index of row that needs a change.
@@ -95,9 +84,7 @@ public:
     }
 
     /// Overload for const char[]. Used for tests.
-    void set_value(size_t row, size_t column, const char value[]) {
-        return set_value(row, column, std::string(value));
-    }
+    void set_value(size_t row, size_t column, const char value[]);
     
     /// Overload for the String type. 
     /*! @param row index of row that needs a change.
@@ -106,20 +93,7 @@ public:
      *  @throws std::logic_error if column is too big; if column type is not string; if string
      *  size mismatches; if row is too big.
      */
-    void set_value(size_t row, size_t column, const StringType& value) {
-        if(column >= header_.size()) 
-            throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
-        if(header_[column].type != String) 
-            throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
-        if(header_[column].size_bytes < value.size())
-            throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
-
-        size_t row_offset = header_[column].offset;
-        auto string_byte_represent = reinterpret_cast<const Byte*>(value.data());
-        content_.set_value(row, row_offset, ByteSpan{ string_byte_represent, value.size() });
-        row_offset += value.size();
-        content_.clear_value(row, row_offset, header_[column].size_bytes - row_offset);
-    }
+    void set_value(size_t row, size_t column, const StringType& value);
 
     /// Overload for numbers. Returns value at given position.
     /*! @param row index of row to change.
@@ -230,5 +204,7 @@ private:
     std::unordered_map<ColumnNameType, size_t> column_name_to_idx_;
     ByteMatrix content_;
 };
+
+static_assert(TableHeaderGatherer<TypedTable>, "TypedTable doesn't match the TableHeaderGatherer concept");
 
 }

@@ -15,13 +15,13 @@ void TypeRules::as_str(std::ostream& os, CellType ct) {
 }
 StringType TypeRules::write_error(OperationError err, 
 	CellType lhs, std::optional<CellType> rhs) {
-    std::unordered_map<OperationError, StringType> map {
+    static const std::unordered_map<OperationError, StringType> map {
 	{ BinaryMath, "binary mathematical operation" },
 	{ UnaryMath,  "unary mathematical operation"  },
 	{ Comparison, "comparison" }
     };
     std::stringstream ss;
-    ss << "Failed to execute " << map[err] << " with operands: ";
+    ss << "Failed to execute " << map.at(err) << " with operands: ";
     as_str(ss, lhs); 
     if(rhs) {
 	ss << " and ";
@@ -39,18 +39,16 @@ TypeRules::TypeOrError TypeRules::binary_math_comp(CellType lhs, CellType rhs) {
     };
     if(map.contains({ lhs, rhs }))
 	return map.at({ lhs, rhs });
-    return std::unexpected(BinaryMath);
+    return std::unexpected(write_error(BinaryMath, lhs, rhs));
 }
-/// Defines the resulting type on unary math operation using given types.
-/*! @returns resulting type or error */
+
 TypeRules::TypeOrError TypeRules::unary_math_comp(CellType op) {
     std::vector<CellType> acceptable = { Int, Float };
     if(std::find(acceptable.begin(), acceptable.end(), op) != acceptable.end())
 	return op;
-    return std::unexpected(UnaryMath);
+    return std::unexpected(write_error(UnaryMath, op));
 }
-/// Defines the resulting type on comparison operation using given types.
-/*! @returns resulting type or error */
+
 TypeRules::TypeOrError TypeRules::comparison_comp(CellType lhs, CellType rhs) {
     std::set<std::pair<CellType, CellType>> acceptable {
 	{ Int, Int },
@@ -61,7 +59,7 @@ TypeRules::TypeOrError TypeRules::comparison_comp(CellType lhs, CellType rhs) {
     };
     if(acceptable.contains({ lhs, rhs }))
 	return Boolean;
-    return std::unexpected(Comparison);
+    return std::unexpected(write_error(Comparison, lhs, rhs));
 }
 
 }
