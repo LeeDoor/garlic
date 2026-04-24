@@ -1,5 +1,5 @@
 #pragma once
-#include "tables_gatherer.hpp"
+#include "tables_header_gatherer.hpp"
 
 namespace garlic {
 
@@ -25,6 +25,6 @@ private:
     ExpectedColumnType type_or_error_;
 };
 
-static_assert(TablesGatherer<TablesGathererMock>);
+static_assert(TablesHeaderGatherer<TablesGathererMock>);
 
 }

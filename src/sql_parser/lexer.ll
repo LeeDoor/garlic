@@ -22,6 +22,7 @@ string_quote_q "'"
 string_quote_d "\""
 string_content_q ([^\\'\n]*(\\.)*)*
 string_content_d ([^\\"\n]*(\\.)*)*
+unquoted_name [a-zA-Z_][a-zA-Z0-9_]*
 
 %{
 /// Executes before each rule
@@ -134,12 +135,17 @@ string_content_d ([^\\"\n]*(\\.)*)*
     return make_STRING(session.get_multiline_string(), curloc);
 }
 
+{unquoted_name}"."{unquoted_name}/({token_separator}) { 
+    MET_CONTENT(); WHITESPACE_SEPARATED("table&column"); return make_TABLE_COLUMN(yytext, curloc); 
+}
+
 {EOL} { MET_NEWLINE(); MET_WORD_DELIMETER(); }
 {blank}+ { MET_SPACE(); MET_WORD_DELIMETER(); }
 
 .    {
 	MET_CONTENT(); LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");
      }
+
 <<EOF>> {
     session.met_eof(); 
     return yy::parser::make_YYEOF (curloc); 

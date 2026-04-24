@@ -17,7 +17,8 @@
     #include "unary_math_expression.hpp"
     #include "constant_expression.hpp"
     #include "constant_condition.hpp"
-
+    #include "table_column_reference.hpp"
+    #include "table_value_expression.hpp"
 
     namespace garlic::sql_parser { class ParsingSession; }
     using namespace garlic;
@@ -101,6 +102,8 @@
 %token <FloatType> FLOAT "float"
 %token <IntType> INTEGER "integer"
 %token <StringType> STRING "string"
+%token <TableColumnReference> TABLE_COLUMN "table&column"
+
 %nterm <uptr<Query>> query
 %nterm <SelectQuery::ColumnsContainer> selectors 
 %nterm <StringType> columnname 
@@ -167,6 +170,7 @@ expr: value { $$ = std::move($1); }
 value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(session, $1)); }
      | FLOAT   { ASSIGN_OR_ABORT($$, mk_v<FloatConstExpr>(session, $1)); }
      | strings { ASSIGN_OR_ABORT($$, mk_v<StringConstExpr>(session, $1)); }
+     | TABLE_COLUMN { ASSIGN_OR_ABORT($$, mk_v<TableValueExpression>(session, session.get_database(), $1.table_name, $1.column_name)); }
      ;
 
 strings: STRING { $$ = $1; }

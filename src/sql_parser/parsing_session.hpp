@@ -95,7 +95,7 @@ private:
     // if == 0, it means the last character was a whitespace; 
     // if < 0, it wasn't
     int left_ok_ {1};
- 
+    const Database& database_;
 };
 
 }

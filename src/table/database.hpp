@@ -1,7 +1,6 @@
 #pragma once
-#include "table_header_gatherer.hpp"
-#include "tables_gatherer.hpp"
 #include "typed_table.hpp"
+#include "table_header_gatherer.hpp"
 
 namespace garlic {
 

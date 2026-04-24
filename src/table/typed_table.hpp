@@ -1,6 +1,6 @@
 #pragma once
 #include "column_info.hpp"
-#include "table_header_gatherer.hpp"
+#include "table_column_type_gatherer.hpp"
 #include "type_rules.hpp"
 #include "public_column_info.hpp"
 #include "byte_matrix.hpp"
@@ -205,6 +205,6 @@ private:
     ByteMatrix content_;
 };
 
-static_assert(TableHeaderGatherer<TypedTable>, "TypedTable doesn't match the TableHeaderGatherer concept");
+static_assert(TableColumnTypeGatherer<TypedTable>, "TypedTable doesn't match the TableHeaderGatherer concept");
 
 }

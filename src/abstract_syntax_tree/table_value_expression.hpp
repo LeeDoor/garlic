@@ -1,12 +1,12 @@
 #pragma once
 #include "expression.hpp"
-#include "tables_gatherer.hpp"
+#include "tables_header_gatherer.hpp"
 
 namespace garlic {
 
 class TableValueExpression : public Expression {
 public:
-    template<TablesGatherer TablesGathererType>
+    template<TablesHeaderGatherer TablesGathererType>
     TableValueExpression(const TablesGathererType& tables_gatherer, const TableNameType& table_name, const ColumnNameType& column_name)
     : Expression{ tables_gatherer.get_tables_column_type(table_name, column_name) }
     , table_name_{ table_name }

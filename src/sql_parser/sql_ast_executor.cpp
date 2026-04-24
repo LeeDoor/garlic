@@ -7,7 +7,7 @@ namespace garlic::sql_parser {
 SqlAstExecutor::SqlAstExecutor(ErrorPrinter& error_printer)
 : os_{ std::cout }
 , err_{ error_printer }
-, gatherer_{ std::make_unique<DumbTableValueGatherer>() }
+, gatherer_{ std::make_shared<DumbTableValueGatherer>() }
 {}
 
 void SqlAstExecutor::execute_sql_ast(const uptr<Query>& query) const {

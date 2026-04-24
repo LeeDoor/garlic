@@ -1,4 +1,5 @@
 #include "literals_converter.hpp"
+#include "table_column_reference.hpp"
 
 namespace garlic::sql_parser {
 
@@ -25,6 +26,14 @@ yy::parser::symbol_type make_INTEGER(std::string_view s, const Position& curloc,
 	return yy::parser::make_INTEGER(*num, curloc);
     }
     return session.lexing_error("Failed to convert \"" + std::string(s) + "\" to int; too big value");
+}
+yy::parser::symbol_type make_TABLE_COLUMN(std::string_view s, const Position& curloc) {
+    auto period = s.find('.');
+    if(period == StringType::npos) 
+	throw std::logic_error("TABLE_COLUMN does not contain period; can't find table name");
+    StringType table_name { s.substr(0, period) };
+    StringType column_name { s.substr(period + 1) };
+    return yy::parser::make_TABLE_COLUMN(TableColumnReference{ std::move(table_name), std::move(column_name) }, curloc);
 }
 yy::parser::symbol_type make_STRING(const std::string& s, const Position& curloc) {
     std::string result; result.reserve(s.size() - 2);
