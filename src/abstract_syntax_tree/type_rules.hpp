@@ -19,6 +19,7 @@ public:
 	if constexpr (std::is_same_v<T, IntType>) { return Int; }
 	if constexpr (std::is_same_v<T, FloatType>) { return Float; }
 	if constexpr (std::is_same_v<T, StringType>) { return String; }
+	if constexpr (std::is_same_v<T, bool>) { return Boolean; }
     }
     /// Constexpr function to define type size at compile time.
     template<CellType cell>

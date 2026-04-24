@@ -6,6 +6,7 @@ namespace garlic {
 class CellIntValue; 
 class CellFloatValue; 
 class CellStringViewValue;
+class CellBooleanValue;
 
 template<IsAnyColumnType T>
 struct get_cell_type;
@@ -28,6 +29,11 @@ struct get_cell_type<FloatType> {
 template<>
 struct get_cell_type<IntType> {
     using Type = CellIntValue;
+};
+
+template<>
+struct get_cell_type<bool> {
+    using Type = CellBooleanValue;
 };
 
 }

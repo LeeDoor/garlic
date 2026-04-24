@@ -14,7 +14,7 @@
 
 EOL "\n"
 blank [ \t]
-token_separator {EOL}|{blank}|$
+token_separator [^a-zA-Z0-9]
 EXP ([Ee][-+]?[0-9]+)
 float [0-9]+"."[0-9]*{EXP}?|"."?[0-9]+{EXP}?
 int "0"|([1-9][0-9]*{EXP}?)
@@ -46,7 +46,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
     } 
 /// should be pasted in every word-separating whitespace;
 /// used to distinguish words like SELECT<>AND<>OR
-    #define MET_WHITESPACE() \
+    #define MET_WORD_DELIMETER() \
 	{ session.met_word_delimeter(); }
 
 /// should be pasted if token should be whitespace separated;
@@ -71,30 +71,36 @@ string_content_d ([^\\"\n]*(\\.)*)*
 "SELECT"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
 "AS"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AS"); return yy::parser::make_AS(curloc); }
 
-","  { MET_CONTENT(); return yy::parser::make_COLON(curloc); }
-";"  { MET_CONTENT(); return yy::parser::make_SEMICOLON(curloc); }
-"-"  { MET_CONTENT(); return yy::parser::make_MINUS(curloc); }
-"+"  { MET_CONTENT(); return yy::parser::make_PLUS(curloc); }
-"*"  { MET_CONTENT(); return yy::parser::make_MUL(curloc); }
-"/"  { MET_CONTENT(); return yy::parser::make_DIV(curloc); }
-"%"  { MET_CONTENT(); return yy::parser::make_REMDIV(curloc); }
-"("  { MET_CONTENT(); return yy::parser::make_LPAREN(curloc); }
-")"  { MET_CONTENT(); return yy::parser::make_RPAREN(curloc); }
-"|"  { MET_CONTENT(); return yy::parser::make_ABS(curloc); }
+","  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_COLON(curloc); }
+";"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_SEMICOLON(curloc); }
+"-"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_MINUS(curloc); }
+"+"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_PLUS(curloc); }
+"*"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_MUL(curloc); }
+"/"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_DIV(curloc); }
+"%"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_REMDIV(curloc); }
+"("  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_LPAREN(curloc); }
+")"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_RPAREN(curloc); }
+"|"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_ABS(curloc); }
 
-"="  { MET_CONTENT(); return yy::parser::make_ISEQ(curloc); }
-"!=" { MET_CONTENT(); return yy::parser::make_NOTEQ(curloc); }
-">=" { MET_CONTENT(); return yy::parser::make_MOREEQ(curloc); }
-"<=" { MET_CONTENT(); return yy::parser::make_LESSEQ(curloc); }
-">"  { MET_CONTENT(); return yy::parser::make_MORE(curloc); }
-"<"  { MET_CONTENT(); return yy::parser::make_LESS(curloc); }
+"="  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_ISEQ(curloc); }
+"!=" { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_NOTEQ(curloc); }
+">=" { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_MOREEQ(curloc); }
+"<=" { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_LESSEQ(curloc); }
+">"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_MORE(curloc); }
+"<"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_LESS(curloc); }
+
+"<=>" { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_IFF(curloc); }
+"->"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_IMPLICATION(curloc); }
+"^"   { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_XOR(curloc); }
 
 "AND"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AND"); return yy::parser::make_LOGICAND(curloc); }
 "OR"/({token_separator})  { MET_CONTENT(); WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(curloc); }
-"!"			  { MET_CONTENT(); return yy::parser::make_NOT(curloc); }
+"!"			  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_NOT(curloc); }
 
-{int}    { MET_CONTENT(); return make_INTEGER(yytext, curloc, session); }
-{float}  { MET_CONTENT(); return make_FLOAT(yytext, curloc, session); }
+"true"/({token_separator})  { MET_CONTENT(); WHITESPACE_SEPARATED("true"); return yy::parser::make_TRUE(curloc); }
+"false"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("false"); return yy::parser::make_FALSE(curloc); }
+{int}   { MET_CONTENT(); return make_INTEGER(yytext, curloc, session); }
+{float} { MET_CONTENT(); return make_FLOAT(yytext, curloc, session); }
 
 {string_quote_q} { MET_CONTENT(); session.append_line(yytext); BEGIN STRING_Q; }
 <STRING_Q>{string_content_q} { MET_CONTENT(); session.append_line(yytext); }
@@ -106,6 +112,7 @@ string_content_d ([^\\"\n]*(\\.)*)*
 }
 <STRING_Q>{string_quote_q} { 
     MET_CONTENT();
+    MET_WORD_DELIMETER();
     session.append_line(yytext); 
     BEGIN INITIAL; 
     return make_STRING(session.get_multiline_string(), curloc); 
@@ -121,13 +128,14 @@ string_content_d ([^\\"\n]*(\\.)*)*
 }
 <STRING_D>{string_quote_d} { 
     MET_CONTENT();
+    MET_WORD_DELIMETER();
     session.append_line(yytext); 
     BEGIN INITIAL; 
     return make_STRING(session.get_multiline_string(), curloc);
 }
 
-{EOL} { MET_NEWLINE(); MET_WHITESPACE(); }
-{blank}+ { MET_SPACE(); MET_WHITESPACE(); }
+{EOL} { MET_NEWLINE(); MET_WORD_DELIMETER(); }
+{blank}+ { MET_SPACE(); MET_WORD_DELIMETER(); }
 
 .    {
 	MET_CONTENT(); LEXING_ERROR("Invalid character \"" + std::string(yytext) + "\"");

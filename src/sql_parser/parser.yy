@@ -16,6 +16,7 @@
     #include "binary_math_expression.hpp"
     #include "unary_math_expression.hpp"
     #include "constant_expression.hpp"
+    #include "constant_condition.hpp"
 
 
     namespace garlic::sql_parser { class ParsingSession; }
@@ -73,7 +74,6 @@
     RPAREN  
     ABS
     ;
-
 %token
     ISEQ    
     NOTEQ    
@@ -81,6 +81,15 @@
     LESSEQ  
     MORE    
     LESS    
+    ;
+%token
+    IFF
+    IMPLICATION
+    XOR
+    ;
+%token
+    TRUE
+    FALSE
     ;
 %token
     LOGICAND
@@ -129,6 +138,9 @@ evaluateable: cond { $$ = std::move($1); }
 
 cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), And)); }
     | cond LOGICOR cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Or)); }
+    | cond IFF cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), IfAndOnlyIf)); }
+    | cond IMPLICATION cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Follows)); }
+    | cond XOR cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(session, std::move($1), std::move($3), Xor)); }
     | LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(session, std::move($2), IsTrue)); }
     | NOT LPAREN cond RPAREN { ASSIGN_OR_ABORT($$, mk_v<UnaryLogicalCondition>(session, std::move($3), IsFalse)); }
     | expr MOREEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(session, std::move($1), std::move($3), Ge)); }
@@ -137,7 +149,9 @@ cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(sess
     | expr NOTEQ expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(session, std::move($1), std::move($3), Ne)); }
     | expr MORE expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(session, std::move($1), std::move($3), Gt)); }
     | expr LESS expr { ASSIGN_OR_ABORT($$, mk_v<CompareCondition>(session, std::move($1), std::move($3), Lt)); }
-   ;
+    | TRUE  { ASSIGN_OR_ABORT($$, mk_v<ConstantCondition>(session, true)); }
+    | FALSE { ASSIGN_OR_ABORT($$, mk_v<ConstantCondition>(session, false)); }
+    ;
 
 expr: value { $$ = std::move($1); }
    | expr PLUS expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(session, std::move($1), std::move($3), Add)); }
@@ -159,6 +173,8 @@ strings: STRING { $$ = $1; }
        | strings STRING { $$ = $1 + $2; }
        ;
 
+%left XOR;
+%left IFF IMPLICATION;
 %left LOGICOR;
 %left LOGICAND;
 %left NOT;

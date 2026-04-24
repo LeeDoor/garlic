@@ -15,13 +15,15 @@ template<typename T>
 concept IsStoringColumnType = 
     std::is_same_v<T, StringType>
     || std::is_same_v<T, IntType> 
-    || std::is_same_v<T, FloatType>;
+    || std::is_same_v<T, FloatType>
+    || std::is_same_v<T, bool>;
 
 template<typename T>
 concept IsReadonlyColumnType = 
     std::is_same_v<T, StringViewType>
     || std::is_same_v<T, IntType> 
-    || std::is_same_v<T, FloatType>;
+    || std::is_same_v<T, FloatType>
+    || std::is_same_v<T, bool>;
 
 template<typename T>
 concept IsAnyColumnType = IsStoringColumnType<T> || IsReadonlyColumnType<T>;
