@@ -190,8 +190,10 @@ def prepare_actual_lines(mode: str, actual_output: str) -> list[str]:
     prepared: list[str] = []
     for line in lines:
         stripped = strip_cli_prompt_prefix(line)
-        if stripped:
-            prepared.append(stripped)
+        prepared.append(stripped)
+
+    while prepared and prepared[0] == "":
+        prepared.pop(0)
     return prepared
 
 

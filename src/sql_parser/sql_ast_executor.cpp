@@ -11,7 +11,7 @@ SqlAstExecutor::SqlAstExecutor()
 
 void SqlAstExecutor::execute_sql_ast(const uptr<Query>& query) const {
     sptr<QueryResult> q_result = query->resolve(gatherer_);
-    os_ << q_result->format() << std::endl;
+    os_ << q_result->format();
 }
 
 }

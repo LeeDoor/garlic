@@ -1,18 +1,27 @@
 String
 aboba\n
-String
-serega
-String
-'quoted'
-String
-"double"
-String
 
 String
+serega
+
+String
+'quoted'
+
+String
+"double"
+
+String
+
+
+String
+
 
 String
 \n\t\r\0
+
 Boolean
 true
+
 Boolean
 true
+

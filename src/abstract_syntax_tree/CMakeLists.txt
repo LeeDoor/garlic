@@ -12,6 +12,7 @@ add_library(abstract_syntax_tree STATIC
     unary_logical_condition.cpp
     binary_math_expression.cpp
     unary_math_expression.cpp
+    table_query_result.cpp
 )
 target_link_libraries(abstract_syntax_tree PUBLIC ${GENERAL_LINK_LIBRARIES})
 target_include_directories(abstract_syntax_tree PUBLIC ../table ${GENERAL_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR})

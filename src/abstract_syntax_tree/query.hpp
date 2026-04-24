@@ -20,7 +20,7 @@ public:
 
 protected:
     sptr<QueryResult> execute_error(const UnexpectedCellValue& err) {
-	return std::make_unique<StringQueryResult>("[RUNTIME_ERROR] " + err);
+	return std::make_unique<StringQueryResult>("[RUNTIME_ERROR] " + err + "\n\n");
     }
 };
 

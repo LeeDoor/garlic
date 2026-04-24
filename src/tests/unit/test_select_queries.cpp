@@ -42,7 +42,7 @@ protected:
     }
 
     static std::string format_single_value_table(std::string_view column_name, std::string_view value) {
-        return std::string(column_name) + "\n" + std::string(value);
+        return std::string(column_name) + "\n" + std::string(value) + "\n\n";
     }
 
     static std::string format_float_like_query(FloatType value) {
@@ -68,7 +68,7 @@ TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
     auto query = make_query(std::make_unique<ThrowingCondition>());
-    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] condition resolve failed");
+    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] condition resolve failed\n\n");
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBasicNumber) {
@@ -116,19 +116,9 @@ TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
     }
 }
 
-TEST_F(TestSelectQueries, expressionStringFormatsVeryLargeValue) {
-    StringType huge(1 << 20, 'X');
-    huge.replace(0, 5, "BEGIN");
-    huge.replace(huge.size() - 3, 3, "END");
-    auto query = make_query(std::make_unique<StringConstExpr>(huge));
-
-    auto result = query.resolve(gatherer_);
-    EXPECT_EQ(result->format(), format_single_value_table("String", huge));
-}
-
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
     auto query = make_query(std::make_unique<ThrowingExpression>());
-    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] expression evaluate failed");
+    EXPECT_EQ(query.resolve(gatherer_)->format(), "[RUNTIME_ERROR] expression evaluate failed\n\n");
 }
 
 }

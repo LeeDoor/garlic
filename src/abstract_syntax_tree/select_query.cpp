@@ -1,5 +1,5 @@
 #include "select_query.hpp"
-#include "string_query_result.hpp"
+#include "table_query_result.hpp"
 
 namespace garlic {
 
@@ -11,31 +11,21 @@ SelectQuery::SelectQuery(ColumnsContainer columns)
 { }
 
 sptr<QueryResult> SelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
-    /// Complete mess free to edit
-    std::stringstream ss;
-    bool is_first = true;
+    TableQueryResult::Table table; table.reserve(2); // TODO
+    table.push_back({ });
     for(const Selector& column : columns_) { 
-	if(!is_first) {
-	    ss << "\t";
-	}
-	is_first = false;
-
-	ss << column.column_name; 
+	table[0].push_back(column.column_name);
     }
-    ss << std::endl;
-    is_first = true;
+    table.push_back({ });
     for(const Selector& column : columns_) {
-	if(!is_first) {
-	    ss << "\t";
-	}
-	is_first = false;
-
+	std::stringstream ss;
 	auto result = column.content->resolve(gatherer);
 	if(!result)
 	    return execute_error(result.error());
 	(*result)->format(ss);
+	table[1].push_back(ss.str());
     }
-    return std::make_shared<StringQueryResult>(ss.str());
+    return std::make_shared<TableQueryResult>(std::move(table));
 }
 
 }

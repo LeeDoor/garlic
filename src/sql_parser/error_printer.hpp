@@ -13,7 +13,7 @@ public:
     void print_error(const ParsingError& error) const {
 	os_ << "[" << stage_str.at(error.stage) << "] "
 	    << "at [" << error.location << "] "
-	    << error.message << std::endl;
+	    << error.message << std::endl << std::endl;
     }
 
 private:
