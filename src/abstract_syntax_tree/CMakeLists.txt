@@ -15,5 +15,5 @@ add_library(abstract_syntax_tree STATIC
     table_query_result.cpp
     type_rules.cpp
 )
-target_link_libraries(abstract_syntax_tree PUBLIC ${GENERAL_LINK_LIBRARIES})
+target_link_libraries(abstract_syntax_tree PUBLIC table ${GENERAL_LINK_LIBRARIES})
 target_include_directories(abstract_syntax_tree PUBLIC ../table ${GENERAL_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR})

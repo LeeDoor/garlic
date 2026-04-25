@@ -4,6 +4,7 @@
 #include "cell_type.hpp"
 #include "error_stage.hpp"
 #include "parsing_result.hpp"
+#include "tables_header_gatherer_impl.hpp"
 
 #define YY_DECL \
     yy::parser::symbol_type yylex (ParsingSession& session)
@@ -19,18 +20,14 @@ class ParserEngine;
 class ParsingSession {
 public:
     using ParsingResults = std::list<ParsingResult>;
-    using ColumnTypeGathererFunc = std::function<ExpectedColumnType(TableNameType, ColumnNameType)>;
 
     struct ContinuationState {
 	ParsingLocation location;
 	bool waiting_query_content;
     };
 
-    ParsingSession(ColumnTypeGathererFunc&& column_type_gatherer)
-    : column_type_gatherer_{ std::move(column_type_gatherer) }
-    {}
-    ParsingSession(ColumnTypeGathererFunc&& column_type_gatherer, ContinuationState cont_state)
-    : ParsingSession{ std::move(column_type_gatherer) }
+    ParsingSession() {}
+    ParsingSession(ContinuationState cont_state)
     {
 	location_ = ParsingLocation::initialize_from(cont_state.location);
 	waiting_query_content_ = cont_state.waiting_query_content;
@@ -83,18 +80,12 @@ public:
     /// returns current position as object.
     Position current_position() const;
     const ParsingLocation& location() const& { return location_; }
-
-    decltype(auto) get_database() const {
-	struct { ColumnTypeGathererFunc get_tables_column_type; }
-	    database{ column_type_gatherer_ };
-	return database;
-    }
+    TablesHeaderGathererImpl get_database() const;
 
 private:
     /// Called if just finished a query and started a new  one.
     void finished_previous_query();
 
-    ColumnTypeGathererFunc column_type_gatherer_;
     ParsingResults parsing_results_ {};
     ParsingLocation location_ {};
     StringType multiline_string_buffer_ {};

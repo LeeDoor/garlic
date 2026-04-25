@@ -1,10 +1,10 @@
 #pragma once
 #include "table_value_expression.hpp"
-#include "tables_gatherer.hpp"
+#include "tables_header_gatherer.hpp"
 
 namespace garlic {
 
-template<TablesGatherer TablesGathererType>
+template<TablesHeaderGatherer TablesGathererType>
 class TablesTypeGatherer {
 public:
     using UnexpectedTableValue = StringType;

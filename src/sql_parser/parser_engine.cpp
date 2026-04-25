@@ -19,15 +19,10 @@ decltype(auto) ParserEngine::create_parser(ParsingSession& session, StringViewTy
 }
 
 ParserEngine::Results ParserEngine::parse(StringViewType query_string) {
-    auto func = 	
-	[](TableNameType , ColumnNameType ) -> ExpectedColumnType {
-	    return std::unexpected("");
-	}; 
-
     ParsingSession session = [&, this] {
 	if(continuation_state_)
-	    return ParsingSession{ std::move(func), *continuation_state_ };
-	return ParsingSession{ std::move(func) };
+	    return ParsingSession{ *continuation_state_ };
+	return ParsingSession{  };
     }();
 
     auto parser = create_parser(session, query_string);

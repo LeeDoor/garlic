@@ -57,9 +57,7 @@ public:
     /// Returns @ref CellType type of column with given id.
     /*! @throws std::logic_error if column parameter is invalid. */
     CellType get_column_type(size_t column) const;
-    CellType get_column_type(const ColumnNameType& column) const { 
-	return get_column_type(get_column_number_by_name(column));
-    }
+    CellType get_column_type(const ColumnNameType& column) const;
 
     /// Creates empty row. You can't access a row without creating it.
     size_t create_empty_row();

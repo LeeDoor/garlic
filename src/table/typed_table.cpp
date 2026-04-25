@@ -20,6 +20,9 @@ CellType TypedTable::get_column_type(size_t column) const {
 	throw std::logic_error("trying to get column type with invalid column");
     return header_[column].type;
 }
+CellType TypedTable::get_column_type(const ColumnNameType& column) const {
+    return get_column_type(get_column_number_by_name(column));
+}
 
 size_t TypedTable::create_empty_row() {
     return content_.create_empty_row();

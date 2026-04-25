@@ -1,5 +1,6 @@
 #include "parsing_session.hpp"
 #include "manual_io.hpp"
+#include "tables_header_gatherer_impl.hpp"
 
 namespace garlic::sql_parser {
 
@@ -104,6 +105,10 @@ void ParsingSession::met_eof() {
 
 Position ParsingSession::current_position() const {
     return location_.cur();
+}
+
+TablesHeaderGathererImpl ParsingSession::get_database() const {
+    return TablesHeaderGathererImpl{ {} };
 }
 
 }
