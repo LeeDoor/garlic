@@ -3,8 +3,15 @@
 
 namespace garlic::sql_parser {
 
-SqlRepl::SqlRepl(bool debug_mode, QueryInput query_input, ErrorPrinter error_printer, SqlAstExecutor ast_executor)
-: parse_ctx_{ debug_mode }
+SqlRepl::SqlRepl(
+	bool debug_mode, 
+	TablesHeaderGatherer tables_header_gatherer, 
+	QueryInput query_input, 
+	ErrorPrinter error_printer, 
+	SqlAstExecutor ast_executor
+    )
+: tables_header_gatherer_ { std::move(tables_header_gatherer) }
+, parser_engine_{ tables_header_gatherer_, debug_mode }
 , query_input_{ std::move(query_input) }
 , error_printer_{ std::move(error_printer) }
 , ast_executor_{ std::move(ast_executor) }
@@ -13,7 +20,7 @@ SqlRepl::SqlRepl(bool debug_mode, QueryInput query_input, ErrorPrinter error_pri
 void SqlRepl::run() {
     do {
 	query_input_.readline();
-	auto parse_session_result = parse_ctx_.parse(query_input_.get_query());
+	auto parse_session_result = parser_engine_.parse(query_input_.get_query());
 	handle_results(parse_session_result);
 	query_input_.shrink_n_characters(parse_session_result.characters_parsed);
     } while (query_input_.is_more_context_available());

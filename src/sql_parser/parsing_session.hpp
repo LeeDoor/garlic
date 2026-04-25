@@ -4,7 +4,7 @@
 #include "cell_type.hpp"
 #include "error_stage.hpp"
 #include "parsing_result.hpp"
-#include "tables_header_gatherer_impl.hpp"
+#include "tables_header_gatherer.hpp"
 
 #define YY_DECL \
     yy::parser::symbol_type yylex (ParsingSession& session)
@@ -80,7 +80,7 @@ public:
     /// returns current position as object.
     Position current_position() const;
     const ParsingLocation& location() const& { return location_; }
-    TablesHeaderGathererImpl get_database() const;
+    TablesHeaderGatherer get_database() const;
 
 private:
     /// Called if just finished a query and started a new  one.

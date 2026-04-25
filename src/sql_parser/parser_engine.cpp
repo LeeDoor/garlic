@@ -3,8 +3,9 @@
 
 namespace garlic::sql_parser {
 
-ParserEngine::ParserEngine(bool debug)
-: debug_mode_{ debug }
+ParserEngine::ParserEngine(const TablesHeaderGatherer& tables_header_gatherer, bool debug)
+: tables_header_gatherer_{ tables_header_gatherer }
+, debug_mode_{ debug }
 {}
 
 decltype(auto) ParserEngine::create_parser(ParsingSession& session, StringViewType query_string) {

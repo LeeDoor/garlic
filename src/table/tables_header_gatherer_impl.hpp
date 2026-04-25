@@ -7,7 +7,7 @@ using UnexpectedColumnType = StringType;
 using ExpectedColumnType = std::expected<CellType, UnexpectedColumnType>;
 
 template<typename T>
-concept TablesHeaderGatherer = requires (const T& tables_gatherer) {
+concept TablesHeaderGathererImpl = requires (const T& tables_gatherer) {
     { tables_gatherer.get_tables_column_type(TableNameType{}, ColumnNameType{}) } -> std::convertible_to<ExpectedColumnType>;
 };
 

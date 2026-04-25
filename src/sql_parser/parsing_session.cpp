@@ -107,8 +107,8 @@ Position ParsingSession::current_position() const {
     return location_.cur();
 }
 
-TablesHeaderGathererImpl ParsingSession::get_database() const {
-    return TablesHeaderGathererImpl{ {} };
+TablesHeaderGatherer ParsingSession::get_database() const {
+    return TablesHeaderGatherer{ {} };
 }
 
 }

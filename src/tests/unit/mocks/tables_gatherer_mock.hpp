@@ -25,6 +25,6 @@ private:
     ExpectedColumnType type_or_error_;
 };
 
-static_assert(TablesHeaderGatherer<TablesGathererMock>);
+static_assert(TablesHeaderGathererImpl<TablesGathererMock>);
 
 }

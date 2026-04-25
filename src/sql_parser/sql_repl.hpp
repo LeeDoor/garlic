@@ -8,8 +8,9 @@ namespace garlic::sql_parser {
 
 class SqlRepl {
 public:
-    explicit SqlRepl(
+    SqlRepl(
 	bool debug_mode, 
+	TablesHeaderGatherer tables_header_gatherer,
 	QueryInput query_input, 
 	ErrorPrinter error_printer,
 	SqlAstExecutor ast_executor);
@@ -19,7 +20,8 @@ private:
     void print_error(const ParsingError& error) const;
     void handle_results(const ParserEngine::Results& results) const;
 
-    ParserEngine parse_ctx_;
+    TablesHeaderGatherer tables_header_gatherer_;
+    ParserEngine parser_engine_;
     QueryInput query_input_;
     ErrorPrinter error_printer_;
     SqlAstExecutor ast_executor_;

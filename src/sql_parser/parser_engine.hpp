@@ -15,7 +15,7 @@ public:
 	, characters_parsed{ inter.characters_parsed }
 	{}
     };
-    explicit ParserEngine(bool debug = false);
+    explicit ParserEngine(const TablesHeaderGatherer& tables_header_gatherer, bool debug = false);
 
     /// Driver API
     Results parse(StringViewType query_string);
@@ -28,7 +28,8 @@ private:
     void scan_begin(StringViewType query_string);
     void scan_end();
 
-    bool debug_mode_ {};
+    const TablesHeaderGatherer& tables_header_gatherer_;
+    bool debug_mode_;
     std::optional<ContinuationState> continuation_state_ {std::nullopt};
 };
 

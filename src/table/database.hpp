@@ -1,5 +1,5 @@
 #pragma once
-#include "tables_header_gatherer.hpp"
+#include "tables_header_gatherer_impl.hpp"
 #include "typed_table.hpp"
 
 namespace garlic {
@@ -28,6 +28,6 @@ private:
 
 using Database = DatabaseImpl<TypedTable>;
 
-static_assert(TablesHeaderGatherer<Database>, "Database doesn't match the TablesGatherer concept");
+static_assert(TablesHeaderGathererImpl<Database>, "Database doesn't match the TablesGatherer concept");
 
 }
