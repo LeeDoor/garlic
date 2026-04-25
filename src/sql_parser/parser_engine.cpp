@@ -1,4 +1,5 @@
 #include "parser_engine.hpp"
+#include "tables_header_gatherer.hpp"
 
 namespace garlic::sql_parser {
 
@@ -18,10 +19,15 @@ decltype(auto) ParserEngine::create_parser(ParsingSession& session, StringViewTy
 }
 
 ParserEngine::Results ParserEngine::parse(StringViewType query_string) {
-    ParsingSession session = [this] {
+    auto func = 	
+	[](TableNameType , ColumnNameType ) -> ExpectedColumnType {
+	    return std::unexpected("");
+	}; 
+
+    ParsingSession session = [&, this] {
 	if(continuation_state_)
-	    return ParsingSession{ *continuation_state_ };
-	return ParsingSession{ };
+	    return ParsingSession{ std::move(func), *continuation_state_ };
+	return ParsingSession{ std::move(func) };
     }();
 
     auto parser = create_parser(session, query_string);
