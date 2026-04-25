@@ -12,7 +12,7 @@ CompareCondition::CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, B
 , operator_  { op }
 {}
 
-CompareCondition::ExpectedCellBooleanValue CompareCondition::resolve_bool(sptr<TableValueGatherer> gatherer) const {
+CompareCondition::ExpectedCellBooleanValue CompareCondition::resolve_bool(sptr<CellValueGatherer> gatherer) const {
     auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return std::unexpected(lvalue.error());
     auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return std::unexpected(rvalue.error());
     sptr<CellComparable> 

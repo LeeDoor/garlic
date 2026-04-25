@@ -8,7 +8,7 @@ add_library(abstract_syntax_tree STATIC
     select_query.cpp
     string_query_result.cpp
     table_value_expression.cpp
-    table_value_gatherer_impl.cpp
+    cell_value_gatherer_impl.cpp
     unary_logical_condition.cpp
     binary_math_expression.cpp
     unary_math_expression.cpp

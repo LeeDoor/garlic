@@ -2,7 +2,7 @@
 #include "query_result.hpp"
 #include "constant_expression.hpp"
 #include "condition_mock.hpp"
-#include "table_value_gatherer_mock.hpp"
+#include "cell_value_gatherer_mock.hpp"
 #include <limits>
 #include <sstream>
 
@@ -11,7 +11,7 @@ namespace garlic {
 class ThrowingCondition : public Condition {
 public:
     ThrowingCondition() : Condition{ Boolean } {}
-    ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer>) const override {
+    ExpectedCellBooleanValue resolve_bool(sptr<CellValueGatherer>) const override {
         return std::unexpected("condition resolve failed");
     }
 };
@@ -19,15 +19,15 @@ public:
 class ThrowingExpression : public Expression {
 public:
     ThrowingExpression() : Expression{ Int } {}
-    ExpectedCellValue resolve(sptr<TableValueGatherer>) const override {
+    ExpectedCellValue resolve(sptr<CellValueGatherer>) const override {
         return std::unexpected("expression evaluate failed");
     }
 };
 
 class TestSelectQueries : public ::testing::Test {
 protected:
-    sptr<testing::StrictMock<TableValueGathererMock>> gatherer_ =
-        std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    sptr<testing::StrictMock<CellValueGathererMock>> gatherer_ =
+        std::make_shared<testing::StrictMock<CellValueGathererMock>>();
 
     template<typename... Exprs>
     static SelectQuery make_query(Exprs&&... exprs) {

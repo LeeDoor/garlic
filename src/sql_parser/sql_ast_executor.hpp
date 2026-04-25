@@ -7,14 +7,14 @@ namespace garlic::sql_parser {
 /// Executes an AST and prints result to std::cout.
 class SqlAstExecutor {
 public:
-    SqlAstExecutor(ErrorPrinter& error_printer, sptr<TableValueGatherer> gatherer);
+    SqlAstExecutor(ErrorPrinter& error_printer, sptr<CellValueGatherer> gatherer);
 
     void execute_sql_ast(const uptr<Query>& query) const;
     
 private:
     std::ostream& os_;
     ErrorPrinter& err_;
-    sptr<TableValueGatherer> gatherer_;
+    sptr<CellValueGatherer> gatherer_;
 };
 
 }

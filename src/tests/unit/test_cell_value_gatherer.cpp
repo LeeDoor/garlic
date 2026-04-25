@@ -1,4 +1,4 @@
-#include "table_value_gatherer_impl.hpp"
+#include "cell_value_gatherer_impl.hpp"
 #include "typed_table.hpp"
 #include "public_column_info.hpp"
 #include "cell_string_view_value.hpp"
@@ -7,12 +7,12 @@
 #include "cell_comparable.hpp"
 
 namespace garlic {
-class TableValueGathererFixture : public ::testing::Test {
+class CellValueGathererFixture : public ::testing::Test {
 protected:
 
 
 public:
-    TableValueGathererFixture()
+    CellValueGathererFixture()
         : table_{ initialize_table() }
     {}
 
@@ -47,12 +47,12 @@ protected:
 };
 
 
-TEST_F(TableValueGathererFixture, init) {
-    sptr<TableValueGathererImpl> tvg = std::make_shared<TableValueGathererImpl>(table_);
+TEST_F(CellValueGathererFixture, init) {
+    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 }
 
-TEST_F(TableValueGathererFixture, accessingData_0ByDefault) {
-    sptr<TableValueGathererImpl> tvg = std::make_shared<TableValueGathererImpl>(table_);
+TEST_F(CellValueGathererFixture, accessingData_0ByDefault) {
+    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 
     sptr<CellValue> cellstr = tvg->get_table_value("String field");
     sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
@@ -70,8 +70,8 @@ TEST_F(TableValueGathererFixture, accessingData_0ByDefault) {
     EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(1)));
 }
 
-TEST_F(TableValueGathererFixture, accessingData_rowSelect) {
-    sptr<TableValueGathererImpl> tvg = std::make_shared<TableValueGathererImpl>(table_);
+TEST_F(CellValueGathererFixture, accessingData_rowSelect) {
+    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
     tvg->set_row_number(1);
 
     sptr<CellValue> cellstr = tvg->get_table_value("String field");
@@ -90,8 +90,8 @@ TEST_F(TableValueGathererFixture, accessingData_rowSelect) {
     EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(INT_MAX - 2024)));
 }
 
-TEST_F(TableValueGathererFixture, wrongRowNumber_shouldThrowLogic) {
-    sptr<TableValueGathererImpl> tvg = std::make_shared<TableValueGathererImpl>(table_);
+TEST_F(CellValueGathererFixture, wrongRowNumber_shouldThrowLogic) {
+    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
     tvg->set_row_number(3);
 
     EXPECT_THROW(tvg->get_table_value("String field"), std::logic_error);
@@ -99,8 +99,8 @@ TEST_F(TableValueGathererFixture, wrongRowNumber_shouldThrowLogic) {
     EXPECT_THROW(tvg->get_table_value("Int field"), std::logic_error);
 }
 
-TEST_F(TableValueGathererFixture, misspellColumnName_throwLogic) {
-    sptr<TableValueGathererImpl> tvg = std::make_shared<TableValueGathererImpl>(table_);
+TEST_F(CellValueGathererFixture, misspellColumnName_throwLogic) {
+    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
     tvg->set_row_number(0);
 
     EXPECT_THROW(tvg->get_table_value("sTRING FIELD"), std::logic_error);

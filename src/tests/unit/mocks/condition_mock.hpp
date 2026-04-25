@@ -11,7 +11,7 @@ public:
             .WillRepeatedly(Return(std::make_shared<CellBooleanValue>(val)));
     }
 
-    MOCK_METHOD(ExpectedCellBooleanValue, resolve_bool, (sptr<TableValueGatherer> gatherer), (const, override));
+    MOCK_METHOD(ExpectedCellBooleanValue, resolve_bool, (sptr<CellValueGatherer> gatherer), (const, override));
 };
 
 }

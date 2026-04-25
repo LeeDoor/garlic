@@ -1,7 +1,7 @@
 #include "binary_math_expression.hpp"
 #include "unary_math_expression.hpp"
 #include "constant_expression.hpp"
-#include "table_value_gatherer_mock.hpp"
+#include "cell_value_gatherer_mock.hpp"
 
 namespace garlic {
 
@@ -23,7 +23,7 @@ static FloatType as_float(const sptr<CellValue>& value) {
 }
 
 TEST(test_binary_math_expression, intOperators) {
-    auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    auto g = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     auto lhs = std::make_shared<IntConstExpr>(17);
     auto rhs = std::make_shared<IntConstExpr>(5);
 
@@ -35,7 +35,7 @@ TEST(test_binary_math_expression, intOperators) {
 }
 
 TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
-    auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    auto g = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     auto lhs = std::make_shared<IntConstExpr>(5);
     auto rhs = std::make_shared<FloatConstExpr>(2.0f);
 
@@ -56,7 +56,7 @@ TEST(test_binary_math_expression, mixedIntFloatReturnsFloat) {
 }
 
 TEST(test_binary_math_expression, operandWithoutMathSupportShouldThrow) {
-    auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    auto g = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     auto lhs = std::make_shared<StringConstExpr>("abc");
     auto rhs = std::make_shared<IntConstExpr>(2);
 
@@ -65,7 +65,7 @@ TEST(test_binary_math_expression, operandWithoutMathSupportShouldThrow) {
 }
 
 TEST(test_unary_math_expression, absAndNegForInt) {
-    auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    auto g = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     auto val = std::make_shared<IntConstExpr>(-17);
 
     EXPECT_EQ(as_int(unwrap_value(UnaryMathExpression(val, Abs).resolve(g))), 17);
@@ -73,7 +73,7 @@ TEST(test_unary_math_expression, absAndNegForInt) {
 }
 
 TEST(test_unary_math_expression, absAndNegForFloat) {
-    auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    auto g = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     auto val = std::make_shared<FloatConstExpr>(-2.5f);
 
     EXPECT_FLOAT_EQ(as_float(unwrap_value(UnaryMathExpression(val, Abs).resolve(g))), 2.5f);
@@ -81,7 +81,7 @@ TEST(test_unary_math_expression, absAndNegForFloat) {
 }
 
 TEST(test_unary_math_expression, operandWithoutMathSupportShouldThrow) {
-    auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    auto g = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     auto val = std::make_shared<StringConstExpr>("abc");
 
     UnaryMathExpression expr(val, Neg);
@@ -89,7 +89,7 @@ TEST(test_unary_math_expression, operandWithoutMathSupportShouldThrow) {
 }
 
 TEST(test_binary_unary_math_expression, composedBigExpression) {
-    auto g = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    auto g = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
 
     // ((|-(1000)| + 24) * 3) % 7 = 0
     auto base = std::make_shared<IntConstExpr>(1000);

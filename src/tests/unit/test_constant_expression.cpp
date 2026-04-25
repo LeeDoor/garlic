@@ -1,9 +1,9 @@
 #include "constant_expression.hpp"
-#include "table_value_gatherer_mock.hpp"
+#include "cell_value_gatherer_mock.hpp"
 
 namespace garlic {
 
-auto gatherer_mock = std::make_shared<::testing::StrictMock<TableValueGathererMock>>();
+auto gatherer_mock = std::make_shared<::testing::StrictMock<CellValueGathererMock>>();
 
 static sptr<CellComparable> as_comparable(ExpectedCellValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();

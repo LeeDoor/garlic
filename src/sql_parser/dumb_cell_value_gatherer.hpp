@@ -1,9 +1,9 @@
 #pragma once
-#include "table_value_gatherer.hpp"
+#include "cell_value_gatherer.hpp"
 
 namespace garlic::sql_parser {
 
-class DumbTableValueGatherer : public TableValueGatherer {
+class DumbCellValueGatherer : public CellValueGatherer {
 public:
     sptr<CellValue> get_table_value(const std::string& ) override {
 	throw std::logic_error("Not supposed to be invoked; stub class");

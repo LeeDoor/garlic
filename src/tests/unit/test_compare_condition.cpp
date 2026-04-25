@@ -4,7 +4,7 @@
 #include "cell_float_value.hpp"
 #include "cell_string_view_value.hpp"
 #include "constant_expression.hpp"
-#include "table_value_gatherer_mock.hpp"
+#include "cell_value_gatherer_mock.hpp"
 
 namespace garlic {
 
@@ -14,7 +14,7 @@ static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
     return (*result)->get_bool();
 }
 
-auto gatherer = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+auto gatherer = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
 
 class TestCompareCondition : public ::testing::Test {
 public:

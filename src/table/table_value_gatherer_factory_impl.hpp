@@ -1,10 +1,10 @@
 #pragma once
 #include "cell_type.hpp"
-#include "table_value_gatherer.hpp"
+#include "cell_value_gatherer.hpp"
 
 namespace garlic {
     
-using ExpectedTableValueGatherer = std::expected<sptr<TableValueGatherer>, StringType>;
+using ExpectedTableValueGatherer = std::expected<sptr<CellValueGatherer>, StringType>;
 
 template<typename TableValueGathererFactoryT>
 concept TableValueGathererFactoryImpl = requires(TableValueGathererFactoryT table_value_gatherer_factory) {

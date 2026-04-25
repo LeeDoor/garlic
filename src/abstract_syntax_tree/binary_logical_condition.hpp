@@ -8,7 +8,7 @@ class BinaryLogicalCondition : public Condition {
 public:
     BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
 
-    ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const override;
+    ExpectedCellBooleanValue resolve_bool(sptr<CellValueGatherer> gatherer) const override;
 
 protected:
     sptr<Condition> lhs_;

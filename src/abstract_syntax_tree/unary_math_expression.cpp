@@ -9,7 +9,7 @@ UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOper
 , op_{ op }
 {}
 
-ExpectedCellValue UnaryMathExpression::resolve(sptr<TableValueGatherer> gatherer) const {
+ExpectedCellValue UnaryMathExpression::resolve(sptr<CellValueGatherer> gatherer) const {
     const auto value = operand_->resolve(gatherer); if(!value) return value;
     sptr<CellAcceptMathOp> operand = std::dynamic_pointer_cast<CellAcceptMathOp>(*value);
     if(!operand)

@@ -1,12 +1,12 @@
 #pragma once
-#include "table_value_gatherer.hpp"
+#include "cell_value_gatherer.hpp"
 
 namespace garlic {
 class TypedTable;
 
-class TableValueGathererImpl : public TableValueGatherer {
+class CellValueGathererImpl : public CellValueGatherer {
 public:
-    TableValueGathererImpl(sptr<TypedTable> table);
+    CellValueGathererImpl(sptr<TypedTable> table);
 
     sptr<CellValue> get_table_value(const ColumnNameType& column_name) override;
     void set_row_number(size_t row_number);

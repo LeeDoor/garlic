@@ -3,11 +3,11 @@
 
 namespace garlic {
 class QueryResult;
-class TableValueGatherer;
+class CellValueGatherer;
 
 /*! @brief Query defines the root of AST defining any query. 
  *  Query may be resolved, which returns pointer to abstract @ref QueryResult.
- *  Resolving requires @ref TableValueGatherer.
+ *  Resolving requires @ref CellValueGatherer.
  */
 class Query {
 public:
@@ -17,7 +17,7 @@ public:
 
     /// Resolves query and forms the @ref QueryResult on return.
     /*! @param gatherer used to resolve table cells mentioned in query. */
-    [[nodiscard]] virtual ExpectedQueryResult resolve(sptr<TableValueGatherer> gatherer) = 0;
+    [[nodiscard]] virtual ExpectedQueryResult resolve(sptr<CellValueGatherer> gatherer) = 0;
 };
 
 }

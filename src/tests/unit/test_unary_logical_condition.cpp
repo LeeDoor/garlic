@@ -1,7 +1,7 @@
 #include "unary_logical_condition.hpp"
 #include "cell_boolean_value.hpp"
 #include "condition_mock.hpp"
-#include "table_value_gatherer_mock.hpp"
+#include "cell_value_gatherer_mock.hpp"
 
 namespace garlic {
 
@@ -26,8 +26,8 @@ std::ostream& operator<<(std::ostream& os, UnaryLogicalOperator op) {
 class TestUnaryLogicalCondition : public ::testing::Test {
 protected:
     static const int TABLE_SIZE = 2;
-    sptr<testing::StrictMock<TableValueGathererMock>> gatherer
-        = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    sptr<testing::StrictMock<CellValueGathererMock>> gatherer
+        = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
 
     uptr<UnaryLogicalCondition> create(bool condition, UnaryLogicalOperator op) {
         return std::make_unique<UnaryLogicalCondition>(

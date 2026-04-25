@@ -1,4 +1,4 @@
-#include "table_value_gatherer_impl.hpp"
+#include "cell_value_gatherer_impl.hpp"
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
 #include "cell_string_view_value.hpp"
@@ -6,15 +6,15 @@
 
 namespace garlic {
 
-TableValueGathererImpl::TableValueGathererImpl(sptr<TypedTable> table)
+CellValueGathererImpl::CellValueGathererImpl(sptr<TypedTable> table)
 : table_{ table }
 , row_number_{ 0 }
 {}
 
-sptr<CellValue> TableValueGathererImpl::get_table_value(const ColumnNameType& column_name) {
+sptr<CellValue> CellValueGathererImpl::get_table_value(const ColumnNameType& column_name) {
     auto column_number = table_->get_column_number_by_name(column_name);
     if(!column_number)
-	throw std::logic_error("called invalid TableValueGathererImpl::get_table_value: no such column \"" + column_name + "\"");
+	throw std::logic_error("called invalid CellValueGathererImpl::get_table_value: no such column \"" + column_name + "\"");
     CellType type = table_->get_column_type(*column_number);
     switch(type) {
     case String:
@@ -34,7 +34,7 @@ sptr<CellValue> TableValueGathererImpl::get_table_value(const ColumnNameType& co
     }
 }
 
-void TableValueGathererImpl::set_row_number(size_t row_number) {
+void CellValueGathererImpl::set_row_number(size_t row_number) {
     row_number_ = row_number;
 }
 

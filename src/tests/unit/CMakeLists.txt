@@ -15,7 +15,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_cell_string_view_value.cpp
     test_cell_string_value.cpp
     test_constant_expression.cpp
-    test_table_value_gatherer.cpp
+    test_cell_value_gatherer.cpp
     test_table_value_expression.cpp
     test_math_expression.cpp
     test_binary_unary_math_expression.cpp

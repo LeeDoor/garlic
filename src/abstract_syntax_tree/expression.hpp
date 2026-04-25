@@ -1,5 +1,5 @@
 #pragma once
-#include "table_value_gatherer.hpp"
+#include "cell_value_gatherer.hpp"
 #include "validateable.hpp"
 #include "expected_cell_value.hpp"
 
@@ -17,7 +17,7 @@ public:
     
     /// Resolves underlying subexpressions or values and forms the @ref CellValue object.
     /*! @throws std::logic_error may throw if did not validate first. */
-    virtual ExpectedCellValue resolve(sptr<TableValueGatherer> gatherer) const = 0;
+    virtual ExpectedCellValue resolve(sptr<CellValueGatherer> gatherer) const = 0;
 };
 
 }

@@ -1,4 +1,4 @@
-#include "dumb_table_value_gatherer.hpp"
+#include "dumb_cell_value_gatherer.hpp"
 #include "manual_io.hpp"
 #include "sql_repl.hpp"
 
@@ -46,7 +46,7 @@ int main (int argc, char** argv) {
 	    database,
 	    QueryInput {}, 
 	    err_p, 
-	    SqlAstExecutor { err_p, std::make_shared<DumbTableValueGatherer>() });
+	    SqlAstExecutor { err_p, std::make_shared<DumbCellValueGatherer>() });
     try {
 	drv.run();
     } catch (const std::logic_error& ex) {
@@ -54,4 +54,3 @@ int main (int argc, char** argv) {
 	return 1;
     }
 }
-

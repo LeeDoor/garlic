@@ -4,9 +4,9 @@
 namespace garlic {
 class CellValue;
 
-class TableValueGatherer {
+class CellValueGatherer {
 public:
-    virtual ~TableValueGatherer() = default;
+    virtual ~CellValueGatherer() = default;
 
     virtual sptr<CellValue> get_table_value(const ColumnNameType& column_name) = 0;
 };

@@ -29,7 +29,7 @@ public:
     SelectQuery();
     SelectQuery(ColumnsContainer columns);
 
-    ExpectedQueryResult resolve(sptr<TableValueGatherer> gatherer) override;
+    ExpectedQueryResult resolve(sptr<CellValueGatherer> gatherer) override;
 
 private:
     ColumnsContainer columns_ {};

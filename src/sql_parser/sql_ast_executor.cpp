@@ -3,7 +3,7 @@
 
 namespace garlic::sql_parser {
 
-SqlAstExecutor::SqlAstExecutor(ErrorPrinter& error_printer, sptr<TableValueGatherer> gatherer)
+SqlAstExecutor::SqlAstExecutor(ErrorPrinter& error_printer, sptr<CellValueGatherer> gatherer)
 : os_{ std::cout }
 , err_{ error_printer }
 , gatherer_{ gatherer }

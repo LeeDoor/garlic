@@ -1,7 +1,7 @@
 #include "binary_logical_condition.hpp"
 #include "cell_boolean_value.hpp"
 #include "condition_mock.hpp"
-#include "table_value_gatherer_mock.hpp"
+#include "cell_value_gatherer_mock.hpp"
 
 namespace garlic {
 
@@ -37,8 +37,8 @@ protected:
 public:
 protected:
     static const int TABLE_SIZE = 4;
-    sptr<testing::StrictMock<TableValueGathererMock>> gatherer
-        = std::make_shared<testing::StrictMock<TableValueGathererMock>>();
+    sptr<testing::StrictMock<CellValueGathererMock>> gatherer
+        = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     uptr<BinaryLogicalCondition> create(bool lhs, bool rhs, BinaryLogicalOperator op) {
         return std::make_unique<BinaryLogicalCondition>(
             std::make_unique<ConditionMock>(lhs),

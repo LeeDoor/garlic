@@ -35,7 +35,7 @@ struct TableValueGathererAll<TableValueGathererT, TypeList<StoringColumnTypesT..
 } 
 
 template<typename TableValueGathererT>
-concept TableValueGathererConcept = details::TableValueGathererAll<TableValueGathererT, StoringColumnTypes>::value;
+concept TableValueGatherer = details::TableValueGathererAll<TableValueGathererT, StoringColumnTypes>::value;
 
 
 }

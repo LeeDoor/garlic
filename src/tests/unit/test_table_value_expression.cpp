@@ -1,6 +1,6 @@
 #include "cell_int_value.hpp"
 #include "table_value_expression.hpp"
-#include "table_value_gatherer_mock.hpp"
+#include "cell_value_gatherer_mock.hpp"
 #include "tables_gatherer_mock.hpp"
 
 namespace garlic {
@@ -8,12 +8,12 @@ namespace garlic {
 class TestValueExpressionFixture : public ::testing::Test {
 public:
     TestValueExpressionFixture()
-    : gatherer_{ std::make_shared<TableValueGathererMock>() }
+    : gatherer_{ std::make_shared<CellValueGathererMock>() }
     , test_int_value_{ std::make_shared<CellIntValue>(5) }
     {}
 
 protected:
-    sptr<TableValueGathererMock> gatherer_;
+    sptr<CellValueGathererMock> gatherer_;
     sptr<CellIntValue> test_int_value_;
 };
 

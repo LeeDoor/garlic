@@ -2,14 +2,14 @@
 #include "table_value_gatherer_factory_impl.hpp"
 #include "tables_header_gatherer_impl.hpp"
 #include "typed_table.hpp"
-#include "table_value_gatherer_concept.hpp"
+#include "table_value_gatherer.hpp"
 
 namespace garlic {
 
 /// Array of all tables in the database
 template<typename TableGathererT>
     requires TableColumnTypeGatherer<TableGathererT>
-    && TableValueGathererConcept<TableGathererT>
+    && TableValueGatherer<TableGathererT>
 class DatabaseImpl {
 private:
     using TablesContainer = std::unordered_map<TableNameType, sptr<TableGathererT>>;

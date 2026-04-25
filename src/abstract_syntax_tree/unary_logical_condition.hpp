@@ -8,7 +8,7 @@ class UnaryLogicalCondition : public Condition {
 public:
     UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
 
-    ExpectedCellBooleanValue resolve_bool(sptr<TableValueGatherer> gatherer) const override;
+    ExpectedCellBooleanValue resolve_bool(sptr<CellValueGatherer> gatherer) const override;
 
 protected:
     sptr<Condition> cond_;

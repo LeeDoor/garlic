@@ -1,8 +1,8 @@
 #pragma once
 #include "column_info.hpp"
 #include "table_column_type_gatherer.hpp"
-#include "table_value_gatherer_concept.hpp"
-#include "table_value_gatherer_concept.hpp"
+#include "table_value_gatherer.hpp"
+#include "table_value_gatherer.hpp"
 #include "type_rules.hpp"
 #include "public_column_info.hpp"
 #include "byte_matrix.hpp"
@@ -207,7 +207,6 @@ private:
 };
 
 static_assert(TableColumnTypeGatherer<TypedTable>);
-static_assert(TableValueGathererConcept<TypedTable>);
+static_assert(TableValueGatherer<TypedTable>);
 
 }
-

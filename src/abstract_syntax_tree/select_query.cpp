@@ -10,7 +10,7 @@ SelectQuery::SelectQuery(ColumnsContainer columns)
 : columns_{ std::move(columns) }
 { }
 
-SelectQuery::ExpectedQueryResult SelectQuery::resolve(sptr<TableValueGatherer> gatherer) {
+SelectQuery::ExpectedQueryResult SelectQuery::resolve(sptr<CellValueGatherer> gatherer) {
     TableQueryResult::Table table(2);
     for(const Selector& column : columns_) { 
 	table[0].push_back(column.column_name);
