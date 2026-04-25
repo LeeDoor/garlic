@@ -21,18 +21,23 @@ struct Selector {
     {}
 };
 
+struct Table {
+    TableNameType table_name;
+};
 
 class SelectQuery : public Query {
 public:
     using ColumnsContainer = std::list<Selector>;
-
+    using TablesContainer = std::list<Table>;
     SelectQuery();
     SelectQuery(ColumnsContainer columns);
+    SelectQuery(ColumnsContainer columns, TablesContainer tables);
 
     ExpectedQueryResult resolve(sptr<CellValueGatherer> gatherer) override;
 
 private:
     ColumnsContainer columns_ {};
+    TablesContainer tables_ {};
 };
 
 }

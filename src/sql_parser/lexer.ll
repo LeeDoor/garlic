@@ -22,7 +22,7 @@ string_quote_q "'"
 string_quote_d "\""
 string_content_q ([^\\'\n]*(\\.)*)*
 string_content_d ([^\\"\n]*(\\.)*)*
-unquoted_name [a-zA-Z_][a-zA-Z0-9_]*
+identifier [a-zA-Z_][a-zA-Z0-9_]*
 
 %{
 /// Executes before each rule
@@ -70,8 +70,10 @@ unquoted_name [a-zA-Z_][a-zA-Z0-9_]*
 %}
 
 "SELECT"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
+"FROM"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("FROM"); return yy::parser::make_FROM(curloc); }
 "AS"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AS"); return yy::parser::make_AS(curloc); }
 
+"."  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_PERIOD(curloc); }
 ","  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_COLON(curloc); }
 ";"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_SEMICOLON(curloc); }
 "-"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_MINUS(curloc); }
@@ -102,6 +104,9 @@ unquoted_name [a-zA-Z_][a-zA-Z0-9_]*
 "false"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("false"); return yy::parser::make_FALSE(curloc); }
 {int}   { MET_CONTENT(); return make_INTEGER(yytext, curloc, session); }
 {float} { MET_CONTENT(); return make_FLOAT(yytext, curloc, session); }
+{identifier}/({token_separator}) { 
+    MET_CONTENT(); WHITESPACE_SEPARATED("identifier"); return yy::parser::make_IDENTIFIER(yytext, curloc); 
+}
 
 {string_quote_q} { MET_CONTENT(); session.append_line(yytext); BEGIN STRING_Q; }
 <STRING_Q>{string_content_q} { MET_CONTENT(); session.append_line(yytext); }
@@ -133,10 +138,6 @@ unquoted_name [a-zA-Z_][a-zA-Z0-9_]*
     session.append_line(yytext); 
     BEGIN INITIAL; 
     return make_STRING(session.get_multiline_string(), curloc);
-}
-
-{unquoted_name}"."{unquoted_name}/({token_separator}) { 
-    MET_CONTENT(); WHITESPACE_SEPARATED("table&column"); return make_TABLE_COLUMN(yytext, curloc); 
 }
 
 {EOL} { MET_NEWLINE(); MET_WORD_DELIMETER(); }

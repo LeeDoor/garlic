@@ -60,10 +60,12 @@
 %token
     SELECT
     AS
+    FROM
     ;
 %token 
     SEMICOLON
     COLON
+    PERIOD
     ;
 %token
     MINUS   
@@ -102,12 +104,15 @@
 %token <FloatType> FLOAT "float"
 %token <IntType> INTEGER "integer"
 %token <StringType> STRING "string"
-%token <TableColumnReference> TABLE_COLUMN "table&column"
+%token <StringType> IDENTIFIER "identifier"
 
 %nterm <uptr<Query>> query
+%nterm <uptr<Query>> select_query
+%nterm <SelectQuery::TablesContainer> tables 
+%nterm <Table> table 
 %nterm <SelectQuery::ColumnsContainer> selectors 
-%nterm <StringType> columnname 
 %nterm <Selector> selector 
+%nterm <StringType> columnname 
 %nterm <uptr<Expression>> evaluateable
 %nterm <uptr<Condition>> cond
 %nterm <uptr<Expression>> expr 
@@ -122,7 +127,19 @@ queries: /**/
     | queries SEMICOLON { session.blank_parsed(); }
     ;
 
-query: SELECT selectors { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
+query: select_query { $$ = std::move($1); }
+     ;
+
+/* make more flexible later for multiple optional queries */
+select_query: SELECT selectors { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
+	    | SELECT selectors FROM tables { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2), std::move($4))); }
+	    ;
+
+tables: table { $$.push_back(std::move($1)); }
+      | tables COLON table { $$ = std::move($1); $$.push_back(std::move($3)); }
+      ;
+
+table: IDENTIFIER { $$ = { $1 }; }
      ;
 
 selectors: selector { $$.push_back(std::move($1)); }
@@ -170,7 +187,9 @@ expr: value { $$ = std::move($1); }
 value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(session, $1)); }
      | FLOAT   { ASSIGN_OR_ABORT($$, mk_v<FloatConstExpr>(session, $1)); }
      | strings { ASSIGN_OR_ABORT($$, mk_v<StringConstExpr>(session, $1)); }
-     | TABLE_COLUMN { ASSIGN_OR_ABORT($$, mk_v<TableValueExpression>(session, session.get_database(), $1.table_name, $1.column_name)); }
+     | IDENTIFIER PERIOD IDENTIFIER { 
+	 ASSIGN_OR_ABORT($$, mk_v<TableValueExpression>(session, session.get_database(), $1, $3)); 
+     }
      ;
 
 strings: STRING { $$ = $1; }

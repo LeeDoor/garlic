@@ -4,11 +4,14 @@
 namespace garlic {
 
 SelectQuery::SelectQuery()
-: columns_{}
 {}
 SelectQuery::SelectQuery(ColumnsContainer columns)
 : columns_{ std::move(columns) }
 { }
+SelectQuery::SelectQuery(ColumnsContainer columns, TablesContainer tables)
+: columns_{ std::move(columns) }
+, tables_{ std::move(tables) }
+{}
 
 SelectQuery::ExpectedQueryResult SelectQuery::resolve(sptr<CellValueGatherer> gatherer) {
     TableQueryResult::Table table(2);
