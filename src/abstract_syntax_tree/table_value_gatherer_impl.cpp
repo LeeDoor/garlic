@@ -12,20 +12,22 @@ TableValueGathererImpl::TableValueGathererImpl(sptr<TypedTable> table)
 {}
 
 sptr<CellValue> TableValueGathererImpl::get_table_value(const ColumnNameType& column_name) {
-    size_t column_number = table_->get_column_number_by_name(column_name);
-    CellType type = table_->get_column_type(column_number);
+    auto column_number = table_->get_column_number_by_name(column_name);
+    if(!column_number)
+	throw std::logic_error("called invalid TableValueGathererImpl::get_table_value: no such column \"" + column_name + "\"");
+    CellType type = table_->get_column_type(*column_number);
     switch(type) {
     case String:
 	return std::make_shared<CellStringViewValue>(
-	    table_->get_value<StringType>(row_number_, column_number)
+	    table_->get_value<StringType>(row_number_, *column_number)
 	);
     case Int:
 	return std::make_shared<CellIntValue>(
-	    table_->get_value<IntType>(row_number_, column_number)
+	    table_->get_value<IntType>(row_number_, *column_number)
 	);
     case Float:
 	return std::make_shared<CellFloatValue>(
-	    table_->get_value<FloatType>(row_number_, column_number)
+	    table_->get_value<FloatType>(row_number_, *column_number)
 	);
     default:
 	throw std::logic_error("get_table_value value type not implemented");

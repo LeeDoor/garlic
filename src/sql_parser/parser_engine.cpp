@@ -22,8 +22,8 @@ decltype(auto) ParserEngine::create_parser(ParsingSession& session, StringViewTy
 ParserEngine::Results ParserEngine::parse(StringViewType query_string) {
     ParsingSession session = [&, this] {
 	if(continuation_state_)
-	    return ParsingSession{ *continuation_state_ };
-	return ParsingSession{  };
+	    return ParsingSession{ tables_header_gatherer_, *continuation_state_ };
+	return ParsingSession{ tables_header_gatherer_ };
     }();
 
     auto parser = create_parser(session, query_string);

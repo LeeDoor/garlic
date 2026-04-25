@@ -50,14 +50,15 @@ public:
     , content_{ row_size_bytes_ }
     {}
 
-    /// Returns index of the column with given name.
-    /*! @throws std::logic_error if no such column in table. */
-    size_t get_column_number_by_name(const std::string& column_name) const;
-
     /// Returns @ref CellType type of column with given id.
     /*! @throws std::logic_error if column parameter is invalid. */
     CellType get_column_type(size_t column) const;
-    CellType get_column_type(const ColumnNameType& column) const;
+
+    /// Returns index of the column with given name.
+    /*! @throws std::logic_error if no such column in table. */
+    std::expected<size_t, StringType> get_column_number_by_name(const std::string& column_name) const;
+
+    ExpectedColumnType get_column_type(const ColumnNameType& column) const;
 
     /// Creates empty row. You can't access a row without creating it.
     size_t create_empty_row();

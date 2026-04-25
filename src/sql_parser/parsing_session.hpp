@@ -26,8 +26,11 @@ public:
 	bool waiting_query_content;
     };
 
-    ParsingSession() {}
-    ParsingSession(ContinuationState cont_state)
+    ParsingSession(const TablesHeaderGatherer& tables_header_gatherer)
+    : tables_header_gatherer_{ tables_header_gatherer }
+    {}
+    ParsingSession(const TablesHeaderGatherer& tables_header_gatherer, ContinuationState cont_state)
+    : ParsingSession{ tables_header_gatherer }
     {
 	location_ = ParsingLocation::initialize_from(cont_state.location);
 	waiting_query_content_ = cont_state.waiting_query_content;
@@ -80,12 +83,13 @@ public:
     /// returns current position as object.
     Position current_position() const;
     const ParsingLocation& location() const& { return location_; }
-    TablesHeaderGatherer get_database() const;
+    const TablesHeaderGatherer& get_database() const&;
 
 private:
     /// Called if just finished a query and started a new  one.
     void finished_previous_query();
 
+    const TablesHeaderGatherer& tables_header_gatherer_;
     ParsingResults parsing_results_ {};
     ParsingLocation location_ {};
     StringType multiline_string_buffer_ {};

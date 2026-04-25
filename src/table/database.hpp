@@ -5,8 +5,7 @@
 namespace garlic {
 
 /// Array of all tables in the database
-template<typename TableColumnTypeGathererT>
-requires TableColumnTypeGatherer<TableColumnTypeGathererT>
+template<TableColumnTypeGatherer TableColumnTypeGathererT>
 class DatabaseImpl {
 private:
     using TablesContainer = std::unordered_map<TableNameType, sptr<TableColumnTypeGathererT>>;

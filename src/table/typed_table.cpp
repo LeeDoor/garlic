@@ -5,13 +5,13 @@ namespace garlic {
 TypedTable::TypedTable(std::initializer_list<PublicColumnInfo> container) 
 : TypedTable(container.begin(), container.end()) {}
 
-size_t TypedTable::get_column_number_by_name(const std::string& column_name) const {
+std::expected<size_t, StringType> TypedTable::get_column_number_by_name(const std::string& column_name) const {
     auto find_result = 
 	std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
 	    return ci.name == column_name;
 	});
     if(find_result == header_.end()) 
-	throw std::logic_error("trying to get id of incorrect column name");
+	return std::unexpected("no such column name: " + column_name);
     return std::distance(header_.begin(), find_result);
 }
 
@@ -20,8 +20,11 @@ CellType TypedTable::get_column_type(size_t column) const {
 	throw std::logic_error("trying to get column type with invalid column");
     return header_[column].type;
 }
-CellType TypedTable::get_column_type(const ColumnNameType& column) const {
-    return get_column_type(get_column_number_by_name(column));
+ExpectedColumnType TypedTable::get_column_type(const ColumnNameType& column) const {
+    auto column_number = get_column_number_by_name(column);
+    if(!column_number) 
+	return std::unexpected(column_number.error());
+    return get_column_type(*column_number);
 }
 
 size_t TypedTable::create_empty_row() {

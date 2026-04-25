@@ -2,6 +2,14 @@
 
 namespace garlic {
 
+template<typename T, typename E>
+static T unwrap_expected(const std::expected<T, E>& result) {
+    EXPECT_TRUE(result.has_value()) << result.error();
+    if(!result)
+        return T{};
+    return *result;
+}
+
 TEST(test_typed_table, initEmpty_shouldThrow) {
     EXPECT_THROW(TypedTable tt {}, std::logic_error);
 }
@@ -214,10 +222,11 @@ TEST(test_typed_table, getColumnNumberByName) {
         { Float, "height", 0 },
     };
 
-    EXPECT_EQ(tt.get_column_number_by_name("Name"), 0);
-    EXPECT_EQ(tt.get_column_number_by_name("Surname"), 1);
-    EXPECT_THROW(tt.get_column_number_by_name("surname"), std::logic_error); // Case-sensitive
-    EXPECT_EQ(tt.get_column_number_by_name("height"), 2);
+    EXPECT_EQ(unwrap_expected(tt.get_column_number_by_name("Name")), 0);
+    EXPECT_EQ(unwrap_expected(tt.get_column_number_by_name("Surname")), 1);
+    auto missing = tt.get_column_number_by_name("surname");
+    EXPECT_FALSE(missing.has_value()); // Case-sensitive
+    EXPECT_EQ(unwrap_expected(tt.get_column_number_by_name("height")), 2);
 }
 
 TEST(test_typed_table, getColumnNumberByName_withRows) {
@@ -230,10 +239,11 @@ TEST(test_typed_table, getColumnNumberByName_withRows) {
     tt.create_empty_row();
     tt.create_empty_row();
 
-    EXPECT_EQ(tt.get_column_number_by_name("Name"), 0);
-    EXPECT_EQ(tt.get_column_number_by_name("Surname"), 1);
-    EXPECT_THROW(tt.get_column_number_by_name("surname"), std::logic_error); // Case-sensitive
-    EXPECT_EQ(tt.get_column_number_by_name("height"), 2);
+    EXPECT_EQ(unwrap_expected(tt.get_column_number_by_name("Name")), 0);
+    EXPECT_EQ(unwrap_expected(tt.get_column_number_by_name("Surname")), 1);
+    auto missing = tt.get_column_number_by_name("surname");
+    EXPECT_FALSE(missing.has_value()); // Case-sensitive
+    EXPECT_EQ(unwrap_expected(tt.get_column_number_by_name("height")), 2);
 }
 
 TEST(test_typed_table, getColumnType) {
@@ -263,7 +273,7 @@ TEST(test_typed_table, testConstQualifier_shouldCompile) {
 
     const TypedTable& tt2 = tt;
 
-    EXPECT_EQ(tt2.get_column_number_by_name("Name"), 0);
+    EXPECT_EQ(unwrap_expected(tt2.get_column_number_by_name("Name")), 0);
     EXPECT_EQ(tt2.get_column_type(0), String);
     EXPECT_FLOAT_EQ(tt2.get_value<FloatType>(0, 1), 5.5);
     EXPECT_EQ(tt2.get_value<StringType>(0, 0), "Value");

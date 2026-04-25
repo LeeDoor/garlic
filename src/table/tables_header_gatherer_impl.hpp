@@ -1,10 +1,8 @@
 #pragma once
 #include "cell_type.hpp"
+#include "expected_column_type.hpp"
 
 namespace garlic {
-
-using UnexpectedColumnType = StringType;
-using ExpectedColumnType = std::expected<CellType, UnexpectedColumnType>;
 
 template<typename T>
 concept TablesHeaderGathererImpl = requires (const T& tables_gatherer) {
