@@ -1,32 +1,49 @@
 #pragma once
+#include "table_value_gatherer_factory_impl.hpp"
 #include "tables_header_gatherer_impl.hpp"
 #include "typed_table.hpp"
+#include "table_value_gatherer_concept.hpp"
 
 namespace garlic {
 
 /// Array of all tables in the database
-template<TableColumnTypeGatherer TableColumnTypeGathererT>
+template<typename TableGathererT>
+    requires TableColumnTypeGatherer<TableGathererT>
+    && TableValueGathererConcept<TableGathererT>
 class DatabaseImpl {
 private:
-    using TablesContainer = std::unordered_map<TableNameType, sptr<TableColumnTypeGathererT>>;
+    using TablesContainer = std::unordered_map<TableNameType, sptr<TableGathererT>>;
 public:
     DatabaseImpl(TablesContainer&& tables)
     : tables_{ std::move(tables) }
     {}
 
     ExpectedColumnType get_tables_column_type(const TableNameType& table_name, const ColumnNameType& column_name) const {
-	if(!tables_.contains(table_name))
-	    return std::unexpected("Table " + table_name + " does not exist.");
-	sptr<TableColumnTypeGathererT> table = tables_.at(table_name);
-	return table->get_column_type(column_name);
+	auto table = get_table_by_name(table_name);
+	if(!table) return std::unexpected(table.error());
+	return (*table)->get_column_type(column_name);
+    }
+    inline ExpectedTableValueGatherer build_table_value_gatherer(const TableNameType& table_name) const {
+	return build_table_value_gatherer(table_name);
+    }
+    ExpectedTableValueGatherer build_table_value_gatherer(const TableNameType& table_name) {
+	auto table = get_table_by_name(table_name);
+	if(!table) return std::unexpected(table.error());
+	return std::make_shared<TableGathererT>(*table);
     }
 
 private:
+    std::expected<sptr<TableGathererT>, StringType> get_table_by_name(const TableNameType& table_name) const {
+	if(!tables_.contains(table_name))
+	    return std::unexpected("Table " + table_name + " does not exist.");
+	return tables_.at(table_name);
+    }
     TablesContainer tables_;
 };
 
 using Database = DatabaseImpl<TypedTable>;
 
-static_assert(TablesHeaderGathererImpl<Database>, "Database doesn't match the TablesGatherer concept");
+static_assert(TablesHeaderGathererImpl<Database>);
+static_assert(TableValueGathererFactoryImpl<Database>);
 
 }

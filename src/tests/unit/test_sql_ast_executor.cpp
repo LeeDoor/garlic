@@ -1,4 +1,5 @@
 #include "constant_expression.hpp"
+#include "dumb_table_value_gatherer.hpp"
 #include "error_printer.hpp"
 #include "select_query.hpp"
 #include "sql_ast_executor.hpp"
@@ -57,7 +58,7 @@ TEST(test_sql_ast_executor, successfulQueryWritesOnlyToStdout) {
     ScopedStreamRedirect stderr_redirect(std::cerr, stderr_stream);
 
     sql_parser::ErrorPrinter error_printer;
-    sql_parser::SqlAstExecutor executor(error_printer);
+    sql_parser::SqlAstExecutor executor(error_printer, std::make_shared<sql_parser::DumbTableValueGatherer>());
     auto query = make_query(std::make_unique<IntConstExpr>(5));
 
     executor.execute_sql_ast(query);
@@ -73,7 +74,7 @@ TEST(test_sql_ast_executor, runtimeErrorWritesOnlyToStderr) {
     ScopedStreamRedirect stderr_redirect(std::cerr, stderr_stream);
 
     sql_parser::ErrorPrinter error_printer;
-    sql_parser::SqlAstExecutor executor(error_printer);
+    sql_parser::SqlAstExecutor executor(error_printer, std::make_shared<sql_parser::DumbTableValueGatherer>());
     auto query = make_query(std::make_unique<ThrowingExpressionForExecutorTest>());
 
     executor.execute_sql_ast(query);

@@ -12,6 +12,14 @@ using FloatType = float;
 template<typename T>
 using ArrayType = std::vector<T>;
 
+template<typename... Ts>
+struct TypeList {};
+using StoringColumnTypes = TypeList<
+    StringType,
+    IntType,
+    FloatType,
+    bool
+>;
 template<typename T>
 concept IsStoringColumnType = 
     std::is_same_v<T, StringType>
