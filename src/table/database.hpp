@@ -1,4 +1,5 @@
 #pragma once
+#include "cell_value_gatherer_impl.hpp"
 #include "table_value_gatherer_factory_impl.hpp"
 #include "tables_header_gatherer_impl.hpp"
 #include "typed_table.hpp"
@@ -23,16 +24,21 @@ public:
 	if(!table) return std::unexpected(table.error());
 	return (*table)->get_column_type(column_name);
     }
-    inline ExpectedTableValueGatherer build_table_value_gatherer(const TableNameType& table_name) const {
-	return build_table_value_gatherer(table_name);
+    inline ExpectedCellValueGatherer build_cell_value_gatherer(const TableNameType& table_name) const {
+	return build_cell_value_gatherer_impl(*this, table_name);
     }
-    ExpectedTableValueGatherer build_table_value_gatherer(const TableNameType& table_name) {
-	auto table = get_table_by_name(table_name);
-	if(!table) return std::unexpected(table.error());
-	return std::make_shared<TableGathererT>(*table);
+    ExpectedCellValueGatherer build_cell_value_gatherer(const TableNameType& table_name) {
+	return build_cell_value_gatherer_impl(*this, table_name);
     }
 
 private:
+    template<typename T>
+    static ExpectedCellValueGatherer 
+	build_cell_value_gatherer_impl(T& self, const TableNameType& table_name) {
+	auto table = self.get_table_by_name(table_name);
+	if(!table) return std::unexpected(table.error());
+	return std::make_shared<CellValueGathererImpl>(*table);
+    }
     std::expected<sptr<TableGathererT>, StringType> get_table_by_name(const TableNameType& table_name) const {
 	if(!tables_.contains(table_name))
 	    return std::unexpected("Table " + table_name + " does not exist.");

@@ -4,14 +4,12 @@
 namespace garlic::sql_parser {
 
 SqlRepl::SqlRepl(
-	bool debug_mode, 
-	TablesHeaderGatherer tables_header_gatherer, 
+	ParserEngine parser_engine, 
 	QueryInput query_input, 
 	ErrorPrinter error_printer, 
 	SqlAstExecutor ast_executor
     )
-: tables_header_gatherer_ { std::move(tables_header_gatherer) }
-, parser_engine_{ tables_header_gatherer_, debug_mode }
+: parser_engine_{ std::move(parser_engine) }
 , query_input_{ std::move(query_input) }
 , error_printer_{ std::move(error_printer) }
 , ast_executor_{ std::move(ast_executor) }

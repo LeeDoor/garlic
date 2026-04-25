@@ -1,4 +1,3 @@
-#include "dumb_cell_value_gatherer.hpp"
 #include "manual_io.hpp"
 #include "sql_repl.hpp"
 
@@ -20,33 +19,35 @@ void handle_args(int argc, char** argv, bool& debug_mode) {
     }
 }
 
+sptr<TypedTable> create_table_users() {
+    auto table = std::make_shared<TypedTable>( 
+	std::initializer_list<PublicColumnInfo>{ 
+	    PublicColumnInfo{ String, "name", 10 },
+	    PublicColumnInfo{ Int, "age", 0 } 
+	});
+    table->create_empty_row();
+    table->create_empty_row();
+    table->set_value(0, 0, "Eblan");
+    table->set_value(0, 1, 12);
+    table->set_value(1, 0, "SecondMan");
+    table->set_value(1, 1, 22222);
+    return table;
+}
+
 int main (int argc, char** argv) {
     bool debug_mode = false;
     handle_args(argc, argv, debug_mode);
     ErrorPrinter err_p;
     Database database {
 	{ 
-	    {
-		"users", std::make_shared<TypedTable>( std::initializer_list<PublicColumnInfo>{ 
-		    PublicColumnInfo{ String, "name", 10 },
-		    PublicColumnInfo{ Int, "age", 0 } 
-		})
-	    },
-	    {
-		"houses", std::make_shared<TypedTable>( std::initializer_list<PublicColumnInfo>{ 
-		    PublicColumnInfo{ String, "address", 10 },
-		    PublicColumnInfo{ Int, "housenumber", 0 } 
-		})
-	    }
-
+	    { "users", create_table_users() }
 	}
     };
     garlic::sql_parser::SqlRepl drv(
-	    debug_mode, 
-	    database,
+	    ParserEngine{ database, debug_mode },
 	    QueryInput {}, 
 	    err_p, 
-	    SqlAstExecutor { err_p, std::make_shared<DumbCellValueGatherer>() });
+	    SqlAstExecutor { err_p, database });
     try {
 	drv.run();
     } catch (const std::logic_error& ex) {

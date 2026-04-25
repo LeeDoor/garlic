@@ -1,5 +1,4 @@
 #include "constant_expression.hpp"
-#include "dumb_cell_value_gatherer.hpp"
 #include "error_printer.hpp"
 #include "select_query.hpp"
 #include "sql_ast_executor.hpp"
@@ -49,6 +48,21 @@ std::string format_single_value_table(std::string_view column_name, std::string_
         + border;
 }
 
+sql_parser::TableValueGathererFactory make_executor_database() {
+    return sql_parser::TableValueGathererFactory{
+        {
+            {
+                "",
+                std::make_shared<TypedTable>(
+                    std::initializer_list<PublicColumnInfo>{
+                        { Int, "dummy", 0 }
+                    }
+                )
+            }
+        }
+    };
+}
+
 }
 
 TEST(test_sql_ast_executor, successfulQueryWritesOnlyToStdout) {
@@ -58,7 +72,8 @@ TEST(test_sql_ast_executor, successfulQueryWritesOnlyToStdout) {
     ScopedStreamRedirect stderr_redirect(std::cerr, stderr_stream);
 
     sql_parser::ErrorPrinter error_printer;
-    sql_parser::SqlAstExecutor executor(error_printer, std::make_shared<sql_parser::DumbCellValueGatherer>());
+    auto database = make_executor_database();
+    sql_parser::SqlAstExecutor executor(error_printer, database);
     auto query = make_query(std::make_unique<IntConstExpr>(5));
 
     executor.execute_sql_ast(query);
@@ -74,7 +89,8 @@ TEST(test_sql_ast_executor, runtimeErrorWritesOnlyToStderr) {
     ScopedStreamRedirect stderr_redirect(std::cerr, stderr_stream);
 
     sql_parser::ErrorPrinter error_printer;
-    sql_parser::SqlAstExecutor executor(error_printer, std::make_shared<sql_parser::DumbCellValueGatherer>());
+    auto database = make_executor_database();
+    sql_parser::SqlAstExecutor executor(error_printer, database);
     auto query = make_query(std::make_unique<ThrowingExpressionForExecutorTest>());
 
     executor.execute_sql_ast(query);
