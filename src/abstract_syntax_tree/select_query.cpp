@@ -15,22 +15,21 @@ SelectQuery::SelectQuery(ColumnsContainer columns, TablesContainer tables)
 {}
 
 SelectQuery::ExpectedQueryResult SelectQuery::resolve(const TableValueGathererFactory& gatherer_factory) {
-    sptr<CellValueGatherer> gatherer;
-    if(tables_.empty()) {
-	gatherer = std::make_shared<DumbCellValueGatherer>();
-    } else {
-	auto exp_gatherer = gatherer_factory.build_cell_value_gatherer(tables_.front().table_name);
+    TablesGathered gatherers {};
+    for(const Table& table : tables_) {
+	auto exp_gatherer = gatherer_factory.build_cell_value_gatherer(table.table_name);
 	if(!exp_gatherer)
 	    return std::unexpected(exp_gatherer.error());
-	gatherer = *exp_gatherer;
+	gatherers[table.table_name] = *exp_gatherer;
     }
+
     TableQueryResult::Table table(2);
     for(const Selector& column : columns_) { 
 	table[0].push_back(column.column_name);
     }
     for(const Selector& column : columns_) {
 	std::stringstream ss;
-	auto result = column.content->resolve(gatherer);
+	auto result = column.content->resolve(gatherers);
 	if(!result)
 	    return std::unexpected(result.error());
 	(*result)->format(ss);

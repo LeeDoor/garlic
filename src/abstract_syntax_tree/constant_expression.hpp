@@ -17,7 +17,7 @@ public:
     , value_(std::move(value))
     {}
 
-    ExpectedCellValue resolve(sptr<CellValueGatherer>) const override {
+    ExpectedCellValue resolve(const TablesGathered& ) const override {
         return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);
     }
 

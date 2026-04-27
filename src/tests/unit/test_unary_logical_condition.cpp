@@ -1,9 +1,10 @@
 #include "unary_logical_condition.hpp"
 #include "cell_boolean_value.hpp"
 #include "condition_mock.hpp"
-#include "cell_value_gatherer_mock.hpp"
 
 namespace garlic {
+
+static const TablesGathered gatherers{};
 
 static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
@@ -26,9 +27,6 @@ std::ostream& operator<<(std::ostream& os, UnaryLogicalOperator op) {
 class TestUnaryLogicalCondition : public ::testing::Test {
 protected:
     static const int TABLE_SIZE = 2;
-    sptr<testing::StrictMock<CellValueGathererMock>> gatherer
-        = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
-
     uptr<UnaryLogicalCondition> create(bool condition, UnaryLogicalOperator op) {
         return std::make_unique<UnaryLogicalCondition>(
             std::make_unique<ConditionMock>(condition),
@@ -45,7 +43,7 @@ protected:
         for(int i = 0; i < TABLE_SIZE; ++i) {
             auto& inp = table_inp[i];
             auto cond = create(inp, op);
-            actual[i] = unwrap_bool(cond->resolve_bool(gatherer));
+            actual[i] = unwrap_bool(cond->resolve_bool(gatherers));
             failed |= actual[i] != table_expected[i];
         }
         if(failed) {

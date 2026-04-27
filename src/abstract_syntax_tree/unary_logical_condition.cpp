@@ -9,8 +9,8 @@ UnaryLogicalCondition::UnaryLogicalCondition(sptr<Condition> condition, UnaryLog
 , op_{ op }
 {}
 
-UnaryLogicalCondition::ExpectedCellBooleanValue UnaryLogicalCondition::resolve_bool(sptr<CellValueGatherer> gatherer) const {
-    auto value = cond_->resolve_bool(gatherer); if(!value) return value;
+UnaryLogicalCondition::ExpectedCellBooleanValue UnaryLogicalCondition::resolve_bool(const TablesGathered& gatherers) const {
+    auto value = cond_->resolve_bool(gatherers); if(!value) return value;
     bool result;
     switch(op_) {
     case IsTrue:

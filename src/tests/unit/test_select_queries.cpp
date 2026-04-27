@@ -10,7 +10,8 @@ namespace garlic {
 class ThrowingCondition : public Condition {
 public:
     ThrowingCondition() : Condition{ Boolean } {}
-    ExpectedCellBooleanValue resolve_bool(sptr<CellValueGatherer>) const override {
+    ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const override {
+        (void)gatherers;
         return std::unexpected("condition resolve failed");
     }
 };
@@ -18,7 +19,8 @@ public:
 class ThrowingExpression : public Expression {
 public:
     ThrowingExpression() : Expression{ Int } {}
-    ExpectedCellValue resolve(sptr<CellValueGatherer>) const override {
+    ExpectedCellValue resolve(const TablesGathered& gatherers) const override {
+        (void)gatherers;
         return std::unexpected("expression evaluate failed");
     }
 };

@@ -1,9 +1,10 @@
 #include "binary_logical_condition.hpp"
 #include "cell_boolean_value.hpp"
 #include "condition_mock.hpp"
-#include "cell_value_gatherer_mock.hpp"
 
 namespace garlic {
+
+static const TablesGathered gatherers{};
 
 static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
     EXPECT_TRUE(result.has_value()) << result.error();
@@ -37,8 +38,6 @@ protected:
 public:
 protected:
     static const int TABLE_SIZE = 4;
-    sptr<testing::StrictMock<CellValueGathererMock>> gatherer
-        = std::make_shared<testing::StrictMock<CellValueGathererMock>>();
     uptr<BinaryLogicalCondition> create(bool lhs, bool rhs, BinaryLogicalOperator op) {
         return std::make_unique<BinaryLogicalCondition>(
             std::make_unique<ConditionMock>(lhs),
@@ -59,7 +58,7 @@ protected:
         for(int i = 0; i < TABLE_SIZE; ++i) {
             auto& inp = table_inp[i];
             auto cond = create(inp.first, inp.second, op);
-            actual[i] = unwrap_bool(cond->resolve_bool(gatherer));
+            actual[i] = unwrap_bool(cond->resolve_bool(gatherers));
             failed |= actual[i] != table_expected[i];
         }
         if(failed) {

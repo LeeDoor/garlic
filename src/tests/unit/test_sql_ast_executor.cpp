@@ -9,7 +9,8 @@ class ThrowingExpressionForExecutorTest : public Expression {
 public:
     ThrowingExpressionForExecutorTest() : Expression{ Int } {}
 
-    ExpectedCellValue resolve(sptr<CellValueGatherer>) const override {
+    ExpectedCellValue resolve(const TablesGathered& gatherers) const override {
+        (void)gatherers;
         return std::unexpected("expression evaluate failed");
     }
 };

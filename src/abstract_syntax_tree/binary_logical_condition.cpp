@@ -10,9 +10,9 @@ BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Conditi
 , op_{ op }
 {}
 
-BinaryLogicalCondition::ExpectedCellBooleanValue BinaryLogicalCondition::resolve_bool(sptr<CellValueGatherer> gatherer) const {
-    auto lhs = lhs_->resolve_bool(gatherer); if(!lhs) return std::unexpected(lhs.error());
-    auto rhs = rhs_->resolve_bool(gatherer); if(!rhs) return std::unexpected(rhs.error());
+BinaryLogicalCondition::ExpectedCellBooleanValue BinaryLogicalCondition::resolve_bool(const TablesGathered& gatherers) const {
+    auto lhs = lhs_->resolve_bool(gatherers); if(!lhs) return std::unexpected(lhs.error());
+    auto rhs = rhs_->resolve_bool(gatherers); if(!rhs) return std::unexpected(rhs.error());
     bool result;
     switch(op_) {
 	case And:

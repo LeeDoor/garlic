@@ -10,9 +10,9 @@ BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression
 , op_ { op }
 {}
 
-ExpectedCellValue BinaryMathExpression::resolve(sptr<CellValueGatherer> gatherer) const {
-    const auto lvalue = lhs_->resolve(gatherer); if(!lvalue) return lvalue;
-    const auto rvalue = rhs_->resolve(gatherer); if(!rvalue) return rvalue;
+ExpectedCellValue BinaryMathExpression::resolve(const TablesGathered& gatherers) const {
+    const auto lvalue = lhs_->resolve(gatherers); if(!lvalue) return lvalue;
+    const auto rvalue = rhs_->resolve(gatherers); if(!rvalue) return rvalue;
     sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);
     sptr<CellAcceptMathOp> rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*rvalue);
     if(!lhs || !rhs)

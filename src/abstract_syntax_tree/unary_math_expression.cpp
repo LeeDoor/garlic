@@ -9,8 +9,8 @@ UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOper
 , op_{ op }
 {}
 
-ExpectedCellValue UnaryMathExpression::resolve(sptr<CellValueGatherer> gatherer) const {
-    const auto value = operand_->resolve(gatherer); if(!value) return value;
+ExpectedCellValue UnaryMathExpression::resolve(const TablesGathered& gatherers) const {
+    const auto value = operand_->resolve(gatherers); if(!value) return value;
     sptr<CellAcceptMathOp> operand = std::dynamic_pointer_cast<CellAcceptMathOp>(*value);
     if(!operand)
 	throw std::logic_error("Invalid math operation on operands not allowing such actions");

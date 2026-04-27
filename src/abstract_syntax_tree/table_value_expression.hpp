@@ -13,7 +13,7 @@ public:
     , column_name_{ column_name }
     {}
 
-    ExpectedCellValue resolve(sptr<CellValueGatherer> gatherer) const override;
+    ExpectedCellValue resolve(const TablesGathered& gatherers) const override;
     
 private:
     TableNameType table_name_;

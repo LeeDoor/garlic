@@ -15,6 +15,7 @@ public:
 protected:
     sptr<CellValueGathererMock> gatherer_;
     sptr<CellIntValue> test_int_value_;
+    TablesGathered gatherers_;
 };
 
 TEST_F(TestValueExpressionFixture, init) {
@@ -23,11 +24,12 @@ TEST_F(TestValueExpressionFixture, init) {
 
 TEST_F(TestValueExpressionFixture, getValue) {
     TableValueExpression expr(TablesGathererMock{ Int }, "Table name", "Name column");
+    gatherers_["Table name"] = gatherer_;
 
     EXPECT_CALL(*gatherer_, get_table_value("Name column"))
         .WillOnce(Return(test_int_value_));
 
-    auto value = expr.resolve(gatherer_);
+    auto value = expr.resolve(gatherers_);
     ASSERT_TRUE(value.has_value()) << value.error();
     auto comparable_value = std::dynamic_pointer_cast<CellComparable>(*value);
     EXPECT_TRUE(comparable_value);
@@ -36,11 +38,12 @@ TEST_F(TestValueExpressionFixture, getValue) {
 
 TEST_F(TestValueExpressionFixture, thrownExceptionInGatherer_ShouldThrowToo) {
     TableValueExpression expr(TablesGathererMock{ Int }, "Table name", "Name column");
+    gatherers_["Table name"] = gatherer_;
 
     EXPECT_CALL(*gatherer_, get_table_value("Name column"))
         .WillOnce(::testing::Throw(std::logic_error("manually generated exception")));
 
-    EXPECT_THROW(expr.resolve(gatherer_), std::logic_error);
+    EXPECT_THROW(expr.resolve(gatherers_), std::logic_error);
 }
 
 }
