@@ -62,6 +62,8 @@ public:
 
     ExpectedColumnType get_column_type(const ColumnNameType& column) const;
 
+    bool is_row_index_overflow(size_t row_index) const;
+
     /// Creates empty row. You can't access a row without creating it.
     size_t create_empty_row();
 

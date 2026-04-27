@@ -8,8 +8,9 @@ class CellValueGathererImpl : public CellValueGatherer {
 public:
     CellValueGathererImpl(sptr<TypedTable> table);
 
+    bool is_table_empty() const override;
     sptr<CellValue> get_table_value(const ColumnNameType& column_name) override;
-    void set_row_number(size_t row_number);
+    bool jump_to_next_row() override;
 
 protected:
     sptr<TypedTable> table_;

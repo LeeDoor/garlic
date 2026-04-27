@@ -5,6 +5,6 @@ namespace garlic {
 
 class CellValueGatherer;
 
-using TablesGathered = std::unordered_map<TableNameType, sptr<CellValueGatherer>>;
+using TablesGathered = std::map<TableNameType, sptr<CellValueGatherer>>;
 
 }

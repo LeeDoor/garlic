@@ -79,6 +79,31 @@ TEST(test_typed_table, creatingManyRowsManyColumns_shouldnotThrow) {
         EXPECT_NO_THROW(tt.create_empty_row());
 }
 
+TEST(test_typed_table, isRowIndexOverflow_emptyTable) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { Int, "Age", 0 },
+    };
+
+    EXPECT_TRUE(tt.is_row_index_overflow(0));
+    EXPECT_TRUE(tt.is_row_index_overflow(1));
+    EXPECT_TRUE(tt.is_row_index_overflow(100));
+}
+
+TEST(test_typed_table, isRowIndexOverflow_withRows) {
+    TypedTable tt = {
+        { String, "Name", 10 },
+        { Int, "Age", 0 },
+    };
+    tt.create_empty_row();
+    tt.create_empty_row();
+
+    EXPECT_FALSE(tt.is_row_index_overflow(0));
+    EXPECT_FALSE(tt.is_row_index_overflow(1));
+    EXPECT_TRUE(tt.is_row_index_overflow(2));
+    EXPECT_TRUE(tt.is_row_index_overflow(100));
+}
+
 TEST(test_typed_table, initedTable_zerosByDefault) {
     TypedTable tt = {
         { String, "Name", 10 },

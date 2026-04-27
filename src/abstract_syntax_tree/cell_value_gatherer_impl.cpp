@@ -11,6 +11,10 @@ CellValueGathererImpl::CellValueGathererImpl(sptr<TypedTable> table)
 , row_number_{ 0 }
 {}
 
+bool CellValueGathererImpl::is_table_empty() const {
+    return table_->is_row_index_overflow(0);
+}
+
 sptr<CellValue> CellValueGathererImpl::get_table_value(const ColumnNameType& column_name) {
     auto column_number = table_->get_column_number_by_name(column_name);
     if(!column_number)
@@ -30,12 +34,17 @@ sptr<CellValue> CellValueGathererImpl::get_table_value(const ColumnNameType& col
 	    table_->get_value<FloatType>(row_number_, *column_number)
 	);
     default:
-	throw std::logic_error("get_table_value value type not implemented");
+	std::unreachable();
     }
 }
 
-void CellValueGathererImpl::set_row_number(size_t row_number) {
-    row_number_ = row_number;
+bool CellValueGathererImpl::jump_to_next_row() {
+    ++row_number_;
+    if(table_->is_row_index_overflow(row_number_)) {
+	row_number_ = 0;
+	return true;
+    }
+    return false;
 }
 
 }

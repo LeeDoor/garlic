@@ -43,6 +43,7 @@ public:
      * @returns @ref ByteArray of read bytes. assert(ByteArray.size() == count).
      */
     ByteSpan get_value(size_t row_id, size_t offset, size_t count) const;
+    size_t get_rows_amount() const;
 
 private:
     size_t row_size_bytes_;

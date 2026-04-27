@@ -46,4 +46,8 @@ ByteSpan ByteMatrix::get_value(size_t row_id, size_t offset, size_t count) const
     return result;
 }
 
+size_t ByteMatrix::get_rows_amount() const {
+    return content_.size();
+}
+
 }
