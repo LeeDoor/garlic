@@ -69,9 +69,9 @@ identifier [a-zA-Z_][a-zA-Z0-9_]*
     auto& curloc = session.location().cur();
 %}
 
-"SELECT"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
-"FROM"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("FROM"); return yy::parser::make_FROM(curloc); }
-"AS"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AS"); return yy::parser::make_AS(curloc); }
+(?i:"select")/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("SELECT"); return yy::parser::make_SELECT(curloc); }
+(?i:"from")/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("FROM"); return yy::parser::make_FROM(curloc); }
+(?i:"as")/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AS"); return yy::parser::make_AS(curloc); }
 
 "."  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_PERIOD(curloc); }
 ","  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_COLON(curloc); }
@@ -96,12 +96,12 @@ identifier [a-zA-Z_][a-zA-Z0-9_]*
 "->"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_IMPLICATION(curloc); }
 "^"   { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_XOR(curloc); }
 
-"AND"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AND"); return yy::parser::make_LOGICAND(curloc); }
-"OR"/({token_separator})  { MET_CONTENT(); WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(curloc); }
+(?i:"and")/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("AND"); return yy::parser::make_LOGICAND(curloc); }
+(?i:"or")/({token_separator})  { MET_CONTENT(); WHITESPACE_SEPARATED("OR"); return yy::parser::make_LOGICOR(curloc); }
 "!"			  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_NOT(curloc); }
 
-"true"/({token_separator})  { MET_CONTENT(); WHITESPACE_SEPARATED("true"); return yy::parser::make_TRUE(curloc); }
-"false"/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("false"); return yy::parser::make_FALSE(curloc); }
+(?i:"true")/({token_separator})  { MET_CONTENT(); WHITESPACE_SEPARATED("true"); return yy::parser::make_TRUE(curloc); }
+(?i:"false")/({token_separator}) { MET_CONTENT(); WHITESPACE_SEPARATED("false"); return yy::parser::make_FALSE(curloc); }
 {int}   { MET_CONTENT(); return make_INTEGER(yytext, curloc, session); }
 {float} { MET_CONTENT(); return make_FLOAT(yytext, curloc, session); }
 {identifier}/({token_separator}) { 
