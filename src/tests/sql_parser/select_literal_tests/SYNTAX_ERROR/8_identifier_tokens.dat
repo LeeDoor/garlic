@@ -1,0 +1,8 @@
+foo;
+_foo;
+A1_b2;
+SELECT foo;
+SELECT _foo123;
+SELECT A1_b2;
+SELECT foo + 1;
+SELECT 1, _bar;

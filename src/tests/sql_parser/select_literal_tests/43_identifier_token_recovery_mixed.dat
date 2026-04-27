@@ -1,0 +1,7 @@
+SELECT 10;
+SELECT foo;
+SELECT 20;
+SELECT 1abc;
+SELECT 30;
+_bar;
+SELECT 40;
