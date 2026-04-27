@@ -4,3 +4,4 @@ SELECT 1,2AS "x";
 SELECT 1 AS 'a',2AS 'b';
 SELECT 1AS 'a', 2;
 SELECT 1 ASA 'x';
+SELECT 5aS 'x';

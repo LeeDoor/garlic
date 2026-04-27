@@ -3,3 +3,5 @@ SELECT 2 > 1OR 1 = 1;
 SELECT 2 > 1AND 1 = 1;
 SELECT 1true;
 SELECT 0false;
+SELECT 1TrUe;
+SELECT 0FaLsE;

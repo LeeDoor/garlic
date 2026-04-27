@@ -3,7 +3,7 @@
 +-----+
 | 1   |
 +-----+
-[LEXICAL_ERROR] at [2.1]
+[SYNTAX_ERROR] at [2.1]
 
 +-----+
 | Int |
