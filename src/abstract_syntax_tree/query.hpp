@@ -1,5 +1,6 @@
 #pragma once
 #include "runtime_error.hpp"
+#include "table_value_gatherer_factory.hpp"
 
 namespace garlic {
 class QueryResult;
@@ -17,7 +18,7 @@ public:
 
     /// Resolves query and forms the @ref QueryResult on return.
     /*! @param gatherer used to resolve table cells mentioned in query. */
-    [[nodiscard]] virtual ExpectedQueryResult resolve(sptr<CellValueGatherer> gatherer) = 0;
+    [[nodiscard]] virtual ExpectedQueryResult resolve(const TableValueGathererFactory& gatherer_factory) = 0;
 };
 
 }

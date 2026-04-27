@@ -1,7 +1,7 @@
 #pragma once
 #include "cell_value_gatherer.hpp"
 
-namespace garlic::sql_parser {
+namespace garlic {
 
 class DumbCellValueGatherer : public CellValueGatherer {
 public:

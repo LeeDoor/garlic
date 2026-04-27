@@ -10,14 +10,7 @@ SqlAstExecutor::SqlAstExecutor(ErrorPrinter& error_printer, const TableValueGath
 {}
 
 void SqlAstExecutor::execute_sql_ast(const uptr<Query>& query) const {
-    // foreach table in tables
-    // if constrain()
-    auto cell_value_gatherer = gatherer_factory_.build_cell_value_gatherer("users");
-    if(!cell_value_gatherer) {
-	err_.print_error(cell_value_gatherer.error());
-	return;
-    }
-    auto q_result = query->resolve(*cell_value_gatherer);
+    auto q_result = query->resolve(gatherer_factory_);
     if(q_result) {
 	os_ << (*q_result)->format();
     } else {

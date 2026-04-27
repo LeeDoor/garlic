@@ -48,18 +48,9 @@ std::string format_single_value_table(std::string_view column_name, std::string_
         + border;
 }
 
-sql_parser::TableValueGathererFactory make_executor_database() {
-    return sql_parser::TableValueGathererFactory{
-        {
-            {
-                "",
-                std::make_shared<TypedTable>(
-                    std::initializer_list<PublicColumnInfo>{
-                        { Int, "dummy", 0 }
-                    }
-                )
-            }
-        }
+TableValueGathererFactory make_executor_database() {
+    return TableValueGathererFactory{
+        std::unordered_map<TableNameType, sptr<TypedTable>>{}
     };
 }
 

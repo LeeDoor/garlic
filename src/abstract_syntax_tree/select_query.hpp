@@ -33,7 +33,7 @@ public:
     SelectQuery(ColumnsContainer columns);
     SelectQuery(ColumnsContainer columns, TablesContainer tables);
 
-    ExpectedQueryResult resolve(sptr<CellValueGatherer> gatherer) override;
+    ExpectedQueryResult resolve(const TableValueGathererFactory& gatherer_factory) override;
 
 private:
     ColumnsContainer columns_ {};

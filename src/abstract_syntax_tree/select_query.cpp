@@ -1,6 +1,7 @@
 #include "select_query.hpp"
 #include "table_query_result.hpp"
-
+#include "dumb_cell_value_gatherer.hpp"
+#include "table_value_gatherer_factory.hpp"
 namespace garlic {
 
 SelectQuery::SelectQuery()
@@ -13,7 +14,16 @@ SelectQuery::SelectQuery(ColumnsContainer columns, TablesContainer tables)
 , tables_{ std::move(tables) }
 {}
 
-SelectQuery::ExpectedQueryResult SelectQuery::resolve(sptr<CellValueGatherer> gatherer) {
+SelectQuery::ExpectedQueryResult SelectQuery::resolve(const TableValueGathererFactory& gatherer_factory) {
+    sptr<CellValueGatherer> gatherer;
+    if(tables_.empty()) {
+	gatherer = std::make_shared<DumbCellValueGatherer>();
+    } else {
+	auto exp_gatherer = gatherer_factory.build_cell_value_gatherer(tables_.front().table_name);
+	if(!exp_gatherer)
+	    return std::unexpected(exp_gatherer.error());
+	gatherer = *exp_gatherer;
+    }
     TableQueryResult::Table table(2);
     for(const Selector& column : columns_) { 
 	table[0].push_back(column.column_name);

@@ -5,37 +5,29 @@ namespace garlic {
 
 namespace details {
 
-template<typename ColumnType>
-using GatheredValueType = std::conditional_t<
-    std::same_as<ColumnType, StringType>,
-    StringViewType,
-    ColumnType
->;
-
-template<typename TableValueGathererT, typename StoringColumnTypeT>
+template<typename TableValueGathererT, typename ResultingColumnTypeT>
 concept TableValueGathererSingle = requires (TableValueGathererT table_value_gatherer) {
-    requires IsStoringColumnType<StoringColumnTypeT>;
-    { table_value_gatherer.template get_value<StoringColumnTypeT>(size_t{}, size_t{}) } 
-	-> std::convertible_to<GatheredValueType<StoringColumnTypeT>>;
+    { table_value_gatherer.template get_value<ResultingColumnTypeT>(size_t{}, size_t{}) } 
+	-> std::convertible_to<ResultingColumnTypeT>;
 };
 
-template<typename TableValueGathererT, typename StoringColumnT>
+template<typename TableValueGathererT, typename ResultingColumnT>
 struct TableValueGathererAllV : 
-    std::bool_constant<(TableValueGathererSingle<TableValueGathererT, StoringColumnT>)> {
-	static_assert(TableValueGathererSingle<TableValueGathererT, StoringColumnT>);
+    std::bool_constant<(TableValueGathererSingle<TableValueGathererT, ResultingColumnT>)> {
+	static_assert(TableValueGathererSingle<TableValueGathererT, ResultingColumnT>);
     };
 
-template<typename TableValueGathererT, typename StoringColumnTypesT>
+template<typename TableValueGathererT, typename ResultingColumnTypesT>
 struct TableValueGathererAll;
 
-template<typename TableValueGathererT, typename... StoringColumnTypesT>
-struct TableValueGathererAll<TableValueGathererT, TypeList<StoringColumnTypesT...>> : 
-    std::bool_constant<(TableValueGathererAllV<TableValueGathererT, StoringColumnTypesT>::value && ...)> {};
+template<typename TableValueGathererT, typename... ResultingColumnTypesT>
+struct TableValueGathererAll<TableValueGathererT, TypeList<ResultingColumnTypesT...>> : 
+    std::bool_constant<(TableValueGathererAllV<TableValueGathererT, ResultingColumnTypesT>::value && ...)> {};
 
 } 
 
 template<typename TableValueGathererT>
-concept TableValueGatherer = details::TableValueGathererAll<TableValueGathererT, StoringColumnTypes>::value;
+concept TableValueGatherer = details::TableValueGathererAll<TableValueGathererT, ReadonlyColumnTypes>::value;
 
 
 }

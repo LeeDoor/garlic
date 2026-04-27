@@ -1,7 +1,7 @@
 #pragma once
 #include "database.hpp"
 
-namespace garlic::sql_parser {
+namespace garlic {
 
 using TableValueGathererFactory = Database;
 static_assert(TableValueGathererFactoryImpl<TableValueGathererFactory>);

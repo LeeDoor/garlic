@@ -14,12 +14,14 @@ using ArrayType = std::vector<T>;
 
 template<typename... Ts>
 struct TypeList {};
-using StoringColumnTypes = TypeList<
-    StringType,
+
+using ReadonlyColumnTypes = TypeList<
+    StringViewType,
     IntType,
     FloatType,
     bool
 >;
+
 template<typename T>
 concept IsStoringColumnType = 
     std::is_same_v<T, StringType>

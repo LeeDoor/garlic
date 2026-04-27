@@ -2,7 +2,6 @@
 #include "query_result.hpp"
 #include "constant_expression.hpp"
 #include "condition_mock.hpp"
-#include "cell_value_gatherer_mock.hpp"
 #include <limits>
 #include <sstream>
 
@@ -26,8 +25,11 @@ public:
 
 class TestSelectQueries : public ::testing::Test {
 protected:
-    sptr<testing::StrictMock<CellValueGathererMock>> gatherer_ =
-        std::make_shared<testing::StrictMock<CellValueGathererMock>>();
+    static TableValueGathererFactory make_unused_factory() {
+        return TableValueGathererFactory{
+            std::unordered_map<TableNameType, sptr<TypedTable>>{}
+        };
+    }
 
     template<typename... Exprs>
     static SelectQuery make_query(Exprs&&... exprs) {
@@ -61,41 +63,46 @@ protected:
 };
 
 TEST_F(TestSelectQueries, conditionTrueFormatsAsOne) {
+    auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<ConditionMock>(true));
 
-    auto result = unwrap_query_result(query.resolve(gatherer_));
+    auto result = unwrap_query_result(query.resolve(factory));
     ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Boolean", "true"));
 }
 
 TEST_F(TestSelectQueries, conditionFalseFormatsAsZero) {
+    auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<ConditionMock>(false));
 
-    auto result = unwrap_query_result(query.resolve(gatherer_));
+    auto result = unwrap_query_result(query.resolve(factory));
     ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Boolean", "false"));
 }
 
 TEST_F(TestSelectQueries, conditionThrowingPropagatesException) {
+    auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<ThrowingCondition>());
-    auto result = query.resolve(gatherer_);
+    auto result = query.resolve(factory);
     ASSERT_FALSE(result.has_value());
     EXPECT_EQ(result.error(), "condition resolve failed");
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBasicNumber) {
+    auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<IntConstExpr>(42));
 
-    auto result = unwrap_query_result(query.resolve(gatherer_));
+    auto result = unwrap_query_result(query.resolve(factory));
     ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Int", "42"));
 }
 
 TEST_F(TestSelectQueries, expressionIntFormatsBoundaryNumbers) {
+    auto factory = make_unused_factory();
     auto max_q = make_query(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::max()));
     auto min_q = make_query(std::make_unique<IntConstExpr>(std::numeric_limits<IntType>::min()));
-    auto max_res = unwrap_query_result(max_q.resolve(gatherer_));
-    auto min_res = unwrap_query_result(min_q.resolve(gatherer_));
+    auto max_res = unwrap_query_result(max_q.resolve(factory));
+    auto min_res = unwrap_query_result(min_q.resolve(factory));
 
     EXPECT_EQ(
         max_res->format(),
@@ -108,14 +115,16 @@ TEST_F(TestSelectQueries, expressionIntFormatsBoundaryNumbers) {
 }
 
 TEST_F(TestSelectQueries, expressionFloatFormatsBasicNumber) {
+    auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<FloatConstExpr>(1.25f));
 
-    auto result = unwrap_query_result(query.resolve(gatherer_));
+    auto result = unwrap_query_result(query.resolve(factory));
     ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->format(), format_single_value_table("Float", "1.25"));
 }
 
 TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
+    auto factory = make_unused_factory();
     const std::array<FloatType, 6> values{
         std::numeric_limits<FloatType>::max(),
         std::numeric_limits<FloatType>::lowest(),
@@ -127,15 +136,16 @@ TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
 
     for(const auto v : values) {
         auto query = make_query(std::make_unique<FloatConstExpr>(v));
-        auto result = unwrap_query_result(query.resolve(gatherer_));
+        auto result = unwrap_query_result(query.resolve(factory));
         ASSERT_NE(result, nullptr);
         EXPECT_EQ(result->format(), format_single_value_table("Float", format_float_like_query(v)));
     }
 }
 
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
+    auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<ThrowingExpression>());
-    auto result = query.resolve(gatherer_);
+    auto result = query.resolve(factory);
     ASSERT_FALSE(result.has_value());
     EXPECT_EQ(result.error(), "expression evaluate failed");
 }
