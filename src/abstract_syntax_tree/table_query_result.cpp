@@ -2,11 +2,11 @@
 
 namespace garlic {
 
-TableQueryResult::TableQueryResult(Table&& table) 
+TableQueryResult::TableQueryResult(ResultTable&& table) 
 : table_result_{ form_table_result(std::move(table)) }
 {}
 
-StringType TableQueryResult::form_table_result(Table&& table) {
+StringType TableQueryResult::form_table_result(ResultTable&& table) {
     std::stringstream ss;
     print_table(ss, table);
     return ss.str();
@@ -16,7 +16,7 @@ StringViewType TableQueryResult::format() const {
     return table_result_;
 }
 
-void TableQueryResult::print_table(std::ostream& out, const Table& table) {
+void TableQueryResult::print_table(std::ostream& out, const ResultTable& table) {
     if (table.empty()) { return; }
     auto widths = count_width_foreach_column(table);
     print_horizontal_delimeter(out, widths);
@@ -38,7 +38,7 @@ void TableQueryResult::print_table(std::ostream& out, const Table& table) {
 
     print_horizontal_delimeter(out, widths);
 }
-std::vector<size_t> TableQueryResult::count_width_foreach_column(const Table& table) {
+std::vector<size_t> TableQueryResult::count_width_foreach_column(const ResultTable& table) {
     const std::size_t cols = table[0].size();
     std::vector<std::size_t> widths(cols, 0);
     for (const auto& row : table) {

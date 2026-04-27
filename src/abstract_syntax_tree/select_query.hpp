@@ -1,23 +1,24 @@
 #pragma once
 #include "query.hpp"
 #include "expression.hpp"
+#include "result_table.hpp"
 
 namespace garlic {
 
 struct Selector { 
     ColumnNameType column_name;
-    uptr<Expression> content;
+    uptr<Expression> ast;
 
-    Selector() : column_name{ "" }, content{ nullptr } {}
+    Selector() : column_name{ "" }, ast{ nullptr } {}
     explicit Selector(uptr<Expression> expression)
-    : content{ std::move(expression) }
+    : ast{ std::move(expression) }
     {
-	std::stringstream ss; TypeRules::as_str(ss, content->get_type());
+	std::stringstream ss; TypeRules::as_str(ss, ast->get_type());
 	column_name = ss.str();
     }
     Selector(const ColumnNameType& column_name, uptr<Expression> expression)
     : column_name{ column_name }
-    , content{ std::move(expression) }
+    , ast{ std::move(expression) }
     {}
 };
 
@@ -36,6 +37,14 @@ public:
     ExpectedQueryResult resolve(const TableValueGathererFactory& gatherer_factory) override;
 
 private:
+    using OrderedGatherers = std::list<sptr<CellValueGatherer>>;
+
+    ResultTable create_result_table_header() const;
+    std::expected<std::pair<TablesGathered, OrderedGatherers>, UnexpectedCellValue> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;
+    std::expected<StringType, UnexpectedCellValue> resolve_and_stringfy(const Selector& column, const TablesGathered& gatherers) const;
+    std::expected<ResultRow, UnexpectedCellValue> resolve_row(const TablesGathered& gatherers) const;
+    static bool jump_to_next_row(OrderedGatherers& gatherers);
+
     ColumnsContainer columns_ {};
     TablesContainer tables_ {};
 };
