@@ -34,13 +34,29 @@ sptr<TypedTable> create_table_users() {
     return table;
 }
 
+sptr<TypedTable> create_table_houses() {
+    auto table = std::make_shared<TypedTable>( 
+	std::initializer_list<PublicColumnInfo>{ 
+	    PublicColumnInfo{ String, "address", 10 },
+	    PublicColumnInfo{ Int, "housenumber", 0 } 
+	});
+    table->create_empty_row();
+    table->create_empty_row();
+    table->set_value(0, 0, "Gorodovik");
+    table->set_value(0, 1, 9);
+    table->set_value(1, 0, "4y kasat");
+    table->set_value(1, 1, 20);
+    return table;
+}
+
 int main (int argc, char** argv) {
     bool debug_mode = false;
     handle_args(argc, argv, debug_mode);
     ErrorPrinter err_p;
     Database database {
 	{ 
-	    { "users", create_table_users() }
+	    { "users", create_table_users() },
+	    { "houses", create_table_houses() }
 	}
     };
     garlic::sql_parser::SqlRepl drv(
