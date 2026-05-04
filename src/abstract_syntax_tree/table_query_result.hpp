@@ -15,11 +15,13 @@ private:
     static void print_table(std::ostream& out, const ResultTable& table);
     static void print_horizontal_delimeter(std::ostream& out, const std::vector<size_t>& widths);
     static std::vector<size_t> count_width_foreach_column(const ResultTable& table);
+    static void print_table_header(std::ostream& out, const ResultRow& row, const std::vector<size_t>& widths);
 
     static constexpr char CROSS = '+';
     static constexpr char V_BAR = '|';
     static constexpr char H_BAR = '-';
     static constexpr char SPACE = ' ';
+    static constexpr char ETC   = '+';
 
     StringType table_result_;
 };

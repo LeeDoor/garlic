@@ -57,6 +57,22 @@ protected:
             + border;
     }
 
+    static std::string format_single_value_table_with_raw_header(std::string_view raw_header, std::string_view value) {
+        const auto escape = std::find_if(
+            raw_header.begin(),
+            raw_header.end(),
+            [](char ch) { return std::iscntrl(static_cast<unsigned char>(ch)) != 0; }
+        );
+        std::string header;
+        if (escape == raw_header.end()) {
+            header.assign(raw_header.begin(), raw_header.end());
+        } else {
+            header.assign(raw_header.begin(), escape);
+            header += '+';
+        }
+        return format_single_value_table(header, value);
+    }
+
     static std::string format_float_like_query(FloatType value) {
         std::ostringstream os;
         os << value;
@@ -144,12 +160,42 @@ TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
     }
 }
 
+TEST_F(TestSelectQueries, stringWithEscapedNewlinesFormatAsEscapedTextInTable) {
+    auto factory = make_unused_factory();
+    auto query = make_query(std::make_unique<StringConstExpr>("hello\nthere\nhi"));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+    EXPECT_EQ(
+        result->format(),
+        "+------------------+\n"
+        "| String           |\n"
+        "+------------------+\n"
+        "| hello\\nthere\\nhi |\n"
+        "+------------------+"
+    );
+}
+
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
     auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<ThrowingExpression>());
     auto result = query.resolve(factory);
     ASSERT_FALSE(result.has_value());
     EXPECT_EQ(result.error(), "expression evaluate failed");
+}
+
+TEST_F(TestSelectQueries, escapedAliasHeaderShrinksBeforeTableFormatting) {
+    auto factory = make_unused_factory();
+    SelectQuery::ColumnsContainer columns;
+    columns.emplace_back("aboba\n\t\nlong name", std::make_unique<IntConstExpr>(12));
+    SelectQuery query(std::move(columns));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+    EXPECT_EQ(
+        result->format(),
+        format_single_value_table_with_raw_header("aboba\n\t\nlong name", "12")
+    );
 }
 
 }

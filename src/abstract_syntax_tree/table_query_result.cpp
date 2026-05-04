@@ -20,7 +20,9 @@ void TableQueryResult::print_table(std::ostream& out, const ResultTable& table) 
     if (table.empty()) { return; }
     auto widths = count_width_foreach_column(table);
     print_horizontal_delimeter(out, widths);
-    for (std::size_t r = 0; r < table.size(); ++r) {
+    print_table_header(out, table.front(), widths);
+    print_horizontal_delimeter(out, widths);
+    for (std::size_t r = 1; r < table.size(); ++r) {
         out << V_BAR;
         for (std::size_t c = 0; c < table[0].size(); ++c) {
             out << SPACE
@@ -31,12 +33,10 @@ void TableQueryResult::print_table(std::ostream& out, const ResultTable& table) 
                 << V_BAR;
         }
         out << std::endl;
-        if (r == 0 && table.size() > 1) {
-            print_horizontal_delimeter(out, widths);
-        }
     }
 
-    print_horizontal_delimeter(out, widths);
+    if(table.size() > 1)
+	print_horizontal_delimeter(out, widths);
 }
 std::vector<size_t> TableQueryResult::count_width_foreach_column(const ResultTable& table) {
     const std::size_t cols = table[0].size();
@@ -58,5 +58,19 @@ void TableQueryResult::print_horizontal_delimeter(std::ostream& out, const std::
     out << '\n';
 }
 
+void TableQueryResult::print_table_header(std::ostream& out, const ResultRow& row, const std::vector<size_t>& widths) {
+    out << V_BAR;
+    for (std::size_t c = 0; c < row.size(); ++c) {
+	auto newline_delimeter = row[c].find('\n');
+	auto first_line = row[c].substr(0, newline_delimeter);
+	out << SPACE
+	    << std::left
+	    << std::setw(static_cast<int>(widths[c]))
+	    << first_line
+	    << SPACE
+	    << V_BAR;
+    }
+    out << std::endl;
+}
 
 }

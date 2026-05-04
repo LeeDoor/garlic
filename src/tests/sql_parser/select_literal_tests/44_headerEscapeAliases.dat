@@ -1,0 +1,2 @@
+SELECT 12 AS 'aboba\n\t\nlong name';
+SELECT 34 AS "tab\tname";
