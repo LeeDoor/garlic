@@ -9,14 +9,31 @@ public:
     TableQueryResult(ResultTable&& table);
 
     StringViewType format() const override;
-    
+
 private:
-    static StringType form_table_result(ResultTable&& table);
-    static void print_table(std::ostream& out, const ResultTable& table);
-    static void print_horizontal_delimeter(std::ostream& out, const std::vector<size_t>& widths);
-    static std::vector<size_t> count_width_foreach_column(const ResultTable& table);
-    static void print_table_header(std::ostream& out, const ResultRow& header, const std::vector<size_t>& widths);
-    static void print_table_body(std::ostream& out, const ResultTable& table, const std::vector<size_t>& widths);
+    StringType table_result_;
+};
+
+class TableQueryResultGenerator {
+public:
+    static StringType form_table_result(const ResultTable& table) {
+	return TableQueryResultGenerator{ table }.form_table_result();
+    }
+
+private:
+    TableQueryResultGenerator(const ResultTable& table);
+    static std::vector<size_t> count_widths(const ResultTable& table);
+    static std::unordered_map<size_t, size_t> count_heights(const ResultTable& table);
+
+    StringType form_table_result();
+    void print_table();
+    void print_horizontal_delimeter();
+    void print_table_header();
+    void print_table_body();
+    void print_row(size_t row_id);
+    std::tuple<StringViewType, bool> get_cell_subline(std::vector<size_t>& newline_pos, size_t row_id, size_t cell_id);
+    void print_cell_subline(const StringViewType& cell_str, size_t column_id, bool is_last_subline);
+    size_t get_height(size_t row);
 
     static constexpr char CROSS = '+';
     static constexpr char V_BAR = '|';
@@ -24,7 +41,10 @@ private:
     static constexpr char SPACE = ' ';
     static constexpr char ETC   = '+';
 
-    StringType table_result_;
+    std::vector<size_t> widths_;
+    std::unordered_map<size_t, size_t> heights_;
+    const ResultTable& table_;
+    std::stringstream out_;
 };
 
 }

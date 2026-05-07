@@ -1,2 +1,2 @@
-SELECT 12 AS 'aboba\n\t\nlong name';
-SELECT 34 AS "tab\tname";
+SELECT 12 AS 'aboba\nmiddle\nlong name';
+SELECT 7 AS 'A\nB', 8 AS '1\n2\n3', 9 AS 'Tail';

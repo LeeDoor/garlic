@@ -57,20 +57,94 @@ protected:
             + border;
     }
 
-    static std::string format_single_value_table_with_raw_header(std::string_view raw_header, std::string_view value) {
-        const auto escape = std::find_if(
-            raw_header.begin(),
-            raw_header.end(),
-            [](char ch) { return std::iscntrl(static_cast<unsigned char>(ch)) != 0; }
-        );
-        std::string header;
-        if (escape == raw_header.end()) {
-            header.assign(raw_header.begin(), raw_header.end());
-        } else {
-            header.assign(raw_header.begin(), escape);
-            header += '+';
+    static std::vector<std::string_view> split_lines(std::string_view cell) {
+        std::vector<std::string_view> lines;
+        size_t line_start = 0;
+        while(line_start <= cell.size()) {
+            const auto newline_pos = cell.find('\n', line_start);
+            if(newline_pos == std::string_view::npos) {
+                lines.push_back(cell.substr(line_start));
+                break;
+            }
+
+            lines.push_back(cell.substr(line_start, newline_pos - line_start));
+            line_start = newline_pos + 1;
         }
-        return format_single_value_table(header, value);
+        return lines;
+    }
+
+    static void append_separator(std::string& out, const std::vector<size_t>& widths) {
+        out += '+';
+        for(const auto width : widths) {
+            out += std::string(width + 2, '-');
+            out += '+';
+        }
+        out += '\n';
+    }
+
+    static void append_table_row(
+        std::string& out,
+        const std::vector<std::vector<std::string_view>>& cells,
+        const std::vector<size_t>& widths
+    ) {
+        size_t height = 1;
+        for(const auto& cell_lines : cells) {
+            height = std::max(height, cell_lines.size());
+        }
+
+        for(size_t h = 0; h < height; ++h) {
+            out += '|';
+            for(size_t c = 0; c < cells.size(); ++c) {
+                const auto current_line = h < cells[c].size() ? cells[c][h] : std::string_view{};
+                const auto continuation = h + 1 < cells[c].size() ? '+' : ' ';
+                out += ' ';
+                out += std::string(current_line);
+                out += std::string(widths[c] - current_line.size(), ' ');
+                out += continuation;
+                out += '|';
+            }
+            out += '\n';
+        }
+    }
+
+    static std::string format_single_row_table(
+        std::initializer_list<std::string_view> header_cells,
+        std::initializer_list<std::string_view> body_cells
+    ) {
+        EXPECT_EQ(header_cells.size(), body_cells.size());
+
+        std::vector<std::vector<std::string_view>> header_lines;
+        std::vector<std::vector<std::string_view>> body_lines;
+        std::vector<size_t> widths;
+        header_lines.reserve(header_cells.size());
+        body_lines.reserve(body_cells.size());
+        widths.reserve(header_cells.size());
+
+        auto body_it = body_cells.begin();
+        for(const auto header_cell : header_cells) {
+            auto header_split = split_lines(header_cell);
+            auto body_split = split_lines(*body_it++);
+
+            size_t width = 0;
+            for(const auto line : header_split) {
+                width = std::max(width, line.size());
+            }
+            for(const auto line : body_split) {
+                width = std::max(width, line.size());
+            }
+
+            header_lines.push_back(std::move(header_split));
+            body_lines.push_back(std::move(body_split));
+            widths.push_back(width);
+        }
+
+        std::string out;
+        append_separator(out, widths);
+        append_table_row(out, header_lines, widths);
+        append_separator(out, widths);
+        append_table_row(out, body_lines, widths);
+        append_separator(out, widths);
+        return out;
     }
 
     static std::string format_float_like_query(FloatType value) {
@@ -160,20 +234,28 @@ TEST_F(TestSelectQueries, expressionFloatFormatsSpecialValues) {
     }
 }
 
-TEST_F(TestSelectQueries, stringWithEscapedNewlinesFormatAsEscapedTextInTable) {
+TEST_F(TestSelectQueries, stringWithEscapedNewlinesFormatsAsMultilineTableRow) {
     auto factory = make_unused_factory();
     auto query = make_query(std::make_unique<StringConstExpr>("hello\nthere\nhi"));
 
     auto result = unwrap_query_result(query.resolve(factory));
     ASSERT_NE(result, nullptr);
-    EXPECT_EQ(
-        result->format(),
-        "+------------------+\n"
-        "| String           |\n"
-        "+------------------+\n"
-        "| hello\\nthere\\nhi |\n"
-        "+------------------+"
-    );
+    const auto expected = format_single_row_table({"String"}, {"hello\nthere\nhi"});
+    EXPECT_EQ(std::string(result->format()), expected);
+}
+
+TEST_F(TestSelectQueries, mixedMultilineRowUsesTallestCellAndPadsShorterCells) {
+    auto factory = make_unused_factory();
+    SelectQuery::ColumnsContainer columns;
+    columns.emplace_back("A", std::make_unique<StringConstExpr>("123\n456"));
+    columns.emplace_back("B", std::make_unique<StringConstExpr>("1\n2\n3\n4"));
+    columns.emplace_back(std::make_unique<IntConstExpr>(5));
+    SelectQuery query(std::move(columns));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+    const auto expected = format_single_row_table({"A", "B", "Int"}, {"123\n456", "1\n2\n3\n4", "5"});
+    EXPECT_EQ(std::string(result->format()), expected);
 }
 
 TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
@@ -184,18 +266,44 @@ TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
     EXPECT_EQ(result.error(), "expression evaluate failed");
 }
 
-TEST_F(TestSelectQueries, escapedAliasHeaderShrinksBeforeTableFormatting) {
+TEST_F(TestSelectQueries, multilineHeaderUsesSameRulesAsBodyCells) {
     auto factory = make_unused_factory();
     SelectQuery::ColumnsContainer columns;
-    columns.emplace_back("aboba\n\t\nlong name", std::make_unique<IntConstExpr>(12));
+    columns.emplace_back("aboba\nmiddle\nlong name", std::make_unique<IntConstExpr>(12));
     SelectQuery query(std::move(columns));
 
     auto result = unwrap_query_result(query.resolve(factory));
     ASSERT_NE(result, nullptr);
-    EXPECT_EQ(
-        result->format(),
-        format_single_value_table_with_raw_header("aboba\n\t\nlong name", "12")
-    );
+    const auto expected = format_single_row_table({"aboba\nmiddle\nlong name"}, {"12"});
+    EXPECT_EQ(std::string(result->format()), expected);
+}
+
+TEST_F(TestSelectQueries, mixedMultilineHeadersUseTallestCellAndPadShorterCells) {
+    auto factory = make_unused_factory();
+    SelectQuery::ColumnsContainer columns;
+    columns.emplace_back("A\nB", std::make_unique<IntConstExpr>(7));
+    columns.emplace_back("1\n2\n3", std::make_unique<IntConstExpr>(8));
+    columns.emplace_back("Tail", std::make_unique<IntConstExpr>(9));
+    SelectQuery query(std::move(columns));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+    const auto expected = format_single_row_table({"A\nB", "1\n2\n3", "Tail"}, {"7", "8", "9"});
+    EXPECT_EQ(std::string(result->format()), expected);
+}
+
+TEST_F(TestSelectQueries, multilineHeadersAndBodiesFormatIndependently) {
+    auto factory = make_unused_factory();
+    SelectQuery::ColumnsContainer columns;
+    columns.emplace_back("A\nB", std::make_unique<StringConstExpr>("123\n456"));
+    columns.emplace_back("C\nD\nE", std::make_unique<StringConstExpr>("1\n2\n3\n4"));
+    columns.emplace_back("Int", std::make_unique<IntConstExpr>(5));
+    SelectQuery query(std::move(columns));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+    const auto expected = format_single_row_table({"A\nB", "C\nD\nE", "Int"}, {"123\n456", "1\n2\n3\n4", "5"});
+    EXPECT_EQ(std::string(result->format()), expected);
 }
 
 }

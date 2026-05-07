@@ -1,0 +1,5 @@
+SELECT
+    '123\n456' AS 'A\nB',
+    '1\n2\n3\n4' AS 'C\nD\nE',
+    5 AS 'Int'
+;
