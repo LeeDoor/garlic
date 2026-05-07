@@ -15,7 +15,8 @@ private:
     static void print_table(std::ostream& out, const ResultTable& table);
     static void print_horizontal_delimeter(std::ostream& out, const std::vector<size_t>& widths);
     static std::vector<size_t> count_width_foreach_column(const ResultTable& table);
-    static void print_table_header(std::ostream& out, const ResultRow& row, const std::vector<size_t>& widths);
+    static void print_table_header(std::ostream& out, const ResultRow& header, const std::vector<size_t>& widths);
+    static void print_table_body(std::ostream& out, const ResultTable& table, const std::vector<size_t>& widths);
 
     static constexpr char CROSS = '+';
     static constexpr char V_BAR = '|';
