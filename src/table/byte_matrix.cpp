@@ -31,7 +31,7 @@ void ByteMatrix::clear_value(size_t row_id, size_t offset, size_t count) {
         throw std::logic_error("offset + count is longer than available in row");
     if(row_id >= content_.size())
         throw std::logic_error("row_id{" + std::to_string(row_id) + "} is more than rows count{" + std::to_string(content_.size()) + "}");
-    auto begin = content_[row_id].data() +  offset;
+    auto begin = content_[row_id].data() + offset;
     std::fill(begin, begin + count, 0);
 }
 

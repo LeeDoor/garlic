@@ -163,6 +163,56 @@ TEST(test_typed_table, initedTable_insertingDataToDifferentRows) {
     EXPECT_FLOAT_EQ(tt.get_value<FloatType>(1, 2), -574.100023f);
 }
 
+TEST(test_typed_table, stringColumnAtEnd_singleRowReadWrite) {
+    TypedTable tt = {
+        { Int, "Age", 0 },
+        { String, "Name", 10 },
+    };
+    tt.create_empty_row();
+
+    tt.set_value(0, 0, 28);
+    tt.set_value(0, 1, "Sergey Jo");
+
+    EXPECT_EQ(tt.get_value<IntType>(0, 0), 28);
+    EXPECT_EQ(tt.get_value<StringType>(0, 1), "Sergey Jo");
+}
+
+TEST(test_typed_table, stringColumnAtEnd_doesNotCorruptPreviousNumericColumns) {
+    TypedTable tt = {
+        { Float, "Weight", 0 },
+        { Int, "Age", 0 },
+        { String, "Name", 10 },
+    };
+    tt.create_empty_row();
+
+    tt.set_value(0, 0, 64.55f);
+    tt.set_value(0, 1, 28);
+    tt.set_value(0, 2, "Sergey Jo");
+
+    EXPECT_FLOAT_EQ(tt.get_value<FloatType>(0, 0), 64.55f);
+    EXPECT_EQ(tt.get_value<IntType>(0, 1), 28);
+    EXPECT_EQ(tt.get_value<StringType>(0, 2), "Sergey Jo");
+}
+
+TEST(test_typed_table, stringColumnAtEnd_multipleRowsReadWrite) {
+    TypedTable tt = {
+        { Int, "Age", 0 },
+        { String, "Name", 12 },
+    };
+    tt.create_empty_row();
+    tt.create_empty_row();
+
+    tt.set_value(0, 0, 28);
+    tt.set_value(0, 1, "Sergey Jo");
+    tt.set_value(1, 0, 12);
+    tt.set_value(1, 1, "Oleg Ivan");
+
+    EXPECT_EQ(tt.get_value<IntType>(0, 0), 28);
+    EXPECT_EQ(tt.get_value<StringType>(0, 1), "Sergey Jo");
+    EXPECT_EQ(tt.get_value<IntType>(1, 0), 12);
+    EXPECT_EQ(tt.get_value<StringType>(1, 1), "Oleg Ivan");
+}
+
 TEST(test_typed_table, initedTable_missStringToInt_throwsWithoutChanges) {
     TypedTable tt = {
         { String, "Name", 10 },

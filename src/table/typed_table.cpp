@@ -49,8 +49,7 @@ void TypedTable::set_value(size_t row, size_t column, const StringType& value) {
     size_t row_offset = header_[column].offset;
     auto string_byte_represent = reinterpret_cast<const Byte*>(value.data());
     content_.set_value(row, row_offset, ByteSpan{ string_byte_represent, value.size() });
-    row_offset += value.size();
-    content_.clear_value(row, row_offset, header_[column].size_bytes - row_offset);
+    content_.clear_value(row, row_offset + value.size(), header_[column].size_bytes - value.size());
 }
 
 }
