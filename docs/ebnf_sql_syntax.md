@@ -1,5 +1,5 @@
 > All keywords that will appear in rules below can be written in any case with different cases for each letter.
-> These are correct keywords: "SELECT", "select", "Select", "SELEct", "SeLeCt" and so on.
+> These are correct keywords: `SELECT`, `select`, `Select`, `SELEct`, `SeLeCt` and so on.
 
 # Primitives
 ## Defining a Value
