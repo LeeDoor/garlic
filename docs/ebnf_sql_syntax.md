@@ -10,7 +10,8 @@ If all characters are recognized as non-terminals but they can't form the result
 Example: `SELECT 12 * / 5;`. Here all tokens are valid and recognized, but `12 * / 5` can't match any expression rule, so 
 we consider the query contains syntax error.
 
-If parsing input corresponds the grammar but still ill-formed by some rules, the query terminates with **Semantic Error**.
+If parsing input corresponds the grammar but still ill-formed by some rules, the query terminates with **Semantic Error**. 
+The error is recognized as semantic **only if it violates the rule under #REQUIREMENTS section**. Other text aims to explain the grammar rules.
 1. Example: `SELECT "hello" + 5;`. Here the query corresponds to the grammar, but the addition of the string and the number is forbidden,
 so we consider the query contains semantic error.
 2. Another example: `SELECT user.name FROM users, users;`. Keeping same table names in one `FROM` clause is forbidden - Semantic Error.
@@ -30,12 +31,11 @@ When such delimiter is found, parsing process continues as usual.
 
 The `value` can be either a positive number, string, or a column reference. 
 
-The value can be a reference to table's column. To resolve that value, you need to provide
-an access to table values.
+The value can be a reference to table's column.
 
 The number is always positive, but can be negated later using unary minus (TODO make a reference). 
 The number can be either an integer or a floating point number.
-After number you can see an exponent.
+After number you can have an exponent.
 
 The string is a set of characters inside single or double quotes.
 There is no difference between single and double quotes.
@@ -71,10 +71,7 @@ string                 = ( "'" { !"'" | "\'" } "'" ) | ( '"' { !'"' | '\"' } '"'
 
 Expression is a value or an operation performed to other expressions.
 Allowed operations: addition, subtraction, multiplication, division, remainder of division, modulus, precedence brackets and unary minus.
-Despite an expression can be a string, these operations on strings is semantically invalid.
-Grammar rules allow applying these operations to strings, so the compiler needs to do a semantic analysis (TODO reference to semantic analysis block).
 Note that unary minus should have **higher priority** than the subtraction operation.
-String concatenation with addition operation is not allowed.
 
 ```EBNF
 expression = value
@@ -88,6 +85,10 @@ expression = value
            | "-" expression
            ;
 ```
+
+### REQUIREMENTS
+1. Despite an expression can be a string, these operations on strings is semantically invalid.
+String concatenation with addition operation is not allowed.
 
 ## Defining a Condition
 
@@ -142,12 +143,6 @@ query   = select_query ;
 
 `SELECT` query grabs data from database tables and represents it as a table. 
 
-```EBNF
-select_query = "SELECT" selector{selector} [ "FROM" table_name{table_name} ] ;
-selector = evaluateable [ "AS" string ] ;
-table_name = identifier ;
-```
-
 `SELECT` keyword always comes with a selector or a combination of selectors.
 Each selector defines a column in the resulting table, so there should be at least 1 selector.
 Any selector may be followed by `AS` keyword with a string. 
@@ -160,14 +155,21 @@ resulting table will have only one line and a header**.
 
 `FROM` keyword comes with set of table names. 
 Each table_name specifies the table that will be iterated through within Select Query.
-Any table used in Select Query should be specified here. 
-> Note that if we don't specify the table name we used in selector, the query will fail with Semantic Error.
-> If we specify the table name but we don't have such table yet, this is Runtime Error.
-> See TODO reference to error section.
 
-Every table_name should be **unique**.
-
-Each row of table[`i`] should be iterated with every row in table[`i + 1`].
+Each row of table[`i`] will be iterated with every row in table[`i + 1`].
 If From clause has 1 table_name of a table with N rows, the resulting table will have N rows too.
 If From clause has 2 tables with sizes N and M respectively, the resulting table will have N * M rows.
 If From clause has 3 tables with sizes N, M, and P respectively, the resulting table will have N * M * P rows.
+
+```EBNF
+select_query = "SELECT" selector{selector} [ "FROM" table_name{table_name} ] ;
+selector = evaluateable [ "AS" string ] ;
+table_name = identifier ;
+```
+
+### REQUIREMENTS
+1. Any table used in Select Query should be specified here. 
+> Note that if we don't specify the table name we used in selector, the query will fail with Semantic Error.
+> If we specify the table name but we don't have such table yet, this is Runtime Error.
+> See TODO reference to error section.
+2. Every table_name should be **unique**.
