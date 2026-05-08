@@ -1,6 +1,30 @@
 > All keywords that will appear in rules below can be written in any case with different cases for each letter.
 > These are correct keywords: `SELECT`, `select`, `Select`, `SELEct`, `SeLeCt` and so on.
 
+# Errors
+
+If any character doesn't match any non-terminal, this character is called *invalid* and query terminates with **Lexical Error**.
+Example: `SELICT 12;`. Here the `SELICT` word can't be recognized as a `SELECT`, so this word is invalid and we consider the query contains lexical error.
+
+If all characters are recognized as non-terminals but they can't form the resulting non-terminal, the query terminates with **Syntax Error**.
+Example: `SELECT 12 * / 5;`. Here all tokens are valid and recognized, but `12 * / 5` can't match any expression rule, so 
+we consider the query contains syntax error.
+
+If parsing input corresponds the grammar but still ill-formed by some rules, the query terminates with **Semantic Error**.
+1. Example: `SELECT "hello" + 5;`. Here the query corresponds to the grammar, but the addition of the string and the number is forbidden,
+so we consider the query contains semantic error.
+2. Another example: `SELECT user.name FROM users, users;`. Keeping same table names in one `FROM` clause is forbidden - Semantic Error.
+
+If parsing input is grammatically valid and doesn't violate any rules but under some circumstances the query execution will lead to an error,
+then we consider the query contains **Runtime Error**.
+Example: `SELECT users.salary / users.debt FROM users;`. This query looks valid, but in some cases if we got unlucky some user may not have any debts,
+so we face the division by zero and the query fails with runtime error.
+Another example: `SELECT users.salary FROM users;`. This is completely valid query, but if we don't have a table with name `users` this 
+query fill fail with runtime error.
+
+If parser meets any error while parsing, it panics and skips all input until next query delimiter (AKA semicolon ";").
+When such delimiter is found, parsing process continues as usual.
+
 # Primitives
 ## Defining a Value
 
@@ -9,7 +33,7 @@ The `value` can be either a positive number, string, or a column reference.
 The value can be a reference to table's column. To resolve that value, you need to provide
 an access to table values.
 
-The number is always positive, but can be negated later using unary minus (#TODO make a reference). 
+The number is always positive, but can be negated later using unary minus (TODO make a reference). 
 The number can be either an integer or a floating point number.
 After number you can see an exponent.
 
@@ -48,7 +72,7 @@ string                 = ( "'" { !"'" | "\'" } "'" ) | ( '"' { !'"' | '\"' } '"'
 Expression is a value or an operation performed to other expressions.
 Allowed operations: addition, subtraction, multiplication, division, remainder of division, modulus, precedence brackets and unary minus.
 Despite an expression can be a string, these operations on strings is semantically invalid.
-Grammar rules allow applying these operations to strings, so the compiler needs to do a semantic analysis (#TODO reference to semantic analysis block).
+Grammar rules allow applying these operations to strings, so the compiler needs to do a semantic analysis (TODO reference to semantic analysis block).
 Note that unary minus should have **higher priority** than the subtraction operation.
 String concatenation with addition operation is not allowed.
 
@@ -73,7 +97,7 @@ Condition is a boolean value resulting by:
    equivalence, implication, addition modulo two, 
    precedence brackets, negation over the expression in parentheses;
 2. The comparison of two expressions. 
-   Can be applied even to strings using lexicographical comparison (#TODO make reference to wiki).
+   Can be applied even to strings using lexicographical comparison (TODO make reference to wiki).
 3. The constant (`true` or `false`);
 
 ```EBNF
@@ -136,11 +160,14 @@ resulting table will have only one line and a header**.
 
 `FROM` keyword comes with set of table names. 
 Each table_name specifies the table that will be iterated through within Select Query.
-Any table used in Select Query should be specified here. If it is not, the query is ill-formed.
+Any table used in Select Query should be specified here. 
+> Note that if we don't specify the table name we used in selector, the query will fail with Semantic Error.
+> If we specify the table name but we don't have such table yet, this is Runtime Error.
+> See TODO reference to error section.
 
-Each row of table[i] should be iterated with every row in table[i + 1].
+Every table_name should be **unique**.
+
+Each row of table[`i`] should be iterated with every row in table[`i + 1`].
 If From clause has 1 table_name of a table with N rows, the resulting table will have N rows too.
 If From clause has 2 tables with sizes N and M respectively, the resulting table will have N * M rows.
 If From clause has 3 tables with sizes N, M, and P respectively, the resulting table will have N * M * P rows.
-
-#TODO Forbid same table names in the same line and specify it here.
