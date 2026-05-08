@@ -18,12 +18,12 @@ def run_case(executable: str, case) -> bool:
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        print("Usage: python test_runner.py <executable>")
+    if len(sys.argv) != 3:
+        print("Usage: python input_output_comparator.py <suite_root> <executable>")
         sys.exit(1)
 
-    executable = sys.argv[1]
-    root = Path(__file__).resolve().parent.parent
+    root = Path(sys.argv[1]).resolve()
+    executable = sys.argv[2]
     cases = collect_cases(root)
 
     if not cases:
@@ -41,4 +41,3 @@ def main() -> None:
             sys.exit(1)
 
     print("\nAll tests passed!")
-

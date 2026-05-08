@@ -1,0 +1,3 @@
+SELECT users.name, users.age FROM users;
+SELECT users.name, offices.floor FROM users, offices;
+SELECT users.favorite_food AS 'food', foods.kind AS 'kind', users.favorite_food = foods.name AS 'match' FROM users, foods;

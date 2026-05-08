@@ -1,0 +1,2 @@
+SELECT users.name FROM users;
+SELECT 1 FROM ;

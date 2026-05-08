@@ -51,3 +51,4 @@ class TestCase:
     expected_file: Path
     mode: str = "default"
     extra_args: tuple[str, ...] = ()
+

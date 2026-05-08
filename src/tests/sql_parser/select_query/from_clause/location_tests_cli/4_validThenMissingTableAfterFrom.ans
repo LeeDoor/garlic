@@ -1,0 +1,14 @@
+#> +--------+
+|<BLEND> String <RESET>|
++--------+
+|<BLEND> Alice  <RESET>|
+|<ACCENT> Bob    <RESET>|
+|<BLEND> Clara  <RESET>|
+|<ACCENT> Dmitry <RESET>|
+|<BLEND> Eva    <RESET>|
+|<ACCENT> Farid  <RESET>|
+|<BLEND> Greta  <RESET>|
++--------+
+#> [SYNTAX_ERROR] at [1.15]
+
+#>

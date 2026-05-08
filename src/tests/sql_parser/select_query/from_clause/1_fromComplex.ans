@@ -1,0 +1,117 @@
++--------+-----+
+| String | Int |
++--------+-----+
+| Alice  | 24  |
+| Bob    | 31  |
+| Clara  | 27  |
+| Dmitry | 35  |
+| Eva    | 29  |
+| Farid  | 41  |
+| Greta  | 22  |
++--------+-----+
++--------+-----+
+| String | Int |
++--------+-----+
+| Alice  | 3   |
+| Alice  | 5   |
+| Alice  | 8   |
+| Alice  | 2   |
+| Alice  | 6   |
+| Alice  | 4   |
+| Alice  | 7   |
+| Bob    | 3   |
+| Bob    | 5   |
+| Bob    | 8   |
+| Bob    | 2   |
+| Bob    | 6   |
+| Bob    | 4   |
+| Bob    | 7   |
+| Clara  | 3   |
+| Clara  | 5   |
+| Clara  | 8   |
+| Clara  | 2   |
+| Clara  | 6   |
+| Clara  | 4   |
+| Clara  | 7   |
+| Dmitry | 3   |
+| Dmitry | 5   |
+| Dmitry | 8   |
+| Dmitry | 2   |
+| Dmitry | 6   |
+| Dmitry | 4   |
+| Dmitry | 7   |
+| Eva    | 3   |
+| Eva    | 5   |
+| Eva    | 8   |
+| Eva    | 2   |
+| Eva    | 6   |
+| Eva    | 4   |
+| Eva    | 7   |
+| Farid  | 3   |
+| Farid  | 5   |
+| Farid  | 8   |
+| Farid  | 2   |
+| Farid  | 6   |
+| Farid  | 4   |
+| Farid  | 7   |
+| Greta  | 3   |
+| Greta  | 5   |
+| Greta  | 8   |
+| Greta  | 2   |
+| Greta  | 6   |
+| Greta  | 4   |
+| Greta  | 7   |
++--------+-----+
++--------+----------+-------+
+| food   | kind     | match |
++--------+----------+-------+
+| pizza  | fastfood | true  |
+| pizza  | soup     | false |
+| pizza  | veggie   | false |
+| pizza  | fastfood | false |
+| pizza  | seafood  | false |
+| pizza  | grain    | false |
+| pizza  | street   | false |
+| ramen  | fastfood | false |
+| ramen  | soup     | true  |
+| ramen  | veggie   | false |
+| ramen  | fastfood | false |
+| ramen  | seafood  | false |
+| ramen  | grain    | false |
+| ramen  | street   | false |
+| salad  | fastfood | false |
+| salad  | soup     | false |
+| salad  | veggie   | true  |
+| salad  | fastfood | false |
+| salad  | seafood  | false |
+| salad  | grain    | false |
+| salad  | street   | false |
+| burger | fastfood | false |
+| burger | soup     | false |
+| burger | veggie   | false |
+| burger | fastfood | true  |
+| burger | seafood  | false |
+| burger | grain    | false |
+| burger | street   | false |
+| sushi  | fastfood | false |
+| sushi  | soup     | false |
+| sushi  | veggie   | false |
+| sushi  | fastfood | false |
+| sushi  | seafood  | true  |
+| sushi  | grain    | false |
+| sushi  | street   | false |
+| pasta  | fastfood | false |
+| pasta  | soup     | false |
+| pasta  | veggie   | false |
+| pasta  | fastfood | false |
+| pasta  | seafood  | false |
+| pasta  | grain    | true  |
+| pasta  | street   | false |
+| tacos  | fastfood | false |
+| tacos  | soup     | false |
+| tacos  | veggie   | false |
+| tacos  | fastfood | false |
+| tacos  | seafood  | false |
+| tacos  | grain    | false |
+| tacos  | street   | true  |
++--------+----------+-------+

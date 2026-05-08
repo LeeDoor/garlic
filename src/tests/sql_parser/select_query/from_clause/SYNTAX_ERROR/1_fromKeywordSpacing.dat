@@ -1,0 +1,3 @@
+SELECT 1 FROMusers;
+SELECT users.name FROMhouses;
+SELECT users.name FrOmusers;

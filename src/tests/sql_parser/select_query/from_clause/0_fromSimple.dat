@@ -1,0 +1,4 @@
+SELECT 1 FROM users;
+SELECT users.name FROM users;
+SELECT offices.floor FROM offices;
+SELECT foods.kind FROM foods;

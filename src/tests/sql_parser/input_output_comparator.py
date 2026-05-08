@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
+import sys
 from pathlib import Path
-import runpy
+
+THIS_DIR = Path(__file__).resolve().parent
+if str(THIS_DIR) not in sys.path:
+    sys.path.insert(0, str(THIS_DIR))
+
+from runner.main import main
+
 
 if __name__ == "__main__":
-    new_runner = Path(__file__).parent / "select_query" / "select_only" / "input_output_comparator.py"
-    runpy.run_path(str(new_runner), run_name="__main__")
+    main()

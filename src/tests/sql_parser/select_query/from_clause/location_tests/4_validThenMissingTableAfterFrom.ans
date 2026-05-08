@@ -1,0 +1,13 @@
++--------+
+| String |
++--------+
+| Alice  |
+| Bob    |
+| Clara  |
+| Dmitry |
+| Eva    |
+| Farid  |
+| Greta  |
++--------+
+[SYNTAX_ERROR] at [2.15]
+

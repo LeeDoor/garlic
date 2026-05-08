@@ -133,3 +133,4 @@ def get_diff(actual_output: str, expected_output: str, mode: str, width: int = 1
         )
 
     return "\n".join(result)
+

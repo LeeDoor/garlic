@@ -1,0 +1,5 @@
+sElEcT users.name FrOm users;
+SELECT users.name,
+users.age
+FrOm users;
+SELECT 5 AS 'v', foods.name AS 'n' fRoM foods;

@@ -1,0 +1,8 @@
+SELECT 1 FROM;
+SELECT 1 FROM , users;
+SELECT 1 FROM users,;
+SELECT 1 FROM users houses;
+SELECT FROM users;
+SELECT 1 FROM users FROM houses;
+SELECT 1, FROM users;
+SELECT 1 FROM users, , houses;

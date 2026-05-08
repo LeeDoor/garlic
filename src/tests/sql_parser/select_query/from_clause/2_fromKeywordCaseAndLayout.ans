@@ -1,0 +1,33 @@
++--------+
+| String |
++--------+
+| Alice  |
+| Bob    |
+| Clara  |
+| Dmitry |
+| Eva    |
+| Farid  |
+| Greta  |
++--------+
++--------+-----+
+| String | Int |
++--------+-----+
+| Alice  | 24  |
+| Bob    | 31  |
+| Clara  | 27  |
+| Dmitry | 35  |
+| Eva    | 29  |
+| Farid  | 41  |
+| Greta  | 22  |
++--------+-----+
++---+--------+
+| v | n      |
++---+--------+
+| 5 | pizza  |
+| 5 | ramen  |
+| 5 | salad  |
+| 5 | burger |
+| 5 | sushi  |
+| 5 | pasta  |
+| 5 | tacos  |
++---+--------+

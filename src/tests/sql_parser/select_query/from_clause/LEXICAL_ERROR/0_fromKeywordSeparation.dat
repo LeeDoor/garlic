@@ -1,0 +1,3 @@
+SELECT 1FROM users;
+SELECT 1,2FROM users;
+SELECT 5.5FROM houses;
