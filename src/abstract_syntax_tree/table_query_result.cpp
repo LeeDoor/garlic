@@ -4,19 +4,37 @@
 namespace garlic {
 
 TableQueryResult::TableQueryResult(ResultTable&& table) 
-: table_result_{ TableQueryResultGenerator::form_table_result(table) }
+: table_result_{ TableQueryResultGenerator::form_table_result(std::move(table)) }
 {}
 
 StringViewType TableQueryResult::format() const {
     return table_result_;
 }
 
-TableQueryResultGenerator::TableQueryResultGenerator(const ResultTable& table) 
+TableQueryResultGenerator::TableQueryResultGenerator(ResultTable&& table) 
 : widths_{ count_widths(table) }
 , heights_{ count_heights(table) }
-, table_{ table }
+, table_{ std::move(table) }
 , out_{ }
-{}
+{ }
+
+void TableQueryResultGenerator::replace_tabs(ResultTable& table) {
+    auto replace_tab = [&](StringType& str) {
+    static constexpr StringType from = "\t";
+    static constexpr StringType to = " -> ";
+	size_t pos = 0;
+	while ((pos = str.find(from, pos)) != std::string::npos) {
+	    str.replace(pos, from.length(), to);
+	    pos += to.length();
+	}
+    };
+    for(auto& row : table) {
+	for(StringType& cell : row) {
+	    replace_tab(cell);
+	}
+    }
+}
+
 StringType TableQueryResultGenerator::form_table_result() {
     print_table();
     return out_.str();

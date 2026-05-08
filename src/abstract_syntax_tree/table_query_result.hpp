@@ -16,12 +16,15 @@ private:
 
 class TableQueryResultGenerator {
 public:
-    static StringType form_table_result(const ResultTable& table) {
-	return TableQueryResultGenerator{ table }.form_table_result();
+    static StringType form_table_result(ResultTable&& table) {
+	replace_tabs(table);
+	return TableQueryResultGenerator{ std::move(table) }.form_table_result();
     }
 
 private:
-    TableQueryResultGenerator(const ResultTable& table);
+    TableQueryResultGenerator(ResultTable&& table);
+
+    static void replace_tabs(ResultTable& table);
     static std::vector<size_t> count_widths(const ResultTable& table);
     static std::unordered_map<size_t, size_t> count_heights(const ResultTable& table);
 
@@ -45,7 +48,7 @@ private:
 
     std::vector<size_t> widths_;
     std::unordered_map<size_t, size_t> heights_;
-    const ResultTable& table_;
+    ResultTable table_;
     std::stringstream out_;
 };
 
