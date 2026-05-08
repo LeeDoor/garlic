@@ -19,6 +19,7 @@ add_executable(${TEST_EXECUTABLE_NAME}
     test_table_value_expression.cpp
     test_math_expression.cpp
     test_binary_unary_math_expression.cpp
+    test_table_query_result.cpp
     test_select_queries.cpp
     test_sql_ast_executor.cpp
     test_compare_condition.cpp

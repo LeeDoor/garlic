@@ -30,10 +30,12 @@ private:
     void print_horizontal_delimeter();
     void print_table_header();
     void print_table_body();
-    void print_row(size_t row_id);
+    void print_row(size_t row_id, bool highlight_row = false);
+    size_t get_height(size_t row);
+    void highlight(StringViewType color, auto action);
+    void print_row_subline(std::vector<size_t>& newline_pos, size_t row_id);
     std::tuple<StringViewType, bool> get_cell_subline(std::vector<size_t>& newline_pos, size_t row_id, size_t cell_id);
     void print_cell_subline(const StringViewType& cell_str, size_t column_id, bool is_last_subline);
-    size_t get_height(size_t row);
 
     static constexpr char CROSS = '+';
     static constexpr char V_BAR = '|';

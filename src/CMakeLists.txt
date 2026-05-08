@@ -6,6 +6,7 @@ set(GENERAL_INCLUDE_DIRECTORIES
 )
 
 set(DEPENDENCIES 
+    terminal_api
     table
     abstract_syntax_tree
     sql_parser

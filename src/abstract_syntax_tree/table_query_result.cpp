@@ -1,4 +1,5 @@
 #include "table_query_result.hpp"
+#include "manual_io.hpp"
 
 namespace garlic {
 
@@ -83,22 +84,38 @@ void TableQueryResultGenerator::print_table_header() {
 
 void TableQueryResultGenerator::print_table_body() {
     for (size_t row_id = 1; row_id < table_.size(); ++row_id) {
-	print_row(row_id);
+	print_row(row_id, row_id % 2 == 0);
     }
 }
 
-void TableQueryResultGenerator::print_row(size_t row_id) {
+void TableQueryResultGenerator::print_row(size_t row_id, bool highlight_row) {
     auto& row = table_[row_id];
     auto height = get_height(row_id);
     std::vector<size_t> newline_pos(row.size(), 0);
     for(size_t h = 0; h < height; ++h) {
-	out_ << V_BAR;
-	for (std::size_t cell_id = 0; cell_id < row.size(); ++cell_id) {
-	    auto [current_cell_subline, is_last_subline] = get_cell_subline(newline_pos, row_id, cell_id);
-	    print_cell_subline(current_cell_subline, cell_id, is_last_subline);
+	highlight(highlight_row ? accent_bash_color() : blend_bash_color(), [&] { 
+	    print_row_subline(newline_pos, row_id); 
+	});
+    }
+}
+
+size_t TableQueryResultGenerator::get_height(size_t row) {
+    return heights_.contains(row) ? heights_.at(row) : 1;
+}
+
+void TableQueryResultGenerator::highlight(StringViewType color, auto action) {
+    out_ << V_BAR << color;
+    action();
+    out_ << reset_bash_color() << V_BAR	<< std::endl;
+}
+
+void TableQueryResultGenerator::print_row_subline(std::vector<size_t>& newline_pos, size_t row_id) {
+    auto& row = table_[row_id];
+    for (std::size_t cell_id = 0; cell_id < row.size(); ++cell_id) {
+	auto [current_cell_subline, is_last_subline] = get_cell_subline(newline_pos, row_id, cell_id);
+	print_cell_subline(current_cell_subline, cell_id, is_last_subline);
+	if(cell_id != row.size() - 1) 
 	    out_ << V_BAR;
-	}
-	out_ << std::endl;
     }
 }
 
@@ -120,10 +137,5 @@ void TableQueryResultGenerator::print_cell_subline(const StringViewType& cell_st
 	<< cell_str
 	<< (is_last_subline? SPACE : ETC);
 }
-
-size_t TableQueryResultGenerator::get_height(size_t row) {
-    return heights_.contains(row) ? heights_.at(row) : 1;
-}
-
 
 }

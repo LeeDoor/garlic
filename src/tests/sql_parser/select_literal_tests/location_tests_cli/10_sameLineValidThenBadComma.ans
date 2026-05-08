@@ -1,7 +1,7 @@
 #> +-----+-----+-----+
-| Int | Int | Int |
+|<BLEND> Int | Int | Int <RESET>|
 +-----+-----+-----+
-| 1   | 2   | 3   |
+|<BLEND> 1   | 2   | 3   <RESET>|
 +-----+-----+-----+
 [SYNTAX_ERROR] at [1.24]
 

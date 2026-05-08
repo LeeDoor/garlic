@@ -1,13 +1,13 @@
 #> +-----+
-| Int |
+|<BLEND> Int <RESET>|
 +-----+
-| 1   |
+|<BLEND> 1   <RESET>|
 +-----+
 #> [SYNTAX_ERROR] at [1.1]
 
 #> +-----+
-| Int |
+|<BLEND> Int <RESET>|
 +-----+
-| 3   |
+|<BLEND> 3   <RESET>|
 +-----+
 #>

@@ -8,8 +8,22 @@ from .models import (
     ANSI_RESET,
     ANSI_YELLOW,
     ERROR_WILDCARDS,
+    HIGHLIGHT_KEYWORDS,
     LOCATION_ERROR_PREFIX_RE,
 )
+
+
+def expand_highlight_keywords(text: str) -> str:
+    for keyword, sequence in HIGHLIGHT_KEYWORDS.items():
+        text = text.replace(keyword, sequence)
+    return text
+
+
+def collapse_highlight_sequences(text: str) -> str:
+    text = text.replace(HIGHLIGHT_KEYWORDS["<ACCENT>"], "<ACCENT>")
+    text = text.replace(HIGHLIGHT_KEYWORDS["<BLEND>"], "<BLEND>")
+    text = text.replace(HIGHLIGHT_KEYWORDS["<RESET>"], "<RESET>")
+    return text
 
 
 def normalize_lines(content: str) -> list[str]:
@@ -17,7 +31,8 @@ def normalize_lines(content: str) -> list[str]:
 
 
 def number_lines(text: str) -> str:
-    return "\n".join(f"{index:3d}: {line}" for index, line in enumerate(normalize_lines(text), 1))
+    visible_lines = normalize_lines(collapse_highlight_sequences(text))
+    return "\n".join(f"{index:3d}: {line}" for index, line in enumerate(visible_lines, 1))
 
 
 def strip_cli_prompt_prefix(line: str) -> str:
@@ -54,7 +69,7 @@ def line_matches(expected_line: str, actual_line: str, mode: str) -> bool:
     if checker is not None:
         return checker(actual_line)
 
-    return expected_line == actual_line
+    return expand_highlight_keywords(expected_line) == actual_line
 
 
 def outputs_match(expected_output: str, actual_output: str, mode: str) -> bool:
@@ -96,7 +111,7 @@ def get_diff(actual_output: str, expected_output: str, mode: str, width: int = 1
     for actual_line, expected_line in zip_longest(actual_lines, expected_lines, fillvalue=missing):
         if expected_line is missing:
             marker = style(" >> ", ANSI_BOLD, ANSI_YELLOW)
-            actual_text = actual_line
+            actual_text = collapse_highlight_sequences(actual_line)
             expected_text = "<no line>"
         elif actual_line is missing:
             marker = style(" << ", ANSI_BOLD, ANSI_YELLOW)
@@ -104,11 +119,11 @@ def get_diff(actual_output: str, expected_output: str, mode: str, width: int = 1
             expected_text = expected_line
         elif line_matches(expected_line, actual_line, mode):
             marker = style("~OK~", ANSI_BOLD, ANSI_GREEN) if expected_line in ERROR_WILDCARDS else style(" OK ", ANSI_GREEN)
-            actual_text = actual_line
+            actual_text = collapse_highlight_sequences(actual_line)
             expected_text = expected_line
         else:
             marker = style(" !! ", ANSI_BOLD, ANSI_RED)
-            actual_text = actual_line
+            actual_text = collapse_highlight_sequences(actual_line)
             expected_text = expected_line
 
         result.append(
@@ -118,4 +133,3 @@ def get_diff(actual_output: str, expected_output: str, mode: str, width: int = 1
         )
 
     return "\n".join(result)
-

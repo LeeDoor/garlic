@@ -23,6 +23,12 @@ ANSI_RED = "\033[31m"
 ANSI_GREEN = "\033[32m"
 ANSI_YELLOW = "\033[33m"
 
+HIGHLIGHT_KEYWORDS = {
+    "<ACCENT>": "\033[7m",
+    "<BLEND>": "\033[0m",
+    "<RESET>": "\033[0m",
+}
+
 MIN_OUTPUT_LIMIT_BYTES = 4096
 MAX_OUTPUT_LIMIT_BYTES = 256 * 1024
 MAX_RUNTIME_SECONDS = 1.0
@@ -45,4 +51,3 @@ class TestCase:
     expected_file: Path
     mode: str = "default"
     extra_args: tuple[str, ...] = ()
-
