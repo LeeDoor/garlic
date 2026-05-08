@@ -1,8 +1,8 @@
-# EBNF SQL description
+# EBNF SQL Description
 ## Simple Expressions
 ### Defining a Value
 
-The `value`'s can be either a positive number, string or a column reference. 
+The `value` can be either a positive number, string, or a column reference. 
 
 The number is always positive, but can be negated later using unary minus (`#TODO` make a reference). 
 The number can be either an integer or a floating point number.
@@ -11,7 +11,7 @@ After number you can see an exponent.
 The string is a set of characters inside single or double quotes.
 There is no difference between single and double quotes.
 Inside quotes there can be ANY character. 
-If you want to put a quote as a part of the string content, use \" or \' escape sequence. 
+If you want to put a quote as a part of the string content, use `\"` or `\'` escape sequence. 
 Any escape sequence inside string such as \n or \t is recognized as a single escape character.
 Example: `"Love,\nMike\t19.02.2007"` is recognized as:
 ```
@@ -22,7 +22,7 @@ Multiple strings `s1 s2 ... sn` are recognized as a single string resulted by co
 Example: "Hello" ", " 'world!' is recognized as "Hello, world!". Different quotes can be combined.
 
 Identifier is a term both for table name and column name.
-Identifier is a non-empty set of digits, letters and underscores with leading letter.
+Identifier is a nonempty set of digits, letters, and underscores with leading letter.
 
 ```EBNF
 string                 = ( "'" { !"'" | "\'" } "'" ) | ( '"' { !'"' | '\"' } '"' ) ;
