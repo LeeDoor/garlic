@@ -10,11 +10,28 @@ SelectQuery::SelectQuery(ColumnsContainer columns)
 : SelectQuery{ std::move(columns), {} }
 { }
 SelectQuery::SelectQuery(ColumnsContainer columns, TablesContainer tables)
-: Query{ check_all_tables_specified(columns, tables) }
+: Query{ is_valid(columns, tables) }
 , columns_{ std::move(columns) }
 , tables_{ std::move(tables) }
 {}
 
+CanBeValidated<void>::TypeOrError SelectQuery::is_valid(const ColumnsContainer& columns, const TablesContainer& tables) {
+    if(auto err = check_no_same_tables(tables); !err)
+	return err;
+    if(auto err = check_all_tables_specified(columns, tables); !err)
+	return err;
+    return {};
+}
+CanBeValidated<void>::TypeOrError SelectQuery::check_no_same_tables(const TablesContainer& tables) {
+    std::unordered_set<TableNameType> met_names;
+    for(const auto& table : tables) {
+	const auto& name = table.table_name; 
+	if(met_names.contains(name))
+	    return std::unexpected("Table \"" + name + "\" meets more than once in FROM clause.");
+	met_names.insert(name);
+    }
+    return {};
+}
 CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const ColumnsContainer& columns, const TablesContainer& tables) {
     std::unordered_set<TableNameType> tables_used;
     for(const auto& column : columns) {

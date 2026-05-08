@@ -40,7 +40,9 @@ public:
 private:
     using OrderedGatherers = std::list<sptr<CellValueGatherer>>;
 
+    static CanBeValidated<void>::TypeOrError is_valid(const ColumnsContainer& columns, const TablesContainer& tables);
     static CanBeValidated<void>::TypeOrError check_all_tables_specified(const ColumnsContainer& columns, const TablesContainer& tables);
+    static CanBeValidated<void>::TypeOrError check_no_same_tables(const TablesContainer& tables);
 
     ResultTable create_result_table_header() const;
     std::expected<std::pair<TablesGathered, OrderedGatherers>, UnexpectedCellValue> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;
