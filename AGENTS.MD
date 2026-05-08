@@ -15,4 +15,5 @@ When i ask you to make tests for some EBNF rule:
 6. Write cracking tests with wrong token order, with extra tokens that should not be recognized.
 7. Write even more tests at your discretion.
 
-While you are writing tests, never rely on my implementation. always follow the rules in docs.
+While you are writing tests, never rely on my implementation. always follow the rules in docs/ file i mention.
+lexer.ll, parser.yy files account as implementation files.

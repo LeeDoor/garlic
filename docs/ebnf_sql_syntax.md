@@ -168,7 +168,7 @@ table_name = identifier ;
 ```
 
 ### REQUIREMENTS
-1. Any table used in Select Query should be specified here. 
+1. Any table used in Select Query should be specified here, but specified tables don't have to be used.
 > Note that if we don't specify the table name we used in selector, the query will fail with Semantic Error.
 > If we specify the table name but we don't have such table yet, this is Runtime Error.
 > See TODO reference to error section.
