@@ -1,8 +1,13 @@
-# EBNF SQL Description
-## Syntax Rules
-### Defining a Value
+> All keywords that will appear in rules below can be written in any case with different cases for each letter.
+> These are correct keywords: "SELECT", "select", "Select", "SELEct", "SeLeCt" and so on.
+
+# Primitives
+## Defining a Value
 
 The `value` can be either a positive number, string, or a column reference. 
+
+The value can be a reference to table's column. To resolve that value, you need to provide
+an access to table values.
 
 The number is always positive, but can be negated later using unary minus (#TODO make a reference). 
 The number can be either an integer or a floating point number.
@@ -25,20 +30,20 @@ Identifier is a non-term both for table name and column name.
 Identifier is a nonempty set of digits, letters, and underscores with leading letter.
 
 ```EBNF
-string                 = ( "'" { !"'" | "\'" } "'" ) | ( '"' { !'"' | '\"' } '"' ) ;
-letter                 = "a" | "A" | "b" | "B" | ... | "z" | "Z" ;
-positive_digit         = "1" | ... | "9" ;
-digit                  = "0" | positive_digit ;
-identifier             = letter { [digit] [letter] "_" } ;
-table_column_reference = identifier "." identifier ;
-exponent               = ( "E" | "e" ) [ "+" | "-" ] digit{digit} ;
+value                  = uns_number | string{string} | table_column_reference ;
+uns_number             = ( uns_integer | uns_float ) [exponent] ;
 uns_integer            = "0" | positive_digit {digit} ;
 uns_float              = digit {digit} "." {digit} | ["."] digit {digit} ;
-uns_number             = ( uns_integer | uns_float ) [exponent] ;
-value                  = uns_number | string{string} | table_column_reference ;
+exponent               = ( "E" | "e" ) [ "+" | "-" ] digit{digit} ;
+table_column_reference = identifier "." identifier ;
+identifier             = letter { [digit] [letter] "_" } ;
+digit                  = "0" | positive_digit ;
+positive_digit         = "1" | ... | "9" ;
+letter                 = "a" | "A" | "b" | "B" | ... | "z" | "Z" ;
+string                 = ( "'" { !"'" | "\'" } "'" ) | ( '"' { !'"' | '\"' } '"' ) ;
 ```
 
-### Defining an Expression
+## Defining an Expression
 
 Expression is a value or an operation performed to other expressions.
 Allowed operations: addition, subtraction, multiplication, division, remainder of division, modulus, precedence brackets and unary minus.
@@ -60,7 +65,7 @@ expression = value
            ;
 ```
 
-### Defining a Condition
+## Defining a Condition
 
 Condition is a boolean value resulting by:
 1. The comparison of two other conditions:
@@ -73,19 +78,69 @@ Condition is a boolean value resulting by:
 
 ```EBNF
 condition = condition "AND" condition
-     | condition "OR" condition
-     | condition "<=>" condition
-     | condition "->" condition
-     | condition "^" condition
-     | "(" condition ")"
-     | "!(" condition ")"
-     | expression ">=" expression
-     | expression "<=" expression
-     | expression "=" expression
-     | expression "!=" expression
-     | expression ">" expression
-     | expression "<" expression
-     | "true"
-     | "false"
-     ;
+          | condition "OR" condition
+          | condition "<=>" condition
+          | condition "->" condition
+          | condition "^" condition
+          | "(" condition ")"
+          | "!(" condition ")"
+          | expression ">=" expression
+          | expression "<=" expression
+          | expression "=" expression
+          | expression "!=" expression
+          | expression ">" expression
+          | expression "<" expression
+          | "true"
+          | "false"
+          ;
 ```
+
+## Defining an Evaluateable
+
+Evaluateable defines anything that can be resolved, evaluated.
+It can be a condition with boolean result, an expression with numeric or string result.
+
+```EBNF
+evaluateable = condition | expression ;
+```
+
+# Defining Queries
+
+A valid parsing input is defined as set of queries.
+Note: empty input is also a valid input.
+
+```EBNF
+queries = { [query] ";" } ;
+query   = select_query ;
+```
+
+## SELECT Query
+
+`SELECT` query grabs data from database tables and represents it as a table. 
+
+```EBNF
+select_query = "SELECT" selector{selector} [ "FROM" table_name{table_name} ] ;
+selector = evaluateable [ "AS" string ] ;
+table_name = identifier ;
+```
+
+`SELECT` keyword always comes with a selector or a combination of selectors.
+Each selector defines a column in the resulting table, so there should be at least 1 selector.
+Any selector may be followed by `AS` keyword with a string. 
+This string defines its column name. 
+If no `AS` keyword specified, the column name is set with default value.
+
+The `SELECT` keyword optionally may be followed by `FROM` keyword.
+If no `FROM` keyword specified, the query will not refer to any table and **the
+resulting table will have only one line and a header**.
+
+`FROM` keyword comes with set of table names. 
+Each table_name specifies the table that will be iterated through within Select Query.
+Any table used in Select Query should be specified here. If it is not, the query is ill-formed.
+
+Each row of table[i] should be iterated with every row in table[i + 1].
+If From clause has 1 table_name of a table with N rows, the resulting table will have N rows too.
+If From clause has 2 tables with sizes N and M respectively, the resulting table will have N * M rows.
+If From clause has 3 tables with sizes N, M, and P respectively, the resulting table will have N * M * P rows.
+
+#TODO Forbid same table names in the same line and specify it here.
