@@ -55,4 +55,10 @@ TEST(test_constant_expression, StringBasicMethodKit) {
     EXPECT_FALSE(value1->equals(value3));
 }
 
+TEST(test_constant_expression, usedTablesAreEmpty) {
+    EXPECT_TRUE(IntConstExpr(5).get_used_tables().empty());
+    EXPECT_TRUE(FloatConstExpr(M_PI).get_used_tables().empty());
+    EXPECT_TRUE(StringConstExpr("Hello").get_used_tables().empty());
+}
+
 }

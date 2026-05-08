@@ -9,6 +9,7 @@ public:
     UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
 
     ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const override;
+    UsedTables get_used_tables() const override;
 
 protected:
     sptr<Condition> cond_;

@@ -87,4 +87,14 @@ TEST_F(TestBinaryLogicalCondition, Operators) {
     matches_truth_table({1, 1, 0, 1}, Implication);
 }
 
+TEST_F(TestBinaryLogicalCondition, getUsedTables_MergesBothConditions) {
+    BinaryLogicalCondition cond(
+        std::make_unique<ConditionMock>(true, Condition::UsedTables({"users"})),
+        std::make_unique<ConditionMock>(false, Condition::UsedTables({"foods"})),
+        And
+    );
+
+    EXPECT_EQ(cond.get_used_tables(), Condition::UsedTables({"users", "foods"}));
+}
+
 }

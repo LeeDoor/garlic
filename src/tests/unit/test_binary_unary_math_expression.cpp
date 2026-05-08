@@ -1,6 +1,8 @@
 #include "binary_math_expression.hpp"
 #include "unary_math_expression.hpp"
 #include "constant_expression.hpp"
+#include "table_value_expression.hpp"
+#include "tables_gatherer_mock.hpp"
 
 namespace garlic {
 
@@ -96,6 +98,25 @@ TEST(test_binary_unary_math_expression, composedBigExpression) {
     ASSERT_TRUE(result.has_value()) << result.error();
     EXPECT_EQ((*result)->get_type(), Int);
     EXPECT_EQ(as_int(*result), 6);
+}
+
+TEST(test_binary_math_expression, getUsedTables_MergesBothOperands) {
+    auto lhs = std::make_shared<TableValueExpression>(TablesGathererMock{ Int }, "users", "age");
+    auto rhs = std::make_shared<TableValueExpression>(TablesGathererMock{ Int }, "foods", "calories");
+
+    EXPECT_EQ(
+        BinaryMathExpression(lhs, rhs, Add).get_used_tables(),
+        Expression::UsedTables({"users", "foods"})
+    );
+}
+
+TEST(test_unary_math_expression, getUsedTables_ForwardsOperandTables) {
+    auto operand = std::make_shared<TableValueExpression>(TablesGathererMock{ Int }, "users", "age");
+
+    EXPECT_EQ(
+        UnaryMathExpression(operand, Neg).get_used_tables(),
+        Expression::UsedTables({"users"})
+    );
 }
 
 }

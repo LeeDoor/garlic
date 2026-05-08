@@ -130,7 +130,6 @@ queries: /**/
 query: select_query { $$ = std::move($1); }
      ;
 
-/* make more flexible later for multiple optional queries */
 select_query: SELECT selectors { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2))); }
 	    | SELECT selectors FROM tables { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2), std::move($4))); }
 	    ;

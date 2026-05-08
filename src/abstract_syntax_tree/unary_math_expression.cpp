@@ -1,3 +1,4 @@
+#include "type_rules.hpp"
 #include "unary_math_expression.hpp"
 #include "cell_accept_math_op.hpp"
 
@@ -22,6 +23,10 @@ ExpectedCellValue UnaryMathExpression::resolve(const TablesGathered& gatherers) 
       break;
     }
     throw std::logic_error("Unary math operator not implemented in unary math expression");
+}
+
+UnaryMathExpression::UsedTables UnaryMathExpression::get_used_tables() const {
+    return operand_->get_used_tables();
 }
 
 }

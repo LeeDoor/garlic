@@ -1,6 +1,7 @@
 #pragma once
 #include "expression.hpp"
 #include "get_cell_type.hpp"
+#include "type_rules.hpp"
 
 // For get_cell_type
 #include "cell_string_view_value.hpp" 
@@ -20,6 +21,7 @@ public:
     ExpectedCellValue resolve(const TablesGathered& ) const override {
         return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);
     }
+    UsedTables get_used_tables() const override { return {}; }
 
 protected:
     ValueType value_;

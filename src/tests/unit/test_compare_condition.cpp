@@ -4,6 +4,8 @@
 #include "cell_float_value.hpp"
 #include "cell_string_view_value.hpp"
 #include "constant_expression.hpp"
+#include "table_value_expression.hpp"
+#include "tables_gatherer_mock.hpp"
 
 namespace garlic {
 
@@ -95,6 +97,14 @@ TEST_F(TestCompareCondition, stringComparison) {
     EXPECT_FALSE(unwrap_bool(condge->resolve_bool(gatherers)));
     EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(gatherers)));
     EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(gatherers)));
+}
+
+TEST_F(TestCompareCondition, getUsedTables_MergesBothExpressions) {
+    auto lhs = std::make_shared<TableValueExpression>(TablesGathererMock{ Int }, "users", "age");
+    auto rhs = std::make_shared<TableValueExpression>(TablesGathererMock{ Int }, "offices", "floor");
+    CompareCondition cond(lhs, rhs, Lt);
+
+    EXPECT_EQ(cond.get_used_tables(), Condition::UsedTables({"users", "offices"}));
 }
 
 }

@@ -13,7 +13,7 @@ class Condition : public Expression {
 public:
     virtual ~Condition() = default;
 
-    Condition(TypeRules::TypeOrError toe) : Expression{ toe } {}
+    Condition(TypeOrError toe) : Expression{ toe } {}
 
     using ExpectedCellBooleanValue = std::expected<sptr<CellBooleanValue>, UnexpectedCellValue>;
 

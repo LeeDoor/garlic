@@ -69,4 +69,13 @@ TEST_F(TestUnaryLogicalCondition, Operators) {
     matches_truth_table({1, 0}, IsFalse);
 }
 
+TEST_F(TestUnaryLogicalCondition, getUsedTables_ForwardsNestedConditionTables) {
+    UnaryLogicalCondition cond(
+        std::make_unique<ConditionMock>(true, Condition::UsedTables({"offices"})),
+        IsTrue
+    );
+
+    EXPECT_EQ(cond.get_used_tables(), Condition::UsedTables({"offices"}));
+}
+
 }

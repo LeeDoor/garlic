@@ -4,15 +4,38 @@
 namespace garlic {
 
 SelectQuery::SelectQuery()
+: SelectQuery{ {}, {} }
 {}
 SelectQuery::SelectQuery(ColumnsContainer columns)
-: columns_{ std::move(columns) }
+: SelectQuery{ std::move(columns), {} }
 { }
 SelectQuery::SelectQuery(ColumnsContainer columns, TablesContainer tables)
-: columns_{ std::move(columns) }
+: Query{ check_all_tables_specified(columns, tables) }
+, columns_{ std::move(columns) }
 , tables_{ std::move(tables) }
 {}
 
+CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const ColumnsContainer& columns, const TablesContainer& tables) {
+    std::unordered_set<TableNameType> tables_used;
+    for(const auto& column : columns) {
+	tables_used.merge(column.ast->get_used_tables());
+    }
+    std::for_each(tables.begin(), tables.end(), [&] (const auto& table) {
+	tables_used.erase(table.table_name);
+    });
+    if(!tables_used.empty()) {
+	StringType error = "Used tables { ";
+	for(auto it = tables_used.begin(); it != tables_used.end(); ++it) {
+	    const auto& table = *it;
+	    error += table;
+	    if(std::next(it) != tables_used.end())
+		error += ", ";
+	}
+	error += " } are not specified in FROM clause.";
+	return std::unexpected(error);
+    }
+    return {};
+}
 
 SelectQuery::ExpectedQueryResult SelectQuery::resolve(const TableValueGathererFactory& gatherer_factory) {
     ResultTable result_table = create_result_table_header();

@@ -9,6 +9,7 @@ public:
     BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
 
     ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const override;
+    UsedTables get_used_tables() const override;
 
 protected:
     sptr<Condition> lhs_;

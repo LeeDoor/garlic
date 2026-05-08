@@ -13,6 +13,7 @@ public:
         (void)gatherers;
         return std::unexpected("expression evaluate failed");
     }
+    UsedTables get_used_tables() const override { return {}; }
 };
 
 namespace {

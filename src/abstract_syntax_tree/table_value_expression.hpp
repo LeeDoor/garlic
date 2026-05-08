@@ -14,7 +14,8 @@ public:
     {}
 
     ExpectedCellValue resolve(const TablesGathered& gatherers) const override;
-    
+    UsedTables get_used_tables() const override;
+
 private:
     TableNameType table_name_;
     ColumnNameType column_name_;

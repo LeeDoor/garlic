@@ -30,6 +30,7 @@ class SelectQuery : public Query {
 public:
     using ColumnsContainer = std::list<Selector>;
     using TablesContainer = std::list<Table>;
+
     SelectQuery();
     SelectQuery(ColumnsContainer columns);
     SelectQuery(ColumnsContainer columns, TablesContainer tables);
@@ -38,6 +39,8 @@ public:
 
 private:
     using OrderedGatherers = std::list<sptr<CellValueGatherer>>;
+
+    static CanBeValidated<void>::TypeOrError check_all_tables_specified(const ColumnsContainer& columns, const TablesContainer& tables);
 
     ResultTable create_result_table_header() const;
     std::expected<std::pair<TablesGathered, OrderedGatherers>, UnexpectedCellValue> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;

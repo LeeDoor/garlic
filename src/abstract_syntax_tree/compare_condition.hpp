@@ -10,6 +10,7 @@ public:
     CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op);
 
     ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const override;
+    UsedTables get_used_tables() const override;
 
 private:
     sptr<Expression> lhs_;

@@ -30,5 +30,8 @@ BinaryLogicalCondition::ExpectedCellBooleanValue BinaryLogicalCondition::resolve
     }
     return std::make_shared<CellBooleanValue>(result);
 }
+BinaryLogicalCondition::UsedTables BinaryLogicalCondition::get_used_tables() const {
+    return get_used_tables_from(lhs_, rhs_);
+}
 
 }

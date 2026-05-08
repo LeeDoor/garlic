@@ -14,6 +14,7 @@ public:
         (void)gatherers;
         return std::unexpected("condition resolve failed");
     }
+    UsedTables get_used_tables() const override { return {}; }
 };
 
 class ThrowingExpression : public Expression {
@@ -23,6 +24,7 @@ public:
         (void)gatherers;
         return std::unexpected("expression evaluate failed");
     }
+    UsedTables get_used_tables() const override { return {}; }
 };
 
 class TestSelectQueries : public ::testing::Test {

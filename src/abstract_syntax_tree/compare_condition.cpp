@@ -1,4 +1,5 @@
 #include "compare_condition.hpp"
+#include "type_rules.hpp"
 #include "cell_boolean_value.hpp"
 #include "cell_comparable.hpp"
 #include "expression.hpp"
@@ -37,6 +38,9 @@ CompareCondition::ExpectedCellBooleanValue CompareCondition::resolve_bool(const 
 	std::unreachable();
     }
     return std::make_shared<CellBooleanValue>(result);
+}
+CompareCondition::UsedTables CompareCondition::get_used_tables() const {
+    return get_used_tables_from(lhs_, rhs_);
 }
 
 }

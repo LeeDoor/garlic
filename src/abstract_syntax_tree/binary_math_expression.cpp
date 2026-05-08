@@ -1,4 +1,5 @@
 #include "binary_math_expression.hpp"
+#include "type_rules.hpp"
 #include "cell_accept_math_op.hpp"
 
 namespace garlic {
@@ -31,6 +32,9 @@ ExpectedCellValue BinaryMathExpression::resolve(const TablesGathered& gatherers)
 	return lhs->remdiv(rhs);
     }
     throw std::logic_error("Unary math operator not implemented in unary math expression");
+}
+BinaryMathExpression::UsedTables BinaryMathExpression::get_used_tables() const {
+    return get_used_tables_from(lhs_, rhs_);
 }
 
 }

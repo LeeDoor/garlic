@@ -11,4 +11,8 @@ ExpectedCellValue TableValueExpression::resolve(const TablesGathered& gatherers)
     return gatherer->get_table_value(column_name_);
 }
 
+TableValueExpression::UsedTables TableValueExpression::get_used_tables() const {
+    return { table_name_ };
+}
+
 }

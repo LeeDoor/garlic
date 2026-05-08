@@ -46,9 +46,6 @@ public:
 
     /// Converts @ref CellType to string using given ostream.
     static void as_str(std::ostream& os, CellType ct);
-    /// Formats error to string.
-    static StringType write_error(OperationError err, 
-	CellType lhs, std::optional<CellType> rhs = std::nullopt);
     /// Defines the resulting type on binary math operation using given types.
     /*! @returns resulting type or error */
     static TypeOrError binary_math_comp(CellType lhs, CellType rhs);
@@ -58,6 +55,10 @@ public:
     /// Defines the resulting type on comparison operation using given types.
     /*! @returns resulting type or error */
     static TypeOrError comparison_comp(CellType lhs, CellType rhs);
+private:
+    /// Formats error to string.
+    static StringType write_error(OperationError err, 
+	CellType lhs, std::optional<CellType> rhs = std::nullopt);
 };
 
 }

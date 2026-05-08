@@ -1,14 +1,18 @@
 #pragma once
-#include "type_rules.hpp"
+#include "cell_type.hpp"
 
 namespace garlic {
 
 using InvalidError = StringType;
 using ExpectedValid = std::expected<void, InvalidError>;
 
+template<typename T>
 class CanBeValidated {
 public:
-    CanBeValidated(TypeRules::TypeOrError toe)
+    using Error = StringType;
+    using TypeOrError = std::expected<T, Error>;
+
+    CanBeValidated(TypeOrError toe)
     : type_or_err_{ toe }
     {}
 
@@ -24,14 +28,14 @@ public:
     /// made by this Expression.
     /*! @returns @ref CellType if type is valid. 
      *  @throws std::logic_error if type was not recognized. */
-    virtual CellType get_type() const { 
+    virtual T get_type() const { 
 	if(!type_or_err_.has_value()) // Throwing std::logic_error (not std::bad_expected_access)
 	    throw std::logic_error("Calling get_type of Validateable object which is invalid");
 	return type_or_err_.value();
     }
 
 protected:
-    TypeRules::TypeOrError type_or_err_;
+    TypeOrError type_or_err_;
 };
 
 }

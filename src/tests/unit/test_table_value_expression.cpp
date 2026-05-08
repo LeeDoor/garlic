@@ -46,4 +46,10 @@ TEST_F(TestValueExpressionFixture, thrownExceptionInGatherer_ShouldThrowToo) {
     EXPECT_THROW(expr.resolve(gatherers_), std::logic_error);
 }
 
+TEST_F(TestValueExpressionFixture, getUsedTables_ReturnsReferencedTable) {
+    TableValueExpression expr(TablesGathererMock{ Int }, "Table name", "Name column");
+
+    EXPECT_EQ(expr.get_used_tables(), TableValueExpression::UsedTables({"Table name"}));
+}
+
 }

@@ -23,4 +23,8 @@ UnaryLogicalCondition::ExpectedCellBooleanValue UnaryLogicalCondition::resolve_b
     return std::make_shared<CellBooleanValue>(result);
 }
 
+UnaryLogicalCondition::UsedTables UnaryLogicalCondition::get_used_tables() const {
+    return get_used_tables_from(cond_);
+}
+
 }
