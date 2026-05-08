@@ -41,12 +41,25 @@ std::string wrap_cells(const std::vector<std::string_view>& cells, std::string_v
     return row;
 }
 
+std::string wrap_plain_cells(const std::vector<std::string_view>& cells) {
+    std::string row;
+    row += '|';
+    for (std::size_t i = 0; i < cells.size(); ++i) {
+        row += cells[i];
+        if (i + 1 < cells.size()) {
+            row += '|';
+        }
+    }
+    row += '|';
+    row += '\n';
+    return row;
+}
+
 }
 
 
 TEST(test_table_query_result, cliZebraKeepsHeaderAndFirstBodyRowDefault) {
     ScopedManualIOMode cli_mode(true);
-    CliZebraStyle style;
 
     ResultTable table{
         { "Int" },
@@ -60,12 +73,12 @@ TEST(test_table_query_result, cliZebraKeepsHeaderAndFirstBodyRowDefault) {
 
     const std::string expected =
         "+-----+\n"
-        + wrap_cells({ " Int " }, style.default_cell_prefix, style)
+        + wrap_plain_cells({ " Int " })
         + "+-----+\n"
-        + wrap_cells({ " 1   " }, style.default_cell_prefix, style)
-        + wrap_cells({ " 2   " }, style.inverted_cell_prefix, style)
-        + wrap_cells({ " 3   " }, style.default_cell_prefix, style)
-        + wrap_cells({ " 4   " }, style.inverted_cell_prefix, style)
+        + wrap_plain_cells({ " 1   " })
+        + wrap_plain_cells({ " 2   " })
+        + wrap_plain_cells({ " 3   " })
+        + wrap_plain_cells({ " 4   " })
         + "+-----+\n";
 
     EXPECT_EQ(result.format(), expected);
@@ -73,7 +86,6 @@ TEST(test_table_query_result, cliZebraKeepsHeaderAndFirstBodyRowDefault) {
 
 TEST(test_table_query_result, cliZebraAlternatesWholeMulticolumnRows) {
     ScopedManualIOMode cli_mode(true);
-    CliZebraStyle style;
 
     ResultTable table{
         { "Int", "String" },
@@ -86,11 +98,11 @@ TEST(test_table_query_result, cliZebraAlternatesWholeMulticolumnRows) {
 
     const std::string expected =
         "+-----+--------+\n"
-        + wrap_cells({ " Int ", " String " }, style.default_cell_prefix, style)
+        + wrap_plain_cells({ " Int ", " String " })
         + "+-----+--------+\n"
-        + wrap_cells({ " 1   ", " a      " }, style.default_cell_prefix, style)
-        + wrap_cells({ " 2   ", " bbb    " }, style.inverted_cell_prefix, style)
-        + wrap_cells({ " 3   ", " cc     " }, style.default_cell_prefix, style)
+        + wrap_plain_cells({ " 1   ", " a      " })
+        + wrap_plain_cells({ " 2   ", " bbb    " })
+        + wrap_plain_cells({ " 3   ", " cc     " })
         + "+-----+--------+\n";
 
     EXPECT_EQ(result.format(), expected);

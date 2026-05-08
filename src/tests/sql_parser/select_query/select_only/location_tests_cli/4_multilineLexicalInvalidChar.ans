@@ -1,12 +1,12 @@
 #> +-----+
-|<BLEND> Int <RESET>|
+| Int |
 +-----+
-|<BLEND> 1   <RESET>|
+| 1   |
 +-----+
 #> +-----+
-|<BLEND> Int <RESET>|
+| Int |
 +-----+
-|<BLEND> 2   <RESET>|
+| 2   |
 +-----+
 #> [LEXICAL_ERROR] at [1.10]
 
