@@ -1,3 +1,3 @@
 SELECT 1 FROM ghosts;
-SELECT users.name FROM offices;
-SELECT offices.city FROM foods;
+SELECT users.name FROM users, ghosts;
+SELECT foods.kind FROM ghosts, foods;
