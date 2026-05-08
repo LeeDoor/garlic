@@ -1,0 +1,4 @@
+SELECT 1 FROM users, users;
+SELECT users.name FROM users, offices, users;
+SELECT offices.city, foods.name FROM offices, foods, offices;
+SELECT foods.kind AS 'kind', users.favorite_food AS 'fav' fRoM foods, users, foods;
