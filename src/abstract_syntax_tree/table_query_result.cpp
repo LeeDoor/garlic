@@ -36,8 +36,8 @@ std::vector<size_t> TableQueryResultGenerator::count_widths(const ResultTable& t
     const std::size_t cols = table[0].size();
     std::vector<std::size_t> widths(cols, 0);
     for (const auto& row : table) {
-        for (std::size_t i = 0; i < cols; ++i) {
-	    auto& cell = row[i];
+        for (std::size_t column_id = 0; column_id < cols; ++column_id) {
+	    auto& cell = row[column_id];
 	    size_t l = 0, r = 0;
 	    do {
 		auto next_eol = cell.find('\n', r);
@@ -45,7 +45,7 @@ std::vector<size_t> TableQueryResultGenerator::count_widths(const ResultTable& t
 		    next_eol = cell.size();
 		l = r;
 		r = next_eol;
-		widths[i] = std::max(widths[i], r - l);
+		widths[column_id] = std::max(widths[column_id], r - l);
 		if(r != cell.size())
 		    ++r;
 	    } while(r != cell.size());
@@ -93,9 +93,15 @@ void TableQueryResultGenerator::print_row(size_t row_id, bool highlight_row) {
     auto height = get_height(row_id);
     std::vector<size_t> newline_pos(row.size(), 0);
     for(size_t h = 0; h < height; ++h) {
-	highlight(highlight_row ? accent_bash_color() : blend_bash_color(), [&] { 
+	out_ << V_BAR;
+	if(heights_.empty()) {
 	    print_row_subline(newline_pos, row_id); 
-	});
+	} else {
+	    highlight(highlight_row ? accent_bash_color() : blend_bash_color(), [&] { 
+		print_row_subline(newline_pos, row_id); 
+	    });
+	}
+	out_ << V_BAR << std::endl;
     }
 }
 
@@ -104,9 +110,9 @@ size_t TableQueryResultGenerator::get_height(size_t row) {
 }
 
 void TableQueryResultGenerator::highlight(StringViewType color, auto action) {
-    out_ << V_BAR << color;
+    out_ << color;
     action();
-    out_ << reset_bash_color() << V_BAR	<< std::endl;
+    out_ << reset_bash_color();
 }
 
 void TableQueryResultGenerator::print_row_subline(std::vector<size_t>& newline_pos, size_t row_id) {
