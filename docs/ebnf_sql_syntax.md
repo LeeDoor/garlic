@@ -2,20 +2,23 @@
 > These are correct keywords: `SELECT`, `select`, `Select`, `SELEct`, `SeLeCt` and so on.
 
 # Errors
-
+### Lexical Error
 If any character doesn't match any non-terminal, this character is called *invalid* and query terminates with **Lexical Error**.
 Example: `SELICT 12;`. Here the `SELICT` word can't be recognized as a `SELECT`, so this word is invalid and we consider the query contains lexical error.
 
+### Syntax Error
 If all characters are recognized as non-terminals but they can't form the resulting non-terminal, the query terminates with **Syntax Error**.
 Example: `SELECT 12 * / 5;`. Here all tokens are valid and recognized, but `12 * / 5` can't match any expression rule, so 
 we consider the query contains syntax error.
 
+### Semantic Error
 If parsing input corresponds the grammar but still ill-formed by some rules, the query terminates with **Semantic Error**. 
 The error is recognized as semantic **only if it violates the rule under #REQUIREMENTS section**. Other text aims to explain the grammar rules.
 1. Example: `SELECT "hello" + 5;`. Here the query corresponds to the grammar, but the addition of the string and the number is forbidden,
 so we consider the query contains semantic error.
 2. Another example: `SELECT user.name FROM users, users;`. Keeping same table names in one `FROM` clause is forbidden - Semantic Error.
 
+### Runtime Error
 If parsing input is grammatically valid and doesn't violate any rules but under some circumstances the query execution will lead to an error,
 then we consider the query contains **Runtime Error**.
 Example: `SELECT users.salary / users.debt FROM users;`. This query looks valid, but in some cases if we got unlucky some user may not have any debts,
@@ -23,6 +26,7 @@ so we face the division by zero and the query fails with runtime error.
 Another example: `SELECT users.salary FROM users;`. This is completely valid query, but if we don't have a table with name `users` this 
 query fill fail with runtime error.
 
+### Panic Error Handling Rules
 If parser meets any error while parsing, it panics and skips all input until next query delimiter (AKA semicolon ";").
 When such delimiter is found, parsing process continues as usual.
 
