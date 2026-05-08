@@ -1,0 +1,3 @@
+SELECT User1.col_2 FROM User1;
+SELECT Abc_1.X2 FROM Abc_1, Z9;
+SELECT Table9.column_7 FROM foods, Table9;

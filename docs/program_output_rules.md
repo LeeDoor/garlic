@@ -6,7 +6,12 @@ Program handles all input incoming from `std::cin` unless it faces `End Of File`
 ## Output Types
 ### Single String Type
 Single String Type output made by actions that return single string as a result (errors, insertion report etc.).
-That string is printed as it is with two following `EOL` characters.
+That string is printed as it is with blank line below result.
+Example:
+```
+[SYNTAX_ERROR] at [5.10] syntax error, unexpected identifier
+
+```
 
 ### Table Type
 Table output is made by `SELECT` action. 

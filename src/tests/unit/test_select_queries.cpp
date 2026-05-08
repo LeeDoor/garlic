@@ -2,6 +2,7 @@
 #include "query_result.hpp"
 #include "constant_expression.hpp"
 #include "condition_mock.hpp"
+#include "typed_table.hpp"
 #include <limits>
 #include <sstream>
 
@@ -33,6 +34,20 @@ protected:
         return TableValueGathererFactory{
             std::unordered_map<TableNameType, sptr<TypedTable>>{}
         };
+    }
+
+    static sptr<TypedTable> make_non_empty_table(std::initializer_list<IntType> values) {
+        auto table = std::make_shared<TypedTable>(
+            std::initializer_list<PublicColumnInfo>{
+                PublicColumnInfo{ Int, "v", 0 },
+            }
+        );
+        std::size_t row = 0;
+        for(const auto value : values) {
+            table->create_empty_row();
+            table->set_value(row++, 0, value);
+        }
+        return table;
     }
 
     template<typename... Exprs>
@@ -246,6 +261,43 @@ TEST_F(TestSelectQueries, stringWithEscapedNewlinesFormatsAsMultilineTableRow) {
     EXPECT_EQ(std::string(result->format()), expected);
 }
 
+TEST_F(TestSelectQueries, tabsExpandToVisibleArrowSequenceInCells) {
+    auto factory = make_unused_factory();
+    SelectQuery::ColumnsContainer columns;
+    columns.emplace_back(std::make_unique<StringConstExpr>("Alice\t"));
+    columns.emplace_back(std::make_unique<IntConstExpr>(24));
+    SelectQuery query(std::move(columns));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+    const std::string expected =
+        "+-----------+-----+\n"
+        "| String    | Int |\n"
+        "+-----------+-----+\n"
+        "| Alice ->  | 24  |\n"
+        "+-----------+-----+\n";
+    EXPECT_EQ(std::string(result->format()), expected);
+}
+
+TEST_F(TestSelectQueries, tabsAndNewlinesCombineInsideCells) {
+    auto factory = make_unused_factory();
+    SelectQuery::ColumnsContainer columns;
+    columns.emplace_back(std::make_unique<StringConstExpr>("A\nB\tC"));
+    columns.emplace_back(std::make_unique<IntConstExpr>(7));
+    SelectQuery query(std::move(columns));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+    const std::string expected =
+        "+--------+-----+\n"
+        "| String | Int |\n"
+        "+--------+-----+\n"
+        "| A     +| 7   |\n"
+        "| B -> C |     |\n"
+        "+--------+-----+\n";
+    EXPECT_EQ(std::string(result->format()), expected);
+}
+
 TEST_F(TestSelectQueries, mixedMultilineRowUsesTallestCellAndPadsShorterCells) {
     auto factory = make_unused_factory();
     SelectQuery::ColumnsContainer columns;
@@ -257,6 +309,42 @@ TEST_F(TestSelectQueries, mixedMultilineRowUsesTallestCellAndPadsShorterCells) {
     auto result = unwrap_query_result(query.resolve(factory));
     ASSERT_NE(result, nullptr);
     const auto expected = format_single_row_table({"A", "B", "Int"}, {"123\n456", "1\n2\n3\n4", "5"});
+    EXPECT_EQ(std::string(result->format()), expected);
+}
+
+TEST_F(TestSelectQueries, fromClauseThreeTablesBuildsCartesianProduct) {
+    TableValueGathererFactory factory{
+        std::unordered_map<TableNameType, sptr<TypedTable>>{
+            { "users", make_non_empty_table({1, 2}) },
+            { "offices", make_non_empty_table({3, 4}) },
+            { "foods", make_non_empty_table({5, 6}) },
+        }
+    };
+
+    SelectQuery::ColumnsContainer columns;
+    columns.emplace_back(std::make_unique<IntConstExpr>(1));
+    SelectQuery::TablesContainer tables;
+    tables.push_back({ "users" });
+    tables.push_back({ "offices" });
+    tables.push_back({ "foods" });
+    SelectQuery query(std::move(columns), std::move(tables));
+
+    auto result = unwrap_query_result(query.resolve(factory));
+    ASSERT_NE(result, nullptr);
+
+    const std::string expected =
+        "+-----+\n"
+        "| Int |\n"
+        "+-----+\n"
+        "| 1   |\n"
+        "| 1   |\n"
+        "| 1   |\n"
+        "| 1   |\n"
+        "| 1   |\n"
+        "| 1   |\n"
+        "| 1   |\n"
+        "| 1   |\n"
+        "+-----+\n";
     EXPECT_EQ(std::string(result->format()), expected);
 }
 

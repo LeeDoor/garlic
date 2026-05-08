@@ -1,0 +1,2 @@
+SELECT "A\tB\nCC";
+SELECT "A\nB\tC", 7;

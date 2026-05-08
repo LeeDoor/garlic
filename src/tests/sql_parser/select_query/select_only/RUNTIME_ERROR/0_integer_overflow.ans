@@ -1,8 +1,14 @@
-<RUNTIME_ERROR>
++-------------+
+| Int         |
++-------------+
+| -2147483647 |
++-------------+
+[RUNTIME_ERROR] Multiplication buffer underflow
 
-<RUNTIME_ERROR>
-
-<RUNTIME_ERROR>
-
-<RUNTIME_ERROR>
++-------------+
+| Float       |
++-------------+
+| 3.40282e+38 |
++-------------+
+[RUNTIME_ERROR] Multiplication buffer underflow
 

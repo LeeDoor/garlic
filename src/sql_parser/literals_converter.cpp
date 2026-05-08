@@ -22,7 +22,7 @@ yy::parser::symbol_type make_FLOAT(std::string_view s, const Position& curloc, P
     return session.lexing_error("Failed to convert \"" + std::string(s) + "\" to float; too big value");
 }
 yy::parser::symbol_type make_INTEGER(std::string_view s, const Position& curloc, ParsingSession& session) {
-    if(auto num = make_number<IntType>(s)) {
+    if(auto num = make_number<FloatType>(s)) {
 	return yy::parser::make_INTEGER(*num, curloc);
     }
     return session.lexing_error("Failed to convert \"" + std::string(s) + "\" to int; too big value");

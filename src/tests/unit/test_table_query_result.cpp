@@ -133,4 +133,29 @@ TEST(test_table_query_result, cliZebraKeepsMultilineStringHighlightInsideCellBor
     EXPECT_EQ(result.format(), expected);
 }
 
+TEST(test_table_query_result, cliZebraHandlesTabsAndNewlinesInsideCells) {
+    ScopedManualIOMode cli_mode(true);
+    CliZebraStyle style;
+
+    ResultTable table{
+        { "String" },
+        { "A\tB\nCC" },
+        { "x\tY\nZ" },
+    };
+
+    TableQueryResult result(std::move(table));
+
+    const std::string expected =
+        "+--------+\n"
+        + wrap_cells({ " String " }, style.default_cell_prefix, style)
+        + "+--------+\n"
+        + wrap_cells({ " A -> B+" }, style.default_cell_prefix, style)
+        + wrap_cells({ " CC     " }, style.default_cell_prefix, style)
+        + wrap_cells({ " x -> Y+" }, style.inverted_cell_prefix, style)
+        + wrap_cells({ " Z      " }, style.inverted_cell_prefix, style)
+        + "+--------+\n";
+
+    EXPECT_EQ(result.format(), expected);
+}
+
 }
