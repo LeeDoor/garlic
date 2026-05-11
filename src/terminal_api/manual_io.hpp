@@ -2,6 +2,8 @@
 
 /// Returns true if both input and output streams are assotiated with the terminal.
 bool is_manual_IO();
+
+std::string_view error_highlight_bash_color();
 std::string_view blend_bash_color();
 std::string_view accent_bash_color();
 std::string_view reset_bash_color();

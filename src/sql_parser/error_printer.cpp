@@ -1,4 +1,5 @@
 #include "error_printer.hpp"
+#include "manual_io.hpp"
 
 namespace garlic::sql_parser {
 
@@ -13,13 +14,19 @@ ErrorPrinter::ErrorPrinter(std::ostream& os) : os_{ os } {}
 ErrorPrinter::ErrorPrinter() : ErrorPrinter(std::cerr) {}
 
 void ErrorPrinter::print_error(const ParsingError& error) const {
-    os_ << "[" << stage_str.at(error.stage) << "] "
-	<< "at [" << error.location << "] "
+    print_error_code(error.stage);
+	os_ << "at [" << error.location << "] "
 	<< error.message << std::endl << std::endl;
 }
 void ErrorPrinter::print_error(const RuntimeError& error) const {
-    os_ << "[" << stage_str.at(Runtime) << "] "
-	<< error << std::endl << std::endl;
+    print_error_code(Runtime);
+	os_ << error << std::endl << std::endl;
+}
+
+void ErrorPrinter::print_error_code(ErrorStage stage) const {
+    os_ << error_highlight_bash_color() 
+        << "[" << stage_str.at(stage) << "]" 
+        << reset_bash_color() << " ";
 }
 
 }

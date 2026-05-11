@@ -15,6 +15,8 @@ public:
     void print_error(const RuntimeError& error) const;
 
 private:
+    void print_error_code(ErrorStage stage) const;
+
     static const std::unordered_map<ErrorStage, std::string> stage_str; 
     std::ostream& os_;
 };
