@@ -78,7 +78,7 @@ identifier [a-zA-Z_][a-zA-Z0-9_]*
 ";"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_SEMICOLON(curloc); }
 "-"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_MINUS(curloc); }
 "+"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_PLUS(curloc); }
-"*"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_MUL(curloc); }
+"*"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_ASTERISK(curloc); }
 "/"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_DIV(curloc); }
 "%"  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_REMDIV(curloc); }
 "("  { MET_CONTENT(); MET_WORD_DELIMETER(); return yy::parser::make_LPAREN(curloc); }

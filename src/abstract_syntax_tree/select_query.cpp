@@ -17,39 +17,39 @@ SelectQuery::SelectQuery(ColumnsContainer columns, TablesContainer tables)
 
 CanBeValidated<void>::TypeOrError SelectQuery::is_valid(const ColumnsContainer& columns, const TablesContainer& tables) {
     if(auto err = check_no_same_tables(tables); !err)
-	return err;
+        return err;
     if(auto err = check_all_tables_specified(columns, tables); !err)
-	return err;
+        return err;
     return {};
 }
 CanBeValidated<void>::TypeOrError SelectQuery::check_no_same_tables(const TablesContainer& tables) {
     std::unordered_set<TableNameType> met_names;
     for(const auto& table : tables) {
-	const auto& name = table.table_name; 
-	if(met_names.contains(name))
-	    return std::unexpected("Table \"" + name + "\" meets more than once in FROM clause.");
-	met_names.insert(name);
+        const auto& name = table.table_name; 
+        if(met_names.contains(name))
+            return std::unexpected("Table \"" + name + "\" meets more than once in FROM clause.");
+        met_names.insert(name);
     }
     return {};
 }
 CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const ColumnsContainer& columns, const TablesContainer& tables) {
     std::unordered_set<TableNameType> tables_used;
     for(const auto& column : columns) {
-	tables_used.merge(column.ast->get_used_tables());
+        tables_used.merge(column.ast->get_used_tables());
     }
     std::for_each(tables.begin(), tables.end(), [&] (const auto& table) {
-	tables_used.erase(table.table_name);
+        tables_used.erase(table.table_name);
     });
     if(!tables_used.empty()) {
-	StringType error = "Used tables { ";
-	for(auto it = tables_used.begin(); it != tables_used.end(); ++it) {
-	    const auto& table = *it;
-	    error += table;
-	    if(std::next(it) != tables_used.end())
-		error += ", ";
-	}
-	error += " } are not specified in FROM clause.";
-	return std::unexpected(error);
+        StringType error = "Used tables { ";
+        for(auto it = tables_used.begin(); it != tables_used.end(); ++it) {
+            const auto& table = *it;
+            error += table;
+            if(std::next(it) != tables_used.end())
+                error += ", ";
+        }
+        error += " } are not specified in FROM clause.";
+        return std::unexpected(error);
     }
     return {};
 }
@@ -59,14 +59,14 @@ SelectQuery::ExpectedQueryResult SelectQuery::resolve(const TableValueGathererFa
     bool has_empty_table = false;
     auto gatherers = create_gatherers(gatherer_factory, has_empty_table);
     if(has_empty_table) 
-	return std::make_shared<TableQueryResult>(std::move(result_table));
+        return std::make_shared<TableQueryResult>(std::move(result_table));
     if(!gatherers) 
-	return std::unexpected(gatherers.error());
+        return std::unexpected(gatherers.error());
     auto [gatherers_hash, gatherers_ordered] = std::move(*gatherers);
     do {
-	auto row = resolve_row(gatherers_hash);
-	if(!row) return std::unexpected(row.error());
-	result_table.push_back(*row);
+        auto row = resolve_row(gatherers_hash);
+        if(!row) return std::unexpected(row.error());
+        result_table.push_back(*row);
     } while(jump_to_next_row(gatherers_ordered));
     return std::make_shared<TableQueryResult>(std::move(result_table));
 }
@@ -74,7 +74,7 @@ SelectQuery::ExpectedQueryResult SelectQuery::resolve(const TableValueGathererFa
 ResultTable SelectQuery::create_result_table_header() const {
     ResultTable result_table(1);
     for(const Selector& column : columns_) { 
-	result_table[0].push_back(column.column_name);
+        result_table[0].push_back(column.column_name);
     }
     return result_table;
 }
@@ -85,15 +85,15 @@ SelectQuery::create_gatherers(const TableValueGathererFactory& gatherer_factory,
     TablesGathered gatherers_hash {};
     OrderedGatherers gatherers_ordered {};
     for(const Table& selected_table : tables_) {
-	auto exp_gatherer = gatherer_factory.build_cell_value_gatherer(selected_table.table_name);
-	if(!exp_gatherer)
-	    return std::unexpected(exp_gatherer.error());
-	if((*exp_gatherer)->is_table_empty()) {
-	    has_empty_table = true;
-	    return std::pair(gatherers_hash, gatherers_ordered);
-	}
-	gatherers_hash[selected_table.table_name] = *exp_gatherer;
-	gatherers_ordered.push_back(*exp_gatherer);
+        auto exp_gatherer = gatherer_factory.build_cell_value_gatherer(selected_table.table_name);
+        if(!exp_gatherer)
+            return std::unexpected(exp_gatherer.error());
+        if((*exp_gatherer)->is_table_empty()) {
+            has_empty_table = true;
+            return std::pair(gatherers_hash, gatherers_ordered);
+        }
+        gatherers_hash[selected_table.table_name] = *exp_gatherer;
+        gatherers_ordered.push_back(*exp_gatherer);
     }
     return std::pair(gatherers_hash, gatherers_ordered);
 }
@@ -101,7 +101,7 @@ SelectQuery::create_gatherers(const TableValueGathererFactory& gatherer_factory,
 bool SelectQuery::jump_to_next_row(OrderedGatherers& gatherers) {
     auto iter = gatherers.rbegin();
     while(iter != gatherers.rend() && (*iter)->jump_to_next_row()) {
-	++iter;
+        ++iter;
     }
     return iter != gatherers.rend();
 }
@@ -109,9 +109,9 @@ bool SelectQuery::jump_to_next_row(OrderedGatherers& gatherers) {
 std::expected<ResultRow, UnexpectedCellValue> SelectQuery::resolve_row(const TablesGathered& gatherers) const {
     ResultRow result_row; result_row.reserve(columns_.size());
     for(const Selector& column : columns_) {
-	auto resolved = resolve_and_stringfy(column, gatherers);
-	if(!resolved) return std::unexpected(resolved.error());
-	result_row.push_back(*resolved);
+        auto resolved = resolve_and_stringfy(column, gatherers);
+        if(!resolved) return std::unexpected(resolved.error());
+        result_row.push_back(*resolved);
     }
     return result_row;
 }
@@ -120,7 +120,7 @@ std::expected<StringType, UnexpectedCellValue> SelectQuery::resolve_and_stringfy
     std::stringstream ss;
     auto result = column.ast->resolve(gatherers);
     if(!result)
-	return std::unexpected(result.error());
+        return std::unexpected(result.error());
     (*result)->format(ss);
     return ss.str();
 }

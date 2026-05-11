@@ -68,13 +68,13 @@
     PERIOD
     ;
 %token
-    MINUS   
-    PLUS    
-    MUL     
-    DIV     
+    MINUS
+    PLUS
+    ASTERISK
+    DIV
     REMDIV
-    LPAREN  
-    RPAREN  
+    LPAREN
+    RPAREN
     ABS
     ;
 %token
@@ -134,22 +134,24 @@ select_query: SELECT selectors { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, 
 	    | SELECT selectors FROM tables { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2), std::move($4))); }
 	    ;
 
+selectors: selector { $$.push_back(std::move($1)); }
+	 | selectors COLON selector { $$ = std::move($1); $$.push_back(std::move($3)); }
+     | ASTERISK { $$.clear(); }
+	 ;
+
+selector: evaluateable AS columnname { $$ = Selector{ $3, std::move($1) }; }
+	| evaluateable { $$ = Selector{ std::move($1) }; }
+    ;
+
+columnname: STRING
+	  ;
+
 tables: table { $$.push_back(std::move($1)); }
       | tables COLON table { $$ = std::move($1); $$.push_back(std::move($3)); }
       ;
 
 table: IDENTIFIER { $$ = { $1 }; }
      ;
-
-selectors: selector { $$.push_back(std::move($1)); }
-	 | selectors COLON selector { $$ = std::move($1); $$.push_back(std::move($3)); }
-	 ;
-
-selector: evaluateable AS columnname { $$ = Selector{ $3, std::move($1) }; }
-	| evaluateable { $$ = Selector{ std::move($1) }; }
-
-columnname: STRING
-	  ;
 
 evaluateable: cond { $$ = std::move($1); }
 	    | expr { $$ = std::move($1); }
@@ -175,7 +177,7 @@ cond: cond LOGICAND cond { ASSIGN_OR_ABORT($$, mk_v<BinaryLogicalCondition>(sess
 expr: value { $$ = std::move($1); }
    | expr PLUS expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(session, std::move($1), std::move($3), Add)); }
    | expr MINUS expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(session, std::move($1), std::move($3), Sub)); }
-   | expr MUL expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(session, std::move($1), std::move($3), Mul)); }
+   | expr ASTERISK expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(session, std::move($1), std::move($3), Mul)); }
    | expr DIV expr { ASSIGN_OR_ABORT($$, mk_v<BinaryMathExpression>(session, std::move($1), std::move($3), Div)); }
    | ABS expr ABS { ASSIGN_OR_ABORT($$, mk_v<UnaryMathExpression>(session, std::move($2), Abs)); }
    | LPAREN expr RPAREN { $$ = std::move($2); }
@@ -187,7 +189,7 @@ value: INTEGER { ASSIGN_OR_ABORT($$, mk_v<IntConstExpr>(session, $1)); }
      | FLOAT   { ASSIGN_OR_ABORT($$, mk_v<FloatConstExpr>(session, $1)); }
      | strings { ASSIGN_OR_ABORT($$, mk_v<StringConstExpr>(session, $1)); }
      | IDENTIFIER PERIOD IDENTIFIER { 
-	 ASSIGN_OR_ABORT($$, mk_v<TableValueExpression>(session, session.get_database(), $1, $3)); 
+        ASSIGN_OR_ABORT($$, mk_v<TableValueExpression>(session, session.get_database(), $1, $3)); 
      }
      ;
 
@@ -201,7 +203,7 @@ strings: STRING { $$ = $1; }
 %left LOGICAND;
 %left NOT;
 %left PLUS MINUS;
-%left MUL DIV REMDIV;
+%left ASTERISK DIV REMDIV;
 %left UMINUS;
 
 %%
