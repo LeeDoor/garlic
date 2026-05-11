@@ -37,7 +37,7 @@ The `value` can be either a positive number, string, or a column reference.
 
 The value can be a reference to table's column.
 
-The number is always positive, but can be negated later using unary minus (TODO make a reference). 
+The number is always positive, but can be negated later using [unary minus](#defining-an-expression). 
 The number can be either an integer or a floating point number.
 After number you can have an exponent.
 
@@ -102,7 +102,7 @@ Condition is a boolean value resulting by:
    equivalence, implication, addition modulo two, 
    precedence brackets, negation over the expression in parentheses;
 2. The comparison of two expressions. 
-   Can be applied even to strings using lexicographical comparison (TODO make reference to wiki).
+   Can be applied even to strings using [lexicographical comparison](https://en.wikipedia.org/wiki/Lexicographic_order).
 3. The constant (`true` or `false`);
 
 ```EBNF
@@ -175,5 +175,6 @@ table_name = identifier ;
 1. Any table used in Select Query should be specified here, but specified tables don't have to be used.
 > Note that if we don't specify the table name we used in selector, the query will fail with Semantic Error.
 > If we specify the table name but we don't have such table yet, this is Runtime Error.
-> See TODO reference to error section.
+> See [[#Errors]]
+
 2. Every table_name should be **unique**.

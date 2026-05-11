@@ -141,7 +141,6 @@ public:
             throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
 
         ByteSpan bytes = content_.get_value(row, header_[column].offset, header_[column].size_bytes);
-        // Finding string size using O(n) traversal; #TODO Store string size in special cell?
         size_t string_size = std::find(bytes.data(), bytes.data() + header_[column].size_bytes, '\0') - bytes.data();
         StringViewType str { reinterpret_cast<const char*>(bytes.data()), string_size };
         return str;

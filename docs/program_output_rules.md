@@ -72,8 +72,8 @@ Example:
 
 ## Output Rules
 Output rules differ between CLI and File input/output. 
-If user writes input manually in terminal and receives output in the same terminal, CLI rules are applied. 
-If user writes input from file or saves output to file, File rules are applied (TODO reference to CLI and File blocks).
+If user writes input manually in terminal and receives output in the same terminal, [CLI rules](#cli-rules) are applied. 
+If user writes input from file or saves output to file, [File rules](#file-rules) are applied. 
 
 ### File Rules
 File rules are common rules without any visual sugar.
