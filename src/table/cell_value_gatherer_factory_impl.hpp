@@ -6,9 +6,9 @@ namespace garlic {
     
 using ExpectedCellValueGatherer = std::expected<sptr<CellValueGatherer>, StringType>;
 
-template<typename TableValueGathererFactoryT>
-concept TableValueGathererFactoryImpl = requires(TableValueGathererFactoryT table_value_gatherer_factory) {
-    { table_value_gatherer_factory.build_cell_value_gatherer(TableNameType{}) } 
+template<typename CellValueGathererFactoryT>
+concept CellValueGathererFactoryImpl = requires(CellValueGathererFactoryT cell_value_gatherer_factory) {
+    { cell_value_gatherer_factory.build_cell_value_gatherer(TableNameType{}) } 
 	-> std::convertible_to<ExpectedCellValueGatherer>;
 };
 

@@ -4,6 +4,6 @@
 namespace garlic {
 
 using TableValueGathererFactory = Database;
-static_assert(TableValueGathererFactoryImpl<TableValueGathererFactory>);
+static_assert(CellValueGathererFactoryImpl<TableValueGathererFactory>);
 
 }
