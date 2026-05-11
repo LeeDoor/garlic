@@ -1,0 +1,4 @@
+SELECT 1 1;
+SELECT 1true;
+SELECT users.name FROM offices;
+SELECT 1 / 0;

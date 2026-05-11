@@ -22,7 +22,14 @@ def expand_highlight_keywords(text: str) -> str:
 def collapse_highlight_sequences(text: str) -> str:
     text = text.replace(HIGHLIGHT_KEYWORDS["<ACCENT>"], "<ACCENT>")
     text = text.replace(HIGHLIGHT_KEYWORDS["<BLEND>"], "<BLEND>")
+    text = text.replace(HIGHLIGHT_KEYWORDS["<ERROR_HIGHLIGHT>"], "<ERROR_HIGHLIGHT>")
     text = text.replace(HIGHLIGHT_KEYWORDS["<RESET>"], "<RESET>")
+    return text
+
+
+def strip_highlight_sequences(text: str) -> str:
+    for sequence in HIGHLIGHT_KEYWORDS.values():
+        text = text.replace(sequence, "")
     return text
 
 
@@ -63,7 +70,7 @@ def prepare_expected_lines(mode: str, expected_output: str) -> list[str]:
 
 def line_matches(expected_line: str, actual_line: str, mode: str) -> bool:
     if mode in {"location", "location_cli"} and LOCATION_ERROR_PREFIX_RE.match(expected_line):
-        return actual_line.startswith(expected_line)
+        return strip_highlight_sequences(actual_line).startswith(expected_line)
 
     checker = ERROR_WILDCARDS.get(expected_line)
     if checker is not None:
@@ -133,4 +140,3 @@ def get_diff(actual_output: str, expected_output: str, mode: str, width: int = 1
         )
 
     return "\n".join(result)
-

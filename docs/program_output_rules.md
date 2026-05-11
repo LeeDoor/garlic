@@ -133,3 +133,23 @@ Example:
 ```
 > ***Warning***: For visual convenience table width is expanded to fit <BC>, <AC> and <RC> codes.
 > In actual program those codes are invisible and retrieved by terminal to change the color.
+
+##### Error highlighting
+Every error has a tag at the beginning with error type.
+
+Example with **Syntax error**:
+```
+[SYNTAX_ERROR] at [5.10] syntax error, unexpected identifier
+
+```
+
+In CLI, this tag should be highlighted:
+```
+Error highlight color(EC): "\033[38;5;9m"
+```
+
+Highlighted example:
+```
+<EC>[SYNTAX_ERROR]<RC> at [5.10] syntax error, unexpected identifier
+
+```

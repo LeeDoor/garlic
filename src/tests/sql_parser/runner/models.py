@@ -26,6 +26,7 @@ ANSI_YELLOW = "\033[33m"
 HIGHLIGHT_KEYWORDS = {
     "<ACCENT>": "\033[7m",
     "<BLEND>": "\033[0m",
+    "<ERROR_HIGHLIGHT>": "\033[38;5;9m",
     "<RESET>": "\033[0m",
 }
 
@@ -51,4 +52,3 @@ class TestCase:
     expected_file: Path
     mode: str = "default"
     extra_args: tuple[str, ...] = ()
-

@@ -1,0 +1,9 @@
+#> <ERROR_HIGHLIGHT>[SYNTAX_ERROR]<RESET> at [1.10] syntax error, unexpected integer
+
+#> <ERROR_HIGHLIGHT>[LEXICAL_ERROR]<RESET> at [1.9] Token true should be whitespace-separated
+
+#> <ERROR_HIGHLIGHT>[SEMANTIC_ERROR]<RESET> at [1.31] Used tables { users } are not specified in FROM clause.
+
+#> <ERROR_HIGHLIGHT>[RUNTIME_ERROR]<RESET> Division by zero
+
+#>
