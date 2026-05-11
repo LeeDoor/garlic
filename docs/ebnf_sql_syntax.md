@@ -153,6 +153,9 @@ Any selector may be followed by `AS` keyword with a string.
 This string defines its column name. 
 If no `AS` keyword specified, the column name is set with default value.
 
+Asterisk selector `*` can be applied instead of all other selectors.
+It means to select all columns from tables mentioned in `FROM` clause.
+
 The `SELECT` keyword optionally may be followed by `FROM` keyword.
 If no `FROM` keyword specified, the query will not refer to any table and **the
 resulting table will have only one line and a header**.
@@ -166,7 +169,10 @@ If From clause has 2 tables with sizes N and M respectively, the resulting table
 If From clause has 3 tables with sizes N, M, and P respectively, the resulting table will have N * M * P rows.
 
 ```EBNF
-select_query = "SELECT" selector{selector} [ "FROM" table_name{table_name} ] ;
+select_query = 
+    "SELECT" ( selector{selector} | "*" )
+    [ "FROM" table_name{table_name} ] ;
+
 selector = evaluateable [ "AS" string ] ;
 table_name = identifier ;
 ```
@@ -178,3 +184,4 @@ table_name = identifier ;
 > See [[#Errors]]
 
 2. Every table_name should be **unique**.
+3. Asterisk operator `*` can be used only in combination with `FROM` clause. 
