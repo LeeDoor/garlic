@@ -106,8 +106,7 @@ ResultTable SelectQuery::create_result_table_header(const ColumnsContainer& colu
     return result_table;
 }
 
-ExpectedOrStr<std::pair<TablesGathered, SelectQuery::OrderedGatherers>>
-SelectQuery::create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const {
+ExpectedOrStr<SelectQuery::GatherersTuple> SelectQuery::create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const {
     has_empty_table = false;
     TablesGathered gatherers_hash {};
     OrderedGatherers gatherers_ordered {};
@@ -117,12 +116,12 @@ SelectQuery::create_gatherers(const TableValueGathererFactory& gatherer_factory,
             return std::unexpected(exp_gatherer.error());
         if((*exp_gatherer)->is_table_empty()) {
             has_empty_table = true;
-            return std::pair(gatherers_hash, gatherers_ordered);
+            return std::tuple{ gatherers_hash, gatherers_ordered };
         }
         gatherers_hash[selected_table.table_name] = *exp_gatherer;
         gatherers_ordered.push_back(*exp_gatherer);
     }
-    return std::pair(gatherers_hash, gatherers_ordered);
+    return std::tuple(gatherers_hash, gatherers_ordered);
 }
 
 bool SelectQuery::jump_to_next_row(OrderedGatherers& gatherers) {

@@ -22,6 +22,7 @@ public:
 
 private:
     using OrderedGatherers = std::list<sptr<CellValueGatherer>>;
+    using GatherersTuple = std::tuple<TablesGathered, OrderedGatherers>;
 
     static CanBeValidated<void>::TypeOrError is_valid(const SelectorGeneratorsContainer& , const TablesContainer& );
     static CanBeValidated<void>::TypeOrError check_all_tables_specified(const SelectorGeneratorsContainer& , const TablesContainer& );
@@ -30,7 +31,7 @@ private:
 
     ExpectedOrStr<ColumnsContainer> generate_columns();
     ResultTable create_result_table_header(const ColumnsContainer& ) const;
-    ExpectedOrStr<std::pair<TablesGathered, OrderedGatherers>> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;
+    ExpectedOrStr<GatherersTuple> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;
     ExpectedOrStr<StringType> resolve_and_stringfy(const Selector& column, const TablesGathered& gatherers) const;
     ExpectedOrStr<ResultRow> resolve_row(const TablesGathered& gatherers, const ColumnsContainer& columns) const;
     static bool jump_to_next_row(OrderedGatherers& gatherers);
