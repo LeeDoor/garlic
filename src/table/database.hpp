@@ -13,11 +13,11 @@ requires TableColumnTypeGatherer<TableGathererT> &&
 TableValueGatherer<TableGathererT>
 class DatabaseImpl {
 private:
-    using TablesContainer =
+    using Tables =
     std::unordered_map<TableNameType, sptr<TableGathererT>>;
 
 public:
-    DatabaseImpl(TablesContainer &&tables) : tables_{std::move(tables)} {}
+    DatabaseImpl(Tables &&tables) : tables_{std::move(tables)} {}
 
     ExpectedColumnType get_tables_column_type(const TableNameType& table_name, const ColumnNameType& column_name) const {
         auto table = get_table_by_name(table_name);
@@ -53,7 +53,7 @@ private:
             return std::unexpected("Table " + table_name + " does not exist.");
         return tables_.at(table_name);
     }
-    TablesContainer tables_;
+    Tables tables_;
 };
 
 using Database = DatabaseImpl<TypedTable>;

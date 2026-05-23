@@ -8,7 +8,7 @@ EverythingSelectorGenerator::EverythingSelectorGenerator(const TablesHeaderGathe
 : header_gatherer_{ header_gatherer }
 {}
 
-ExpectedOrStr<std::list<Selector>> EverythingSelectorGenerator::generate(const TablesContainer& tables) {
+ExpectedOrStr<std::list<Selector>> EverythingSelectorGenerator::generate(const Tables& tables) {
     std::list<Selector> selectors;
     if(tables.empty())
         return std::unexpected("SELECT * with no tables in FROM clause is an error");

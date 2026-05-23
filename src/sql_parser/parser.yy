@@ -110,7 +110,7 @@
 
 %nterm <uptr<Query>> query
 %nterm <uptr<Query>> select_query
-%nterm <SelectQuery::TablesContainer> tables
+%nterm <SelectQuery::Tables> tables
 %nterm <Table> table
 %nterm <SelectQuery::SelectorGenerators> selectors
 %nterm <SelectQuery::SelectorGenerators> general_selectors

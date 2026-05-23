@@ -32,7 +32,7 @@ class TestSelectorGenerator : public SelectorGenerator {
 public:
     explicit TestSelectorGenerator(Selector&& selector) : selector_{ std::move(selector) } {}
 
-    ExpectedOrStr<std::list<Selector>> generate(const TablesContainer&) override {
+    ExpectedOrStr<std::list<Selector>> generate(const Tables&) override {
         return std::list<Selector>{ selector_ };
     }
 
@@ -90,7 +90,7 @@ protected:
 
     static SelectQuery make_query_from_columns(
         SelectQuery::Selectors columns,
-        SelectQuery::TablesContainer tables
+        SelectQuery::Tables tables
     ) {
         return SelectQuery(make_selector_generators(std::move(columns)), std::move(tables));
     }
@@ -361,7 +361,7 @@ TEST_F(TestSelectQueries, fromClauseThreeTablesBuildsCartesianProduct) {
 
     SelectQuery::Selectors columns;
     columns.emplace_back(std::make_unique<IntConstExpr>(1));
-    SelectQuery::TablesContainer tables;
+    SelectQuery::Tables tables;
     tables.push_back({ "users" });
     tables.push_back({ "offices" });
     tables.push_back({ "foods" });
