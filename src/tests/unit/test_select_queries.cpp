@@ -72,24 +72,24 @@ protected:
 
     template<typename... Exprs>
     static SelectQuery make_query(Exprs&&... exprs) {
-        SelectQuery::ColumnsContainer columns;
+        SelectQuery::Selectors columns;
         (columns.emplace_back(std::forward<Exprs>(exprs)), ...);
         return SelectQuery(make_selector_generators(std::move(columns)));
     }
 
-    static SelectQuery::SelectorGeneratorsContainer make_selector_generators(SelectQuery::ColumnsContainer columns) {
+    static SelectQuery::SelectorGeneratorsContainer make_selector_generators(SelectQuery::Selectors columns) {
         SelectQuery::SelectorGeneratorsContainer selector_generators;
         for(auto& column : columns)
             selector_generators.push_back(std::make_unique<TestSelectorGenerator>(std::move(column)));
         return selector_generators;
     }
 
-    static SelectQuery make_query_from_columns(SelectQuery::ColumnsContainer columns) {
+    static SelectQuery make_query_from_columns(SelectQuery::Selectors columns) {
         return SelectQuery(make_selector_generators(std::move(columns)));
     }
 
     static SelectQuery make_query_from_columns(
-        SelectQuery::ColumnsContainer columns,
+        SelectQuery::Selectors columns,
         SelectQuery::TablesContainer tables
     ) {
         return SelectQuery(make_selector_generators(std::move(columns)), std::move(tables));
@@ -301,7 +301,7 @@ TEST_F(TestSelectQueries, stringWithEscapedNewlinesFormatsAsMultilineTableRow) {
 
 TEST_F(TestSelectQueries, tabsExpandToVisibleArrowSequenceInCells) {
     auto factory = make_unused_factory();
-    SelectQuery::ColumnsContainer columns;
+    SelectQuery::Selectors columns;
     columns.emplace_back(std::make_unique<StringConstExpr>("Alice\t"));
     columns.emplace_back(std::make_unique<IntConstExpr>(24));
     SelectQuery query = make_query_from_columns(std::move(columns));
@@ -319,7 +319,7 @@ TEST_F(TestSelectQueries, tabsExpandToVisibleArrowSequenceInCells) {
 
 TEST_F(TestSelectQueries, tabsAndNewlinesCombineInsideCells) {
     auto factory = make_unused_factory();
-    SelectQuery::ColumnsContainer columns;
+    SelectQuery::Selectors columns;
     columns.emplace_back(std::make_unique<StringConstExpr>("A\nB\tC"));
     columns.emplace_back(std::make_unique<IntConstExpr>(7));
     SelectQuery query = make_query_from_columns(std::move(columns));
@@ -338,7 +338,7 @@ TEST_F(TestSelectQueries, tabsAndNewlinesCombineInsideCells) {
 
 TEST_F(TestSelectQueries, mixedMultilineRowUsesTallestCellAndPadsShorterCells) {
     auto factory = make_unused_factory();
-    SelectQuery::ColumnsContainer columns;
+    SelectQuery::Selectors columns;
     columns.emplace_back("A", std::make_unique<StringConstExpr>("123\n456"));
     columns.emplace_back("B", std::make_unique<StringConstExpr>("1\n2\n3\n4"));
     columns.emplace_back(std::make_unique<IntConstExpr>(5));
@@ -359,7 +359,7 @@ TEST_F(TestSelectQueries, fromClauseThreeTablesBuildsCartesianProduct) {
         }
     };
 
-    SelectQuery::ColumnsContainer columns;
+    SelectQuery::Selectors columns;
     columns.emplace_back(std::make_unique<IntConstExpr>(1));
     SelectQuery::TablesContainer tables;
     tables.push_back({ "users" });
@@ -396,7 +396,7 @@ TEST_F(TestSelectQueries, expressionThrowingPropagatesException) {
 
 TEST_F(TestSelectQueries, multilineHeaderUsesSameRulesAsBodyCells) {
     auto factory = make_unused_factory();
-    SelectQuery::ColumnsContainer columns;
+    SelectQuery::Selectors columns;
     columns.emplace_back("aboba\nmiddle\nlong name", std::make_unique<IntConstExpr>(12));
     SelectQuery query = make_query_from_columns(std::move(columns));
 
@@ -408,7 +408,7 @@ TEST_F(TestSelectQueries, multilineHeaderUsesSameRulesAsBodyCells) {
 
 TEST_F(TestSelectQueries, mixedMultilineHeadersUseTallestCellAndPadShorterCells) {
     auto factory = make_unused_factory();
-    SelectQuery::ColumnsContainer columns;
+    SelectQuery::Selectors columns;
     columns.emplace_back("A\nB", std::make_unique<IntConstExpr>(7));
     columns.emplace_back("1\n2\n3", std::make_unique<IntConstExpr>(8));
     columns.emplace_back("Tail", std::make_unique<IntConstExpr>(9));
@@ -422,7 +422,7 @@ TEST_F(TestSelectQueries, mixedMultilineHeadersUseTallestCellAndPadShorterCells)
 
 TEST_F(TestSelectQueries, multilineHeadersAndBodiesFormatIndependently) {
     auto factory = make_unused_factory();
-    SelectQuery::ColumnsContainer columns;
+    SelectQuery::Selectors columns;
     columns.emplace_back("A\nB", std::make_unique<StringConstExpr>("123\n456"));
     columns.emplace_back("C\nD\nE", std::make_unique<StringConstExpr>("1\n2\n3\n4"));
     columns.emplace_back("Int", std::make_unique<IntConstExpr>(5));

@@ -9,9 +9,9 @@ namespace garlic {
 
 class SelectQuery : public Query {
 public:
-    // #TODO rename: remove Container suffix and ColumnsContainer -> Selectors
+    // #TODO rename: remove Container suffix and Selectors -> Selectors
     using SelectorGeneratorsContainer = std::list<uptr<SelectorGenerator>>;
-    using ColumnsContainer = std::list<Selector>;
+    using Selectors = std::list<Selector>;
     using TablesContainer = std::list<Table>;
 
     SelectQuery();
@@ -29,11 +29,11 @@ private:
     static CanBeValidated<void>::TypeOrError check_no_same_tables(const TablesContainer& );
     static CanBeValidated<void>::TypeOrError check_if_from_exists_when_required(const SelectorGeneratorsContainer& , const TablesContainer& );
 
-    ExpectedOrStr<ColumnsContainer> generate_columns();
-    ResultTable create_result_table_header(const ColumnsContainer& ) const;
+    ExpectedOrStr<Selectors> generate_columns();
+    ResultTable create_result_table_header(const Selectors& ) const;
     ExpectedOrStr<GatherersTuple> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;
     ExpectedOrStr<StringType> resolve_and_stringfy(const Selector& column, const TablesGathered& gatherers) const;
-    ExpectedOrStr<ResultRow> resolve_row(const TablesGathered& gatherers, const ColumnsContainer& columns) const;
+    ExpectedOrStr<ResultRow> resolve_row(const TablesGathered& gatherers, const Selectors& columns) const;
     static bool jump_to_next_row(OrderedGatherers& gatherers);
 
     TablesContainer tables_ {};
