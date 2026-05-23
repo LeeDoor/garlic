@@ -22,19 +22,25 @@ using ReadonlyColumnTypes = TypeList<
     bool
 >;
 
-template<typename T>
-concept IsStoringColumnType = 
-    std::is_same_v<T, StringType>
-    || std::is_same_v<T, IntType> 
-    || std::is_same_v<T, FloatType>
-    || std::is_same_v<T, bool>;
+using StoringColumnTypes = TypeList<
+    StringType,
+    IntType,
+    FloatType,
+    bool
+>;
+
+template<typename VerifiedType, typename TypeContainer>
+struct MatchesTypeArray;
+
+template<typename VerifiedType, typename... TypeContainer>
+struct MatchesTypeArray<VerifiedType, TypeList<TypeContainer...>> : 
+    std::bool_constant<(std::is_same_v<VerifiedType, TypeContainer> || ...)> {};
 
 template<typename T>
-concept IsReadonlyColumnType = 
-    std::is_same_v<T, StringViewType>
-    || std::is_same_v<T, IntType> 
-    || std::is_same_v<T, FloatType>
-    || std::is_same_v<T, bool>;
+concept IsStoringColumnType = MatchesTypeArray<T, garlic::StoringColumnTypes>::value;
+
+template<typename T>
+concept IsReadonlyColumnType = MatchesTypeArray<T, garlic::ReadonlyColumnTypes>::value;
 
 template<typename T>
 concept IsAnyColumnType = IsStoringColumnType<T> || IsReadonlyColumnType<T>;
