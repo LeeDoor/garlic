@@ -1,0 +1,2 @@
+SELECT * FROM ghosts;
+SELECT * FROM users, ghosts;

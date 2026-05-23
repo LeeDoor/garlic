@@ -10,6 +10,8 @@
     #include "cell_type.hpp"
     #include "string_query_result.hpp"
     #include "select_query.hpp"
+    #include "ready_selector_generator.hpp"
+    #include "everything_selector_generator.hpp"
     #include "compare_condition.hpp"
     #include "binary_logical_condition.hpp"
     #include "unary_logical_condition.hpp"
@@ -108,16 +110,18 @@
 
 %nterm <uptr<Query>> query
 %nterm <uptr<Query>> select_query
-%nterm <SelectQuery::TablesContainer> tables 
-%nterm <Table> table 
-%nterm <SelectQuery::ColumnsContainer> selectors 
-%nterm <Selector> selector 
-%nterm <StringType> columnname 
-%nterm <uptr<Expression>> evaluateable
+%nterm <SelectQuery::TablesContainer> tables
+%nterm <Table> table
+%nterm <SelectQuery::SelectorGeneratorsContainer> selectors
+%nterm <SelectQuery::SelectorGeneratorsContainer> general_selectors
+%nterm <uptr<EverythingSelectorGenerator>> asterisk_selector
+%nterm <uptr<SelectorGenerator>> selector
+%nterm <StringType> columnname
+%nterm <sptr<Expression>> evaluateable
 %nterm <uptr<Condition>> cond
-%nterm <uptr<Expression>> expr 
-%nterm <uptr<Expression>> value 
-%nterm <StringType> strings 
+%nterm <uptr<Expression>> expr
+%nterm <uptr<Expression>> value
+%nterm <StringType> strings
 
 %%
 
@@ -134,24 +138,27 @@ select_query: SELECT selectors { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, 
 	    | SELECT selectors FROM tables { ASSIGN_OR_ABORT($$, mk_v<SelectQuery>(session, std::move($2), std::move($4))); }
 	    ;
 
-selectors: selector { $$.push_back(std::move($1)); }
-	 | selectors COLON selector { $$ = std::move($1); $$.push_back(std::move($3)); }
-     | ASTERISK { $$.clear(); }
-	 ;
+selectors: general_selectors { $$ = std::move($1); }
+         | asterisk_selector { $$.push_back(std::move($1)); }
+         ;
 
-selector: evaluateable AS columnname { $$ = Selector{ $3, std::move($1) }; }
-	| evaluateable { $$ = Selector{ std::move($1) }; }
+general_selectors: selector { $$.push_back(std::move($1)); }
+                 | general_selectors COLON selector { $$ = std::move($1); $$.push_back(std::move($3)); }
+                 ;
+
+selector: evaluateable AS columnname { $$ = std::make_unique<ReadySelectorGenerator>(Selector{ $3, std::move($1) }); }
+	| evaluateable { $$ = std::make_unique<ReadySelectorGenerator>(Selector{ std::move($1) }); }
     ;
 
-columnname: STRING
-	  ;
+asterisk_selector: ASTERISK { $$ = std::make_unique<EverythingSelectorGenerator>(session.get_database()); };
+
+columnname: STRING;
 
 tables: table { $$.push_back(std::move($1)); }
       | tables COLON table { $$ = std::move($1); $$.push_back(std::move($3)); }
       ;
 
-table: IDENTIFIER { $$ = { $1 }; }
-     ;
+table: IDENTIFIER { $$ = { $1 }; };
 
 evaluateable: cond { $$ = std::move($1); }
 	    | expr { $$ = std::move($1); }

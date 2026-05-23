@@ -19,18 +19,23 @@ private:
 public:
     DatabaseImpl(TablesContainer &&tables) : tables_{std::move(tables)} {}
 
-    ExpectedColumnType get_tables_column_type(const TableNameType &table_name, const ColumnNameType &column_name) const {
+    ExpectedColumnType get_tables_column_type(const TableNameType& table_name, const ColumnNameType& column_name) const {
         auto table = get_table_by_name(table_name);
         if (!table)
             return std::unexpected(table.error());
         return (*table)->get_column_type(column_name);
     }
-    inline ExpectedCellValueGatherer build_cell_value_gatherer(const TableNameType &table_name) const {
+    inline ExpectedCellValueGatherer build_cell_value_gatherer(const TableNameType& table_name) const {
         return build_cell_value_gatherer_impl(*this, table_name);
     }
-    ExpectedCellValueGatherer
-    build_cell_value_gatherer(const TableNameType &table_name) {
+    ExpectedCellValueGatherer build_cell_value_gatherer(const TableNameType& table_name) {
         return build_cell_value_gatherer_impl(*this, table_name);
+    }
+    std::expected<std::vector<ColumnInfo>, StringType> get_tables_header(const TableNameType& table_name) const {
+        auto table = get_table_by_name(table_name);
+        if (!table)
+            return std::unexpected(table.error());
+        return (*table)->get_header();
     }
 
 private:

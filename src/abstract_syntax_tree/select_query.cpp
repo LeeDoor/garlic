@@ -1,24 +1,27 @@
 #include "select_query.hpp"
 #include "table_query_result.hpp"
 #include "table_value_gatherer_factory.hpp"
+
 namespace garlic {
 
 SelectQuery::SelectQuery()
 : SelectQuery{ {}, {} }
 {}
-SelectQuery::SelectQuery(ColumnsContainer columns)
-: SelectQuery{ std::move(columns), {} }
+SelectQuery::SelectQuery(SelectorGeneratorsContainer selector_gens)
+: SelectQuery{ std::move(selector_gens), {} }
 { }
-SelectQuery::SelectQuery(ColumnsContainer columns, TablesContainer tables)
-: Query{ is_valid(columns, tables) }
-, columns_{ std::move(columns) }
+SelectQuery::SelectQuery(SelectorGeneratorsContainer selector_gens, TablesContainer tables)
+: Query{ is_valid(selector_gens, tables) }
 , tables_{ std::move(tables) }
+, selector_generators_{ std::move(selector_gens) }
 {}
 
-CanBeValidated<void>::TypeOrError SelectQuery::is_valid(const ColumnsContainer& columns, const TablesContainer& tables) {
+CanBeValidated<void>::TypeOrError SelectQuery::is_valid(const SelectorGeneratorsContainer& generators, const TablesContainer& tables) {
     if(auto err = check_no_same_tables(tables); !err)
         return err;
-    if(auto err = check_all_tables_specified(columns, tables); !err)
+    if(auto err = check_all_tables_specified(generators, tables); !err)
+        return err;
+    if(auto err = check_if_from_exists_when_required(generators, tables); !err)
         return err;
     return {};
 }
@@ -32,10 +35,10 @@ CanBeValidated<void>::TypeOrError SelectQuery::check_no_same_tables(const Tables
     }
     return {};
 }
-CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const ColumnsContainer& columns, const TablesContainer& tables) {
+CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const SelectorGeneratorsContainer& generators, const TablesContainer& tables) {
     std::unordered_set<TableNameType> tables_used;
-    for(const auto& column : columns) {
-        tables_used.merge(column.ast->get_used_tables());
+    for(const auto& generator: generators) {
+        tables_used.merge(generator->get_used_tables());
     }
     std::for_each(tables.begin(), tables.end(), [&] (const auto& table) {
         tables_used.erase(table.table_name);
@@ -54,26 +57,50 @@ CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const 
     return {};
 }
 
+CanBeValidated<void>::TypeOrError SelectQuery::check_if_from_exists_when_required(const SelectorGeneratorsContainer& generators, const TablesContainer& tables) {
+    if(!tables.empty()) return {};
+    for(const auto& generator : generators) {
+        if(generator->requires_from_clause()) {
+            return std::unexpected("SELECT * query is invalid; FROM clause required.");
+        }
+    }
+    return {};
+}
+
 SelectQuery::ExpectedQueryResult SelectQuery::resolve(const TableValueGathererFactory& gatherer_factory) {
-    ResultTable result_table = create_result_table_header();
     bool has_empty_table = false;
     auto gatherers = create_gatherers(gatherer_factory, has_empty_table);
-    if(has_empty_table) 
-        return std::make_shared<TableQueryResult>(std::move(result_table));
     if(!gatherers) 
         return std::unexpected(gatherers.error());
+    auto columns = generate_columns();
+    if(!columns)
+        return std::unexpected(columns.error());
+    ResultTable result_table = create_result_table_header(*columns);
+    if(has_empty_table) 
+        return std::make_shared<TableQueryResult>(std::move(result_table));
     auto [gatherers_hash, gatherers_ordered] = std::move(*gatherers);
     do {
-        auto row = resolve_row(gatherers_hash);
+        auto row = resolve_row(gatherers_hash, *columns);
         if(!row) return std::unexpected(row.error());
         result_table.push_back(*row);
     } while(jump_to_next_row(gatherers_ordered));
     return std::make_shared<TableQueryResult>(std::move(result_table));
 }
 
-ResultTable SelectQuery::create_result_table_header() const {
+std::expected<SelectQuery::ColumnsContainer, StringType> SelectQuery::generate_columns() {
+    ColumnsContainer columns;
+    for(const auto& gen : selector_generators_) {
+        auto selectors = gen->generate(tables_);
+        if(!selectors)
+            return std::unexpected(selectors.error());
+        columns.splice(columns.end(), *selectors); 
+    }
+    return columns;
+}
+
+ResultTable SelectQuery::create_result_table_header(const ColumnsContainer& columns) const {
     ResultTable result_table(1);
-    for(const Selector& column : columns_) { 
+    for(const Selector& column : columns) { 
         result_table[0].push_back(column.column_name);
     }
     return result_table;
@@ -106,9 +133,9 @@ bool SelectQuery::jump_to_next_row(OrderedGatherers& gatherers) {
     return iter != gatherers.rend();
 }
 
-std::expected<ResultRow, UnexpectedCellValue> SelectQuery::resolve_row(const TablesGathered& gatherers) const {
-    ResultRow result_row; result_row.reserve(columns_.size());
-    for(const Selector& column : columns_) {
+std::expected<ResultRow, UnexpectedCellValue> SelectQuery::resolve_row(const TablesGathered& gatherers, const ColumnsContainer& columns) const {
+    ResultRow result_row; result_row.reserve(columns.size());
+    for(const Selector& column : columns) {
         auto resolved = resolve_and_stringfy(column, gatherers);
         if(!resolved) return std::unexpected(resolved.error());
         result_row.push_back(*resolved);

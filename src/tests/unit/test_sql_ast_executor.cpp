@@ -16,6 +16,26 @@ public:
     UsedTables get_used_tables() const override { return {}; }
 };
 
+class TestSelectorGeneratorForExecutorTest : public SelectorGenerator {
+public:
+    explicit TestSelectorGeneratorForExecutorTest(Selector selector) : selector_{ std::move(selector) } {}
+
+    std::expected<std::list<Selector>, StringType> generate(const TablesContainer&) override {
+        return std::list<Selector>{ selector_ };
+    }
+
+    Expression::UsedTables get_used_tables() const override {
+        return selector_.ast->get_used_tables();
+    }
+
+    bool requires_from_clause() const override {
+        return false;
+    }
+
+private:
+    Selector selector_;
+};
+
 namespace {
 
 class ScopedStreamRedirect {
@@ -35,9 +55,11 @@ private:
 };
 
 uptr<Query> make_query(uptr<Expression> expression) {
-    SelectQuery::ColumnsContainer columns;
-    columns.emplace_back(std::move(expression));
-    return std::make_unique<SelectQuery>(std::move(columns));
+    SelectQuery::SelectorGeneratorsContainer selector_generators;
+    selector_generators.push_back(
+        std::make_unique<TestSelectorGeneratorForExecutorTest>(Selector{ std::move(expression) })
+    );
+    return std::make_unique<SelectQuery>(std::move(selector_generators));
 }
 
 std::string format_single_value_table(std::string_view column_name, std::string_view value) {

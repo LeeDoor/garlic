@@ -1,33 +1,33 @@
-+--------+-----+---------------+
-| String | Int | String        |
-+--------+-----+---------------+
-| Alice  | 24  | pizza         |
-| Bob    | 31  | ramen         |
-| Clara  | 27  | salad         |
-| Dmitry | 35  | burger        |
-| Eva    | 29  | sushi         |
-| Farid  | 41  | pasta         |
-| Greta  | 22  | tacos         |
-+--------+-----+---------------+
-+---------+-------+----------+
-| String  | Int   | String   |
-+---------+-------+----------+
-| Moscow  | 3     | backend  |
-| Berlin  | 5     | frontend |
-| Tokyo   | 8     | research |
-| Paris   | 2     | hr       |
-| Lisbon  | 6     | infra    |
-| Prague  | 4     | qa       |
-| Tbilisi | 7     | support  |
-+---------+-------+----------+
-+--------+----------+----------+
-| String | Int      | String   |
-+--------+----------+----------+
-| pizza  | 285      | fastfood |
-| ramen  | 436      | soup     |
-| salad  | 120      | veggie   |
-| burger | 295      | fastfood |
-| sushi  | 200      | seafood  |
-| pasta  | 260      | grain    |
-| tacos  | 226      | street   |
-+--------+----------+----------+
++--------+-----+--------+
+| String | Int | String |
++--------+-----+--------+
+| Alice  | 24  | pizza  |
+| Bob    | 31  | ramen  |
+| Clara  | 27  | salad  |
+| Dmitry | 35  | burger |
+| Eva    | 29  | sushi  |
+| Farid  | 41  | pasta  |
+| Greta  | 22  | tacos  |
++--------+-----+--------+
++---------+-----+----------+
+| String  | Int | String   |
++---------+-----+----------+
+| Moscow  | 3   | backend  |
+| Berlin  | 5   | frontend |
+| Tokyo   | 8   | research |
+| Paris   | 2   | hr       |
+| Lisbon  | 6   | infra    |
+| Prague  | 4   | qa       |
+| Tbilisi | 7   | support  |
++---------+-----+----------+
++--------+-----+----------+
+| String | Int | String   |
++--------+-----+----------+
+| pizza  | 285 | fastfood |
+| ramen  | 436 | soup     |
+| salad  | 120 | veggie   |
+| burger | 295 | fastfood |
+| sushi  | 200 | seafood  |
+| pasta  | 260 | grain    |
+| tacos  | 226 | street   |
++--------+-----+----------+

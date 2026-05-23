@@ -1,0 +1,4 @@
+SELECT * FROM ghosts;
+SELECT * FROM users, ghosts;
+SELECT * FROM ghosts, foods;
+SELECT * FROM ghosts, shadows;

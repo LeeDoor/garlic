@@ -25,6 +25,8 @@ add_library(sql_parser
     parsing_session.cpp
     position.cpp
     literals_converter.cpp
+    ready_selector_generator.cpp
+    everything_selector_generator.cpp
 )
 set(INCLUDE_DIRS 
     ../abstract_syntax_tree 

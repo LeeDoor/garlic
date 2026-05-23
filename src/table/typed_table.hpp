@@ -64,6 +64,8 @@ public:
 
     bool is_row_index_overflow(size_t row_index) const;
 
+    std::vector<ColumnInfo> get_header() const;
+
     /// Creates empty row. You can't access a row without creating it.
     size_t create_empty_row();
 

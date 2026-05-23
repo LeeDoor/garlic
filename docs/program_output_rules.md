@@ -12,6 +12,8 @@ Example:
 [SYNTAX_ERROR] at [5.10] syntax error, unexpected identifier
 
 ```
+Every error should contain the error type and it's location.
+At the example above, error type is Syntax Error pointing to a character at 5th row and 10th column.
 
 ### Table Type
 Table output is made by `SELECT` action. 

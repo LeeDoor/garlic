@@ -31,6 +31,10 @@ bool TypedTable::is_row_index_overflow(size_t row_index) const {
     return row_index >= content_.get_rows_amount();
 }
 
+std::vector<ColumnInfo> TypedTable::get_header() const {
+    return header_;
+}
+
 size_t TypedTable::create_empty_row() {
     return content_.create_empty_row();
 }
