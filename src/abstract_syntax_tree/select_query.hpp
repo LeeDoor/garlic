@@ -10,13 +10,13 @@ namespace garlic {
 class SelectQuery : public Query {
 public:
     // #TODO rename: remove Container suffix and Selectors -> Selectors
-    using SelectorGeneratorsContainer = std::list<uptr<SelectorGenerator>>;
+    using SelectorGenerators = std::list<uptr<SelectorGenerator>>;
     using Selectors = std::list<Selector>;
     using TablesContainer = std::list<Table>;
 
     SelectQuery();
-    SelectQuery(SelectorGeneratorsContainer selector_gens);
-    SelectQuery(SelectorGeneratorsContainer selector_gens, TablesContainer tables);
+    SelectQuery(SelectorGenerators selector_gens);
+    SelectQuery(SelectorGenerators selector_gens, TablesContainer tables);
 
     ExpectedQueryResult resolve(const TableValueGathererFactory& gatherer_factory) override;
 
@@ -24,10 +24,10 @@ private:
     using OrderedGatherers = std::list<sptr<CellValueGatherer>>;
     using GatherersTuple = std::tuple<TablesGathered, OrderedGatherers>;
 
-    static CanBeValidated<void>::TypeOrError is_valid(const SelectorGeneratorsContainer& , const TablesContainer& );
-    static CanBeValidated<void>::TypeOrError check_all_tables_specified(const SelectorGeneratorsContainer& , const TablesContainer& );
+    static CanBeValidated<void>::TypeOrError is_valid(const SelectorGenerators& , const TablesContainer& );
+    static CanBeValidated<void>::TypeOrError check_all_tables_specified(const SelectorGenerators& , const TablesContainer& );
     static CanBeValidated<void>::TypeOrError check_no_same_tables(const TablesContainer& );
-    static CanBeValidated<void>::TypeOrError check_if_from_exists_when_required(const SelectorGeneratorsContainer& , const TablesContainer& );
+    static CanBeValidated<void>::TypeOrError check_if_from_exists_when_required(const SelectorGenerators& , const TablesContainer& );
 
     ExpectedOrStr<Selectors> generate_columns();
     ResultTable create_result_table_header(const Selectors& ) const;
@@ -37,7 +37,7 @@ private:
     static bool jump_to_next_row(OrderedGatherers& gatherers);
 
     TablesContainer tables_ {};
-    SelectorGeneratorsContainer selector_generators_{};
+    SelectorGenerators selector_generators_{};
 };
 
 }

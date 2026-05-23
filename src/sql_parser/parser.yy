@@ -112,8 +112,8 @@
 %nterm <uptr<Query>> select_query
 %nterm <SelectQuery::TablesContainer> tables
 %nterm <Table> table
-%nterm <SelectQuery::SelectorGeneratorsContainer> selectors
-%nterm <SelectQuery::SelectorGeneratorsContainer> general_selectors
+%nterm <SelectQuery::SelectorGenerators> selectors
+%nterm <SelectQuery::SelectorGenerators> general_selectors
 %nterm <uptr<EverythingSelectorGenerator>> asterisk_selector
 %nterm <uptr<SelectorGenerator>> selector
 %nterm <StringType> columnname

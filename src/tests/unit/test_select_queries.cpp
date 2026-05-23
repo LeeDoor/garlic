@@ -77,8 +77,8 @@ protected:
         return SelectQuery(make_selector_generators(std::move(columns)));
     }
 
-    static SelectQuery::SelectorGeneratorsContainer make_selector_generators(SelectQuery::Selectors columns) {
-        SelectQuery::SelectorGeneratorsContainer selector_generators;
+    static SelectQuery::SelectorGenerators make_selector_generators(SelectQuery::Selectors columns) {
+        SelectQuery::SelectorGenerators selector_generators;
         for(auto& column : columns)
             selector_generators.push_back(std::make_unique<TestSelectorGenerator>(std::move(column)));
         return selector_generators;

@@ -55,7 +55,7 @@ private:
 };
 
 uptr<Query> make_query(uptr<Expression> expression) {
-    SelectQuery::SelectorGeneratorsContainer selector_generators;
+    SelectQuery::SelectorGenerators selector_generators;
     selector_generators.push_back(
         std::make_unique<TestSelectorGeneratorForExecutorTest>(Selector{ std::move(expression) })
     );

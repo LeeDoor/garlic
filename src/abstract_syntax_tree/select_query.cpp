@@ -7,16 +7,16 @@ namespace garlic {
 SelectQuery::SelectQuery()
 : SelectQuery{ {}, {} }
 {}
-SelectQuery::SelectQuery(SelectorGeneratorsContainer selector_gens)
+SelectQuery::SelectQuery(SelectorGenerators selector_gens)
 : SelectQuery{ std::move(selector_gens), {} }
 { }
-SelectQuery::SelectQuery(SelectorGeneratorsContainer selector_gens, TablesContainer tables)
+SelectQuery::SelectQuery(SelectorGenerators selector_gens, TablesContainer tables)
 : Query{ is_valid(selector_gens, tables) }
 , tables_{ std::move(tables) }
 , selector_generators_{ std::move(selector_gens) }
 {}
 
-CanBeValidated<void>::TypeOrError SelectQuery::is_valid(const SelectorGeneratorsContainer& generators, const TablesContainer& tables) {
+CanBeValidated<void>::TypeOrError SelectQuery::is_valid(const SelectorGenerators& generators, const TablesContainer& tables) {
     if(auto err = check_no_same_tables(tables); !err)
         return err;
     if(auto err = check_all_tables_specified(generators, tables); !err)
@@ -35,7 +35,7 @@ CanBeValidated<void>::TypeOrError SelectQuery::check_no_same_tables(const Tables
     }
     return {};
 }
-CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const SelectorGeneratorsContainer& generators, const TablesContainer& tables) {
+CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const SelectorGenerators& generators, const TablesContainer& tables) {
     std::unordered_set<TableNameType> tables_used;
     for(const auto& generator: generators) {
         tables_used.merge(generator->get_used_tables());
@@ -57,7 +57,7 @@ CanBeValidated<void>::TypeOrError SelectQuery::check_all_tables_specified(const 
     return {};
 }
 
-CanBeValidated<void>::TypeOrError SelectQuery::check_if_from_exists_when_required(const SelectorGeneratorsContainer& generators, const TablesContainer& tables) {
+CanBeValidated<void>::TypeOrError SelectQuery::check_if_from_exists_when_required(const SelectorGenerators& generators, const TablesContainer& tables) {
     if(!tables.empty()) return {};
     for(const auto& generator : generators) {
         if(generator->requires_from_clause()) {
