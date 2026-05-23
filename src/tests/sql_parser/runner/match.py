@@ -74,7 +74,7 @@ def line_matches(expected_line: str, actual_line: str, mode: str) -> bool:
 
     checker = ERROR_WILDCARDS.get(expected_line)
     if checker is not None:
-        return checker(actual_line)
+        return checker(strip_highlight_sequences(actual_line))
 
     return expand_highlight_keywords(expected_line) == actual_line
 
