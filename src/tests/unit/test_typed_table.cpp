@@ -2,8 +2,8 @@
 
 namespace garlic {
 
-template<typename T, typename E>
-static T unwrap_expected(const std::expected<T, E>& result) {
+template<typename T>
+static T unwrap_expected(const ExpectedOrStr<T>& result) {
     EXPECT_TRUE(result.has_value()) << result.error();
     if(!result)
         return T{};

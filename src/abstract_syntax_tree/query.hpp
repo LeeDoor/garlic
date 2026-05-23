@@ -15,7 +15,7 @@ class Query : public CanBeValidated<void> {
 public:
     virtual ~Query() = default;
 
-    using ExpectedQueryResult = std::expected<sptr<QueryResult>, RuntimeError>; 
+    using ExpectedQueryResult = ExpectedOrStr<sptr<QueryResult>>; 
 
     Query(CanBeValidated<void>::TypeOrError&& error) 
     : CanBeValidated<void>{ std::move(error) } {}

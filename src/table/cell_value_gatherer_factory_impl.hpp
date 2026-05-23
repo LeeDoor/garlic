@@ -4,7 +4,7 @@
 
 namespace garlic {
     
-using ExpectedCellValueGatherer = std::expected<sptr<CellValueGatherer>, StringType>;
+using ExpectedCellValueGatherer = ExpectedOrStr<sptr<CellValueGatherer>>;
 
 template<typename CellValueGathererFactoryT>
 concept CellValueGathererFactoryImpl = requires(CellValueGathererFactoryT cell_value_gatherer_factory) {

@@ -87,7 +87,7 @@ SelectQuery::ExpectedQueryResult SelectQuery::resolve(const TableValueGathererFa
     return std::make_shared<TableQueryResult>(std::move(result_table));
 }
 
-std::expected<SelectQuery::ColumnsContainer, StringType> SelectQuery::generate_columns() {
+ExpectedOrStr<SelectQuery::ColumnsContainer> SelectQuery::generate_columns() {
     ColumnsContainer columns;
     for(const auto& gen : selector_generators_) {
         auto selectors = gen->generate(tables_);
@@ -106,7 +106,7 @@ ResultTable SelectQuery::create_result_table_header(const ColumnsContainer& colu
     return result_table;
 }
 
-std::expected<std::pair<TablesGathered, SelectQuery::OrderedGatherers>, UnexpectedCellValue> 
+ExpectedOrStr<std::pair<TablesGathered, SelectQuery::OrderedGatherers>>
 SelectQuery::create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const {
     has_empty_table = false;
     TablesGathered gatherers_hash {};
@@ -133,7 +133,7 @@ bool SelectQuery::jump_to_next_row(OrderedGatherers& gatherers) {
     return iter != gatherers.rend();
 }
 
-std::expected<ResultRow, UnexpectedCellValue> SelectQuery::resolve_row(const TablesGathered& gatherers, const ColumnsContainer& columns) const {
+ExpectedOrStr<ResultRow> SelectQuery::resolve_row(const TablesGathered& gatherers, const ColumnsContainer& columns) const {
     ResultRow result_row; result_row.reserve(columns.size());
     for(const Selector& column : columns) {
         auto resolved = resolve_and_stringfy(column, gatherers);
@@ -143,7 +143,7 @@ std::expected<ResultRow, UnexpectedCellValue> SelectQuery::resolve_row(const Tab
     return result_row;
 }
 
-std::expected<StringType, UnexpectedCellValue> SelectQuery::resolve_and_stringfy(const Selector& column, const TablesGathered& gatherers) const {
+ExpectedOrStr<StringType> SelectQuery::resolve_and_stringfy(const Selector& column, const TablesGathered& gatherers) const {
     std::stringstream ss;
     auto result = column.ast->resolve(gatherers);
     if(!result)

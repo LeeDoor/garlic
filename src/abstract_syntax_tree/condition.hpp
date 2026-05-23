@@ -15,7 +15,7 @@ public:
 
     Condition(TypeOrError toe) : Expression{ toe } {}
 
-    using ExpectedCellBooleanValue = std::expected<sptr<CellBooleanValue>, UnexpectedCellValue>;
+    using ExpectedCellBooleanValue = ExpectedOrStr<sptr<CellBooleanValue>>;
 
     /// Same as @ref Expression::resolve(), but ensures the boolean return type (or error).
     virtual ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const = 0;

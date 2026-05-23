@@ -32,7 +32,7 @@ class TestSelectorGenerator : public SelectorGenerator {
 public:
     explicit TestSelectorGenerator(Selector&& selector) : selector_{ std::move(selector) } {}
 
-    std::expected<std::list<Selector>, StringType> generate(const TablesContainer&) override {
+    ExpectedOrStr<std::list<Selector>> generate(const TablesContainer&) override {
         return std::list<Selector>{ selector_ };
     }
 

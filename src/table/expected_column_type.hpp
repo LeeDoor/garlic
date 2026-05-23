@@ -3,7 +3,6 @@
 
 namespace garlic {
 
-using UnexpectedColumnType = StringType;
-using ExpectedColumnType = std::expected<CellType, UnexpectedColumnType>;
+using ExpectedColumnType = ExpectedOrStr<CellType>;
 
 }

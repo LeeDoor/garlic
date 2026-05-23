@@ -28,11 +28,11 @@ private:
     static CanBeValidated<void>::TypeOrError check_no_same_tables(const TablesContainer& );
     static CanBeValidated<void>::TypeOrError check_if_from_exists_when_required(const SelectorGeneratorsContainer& , const TablesContainer& );
 
-    std::expected<ColumnsContainer, StringType> generate_columns();
+    ExpectedOrStr<ColumnsContainer> generate_columns();
     ResultTable create_result_table_header(const ColumnsContainer& ) const;
-    std::expected<std::pair<TablesGathered, OrderedGatherers>, UnexpectedCellValue> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;
-    std::expected<StringType, UnexpectedCellValue> resolve_and_stringfy(const Selector& column, const TablesGathered& gatherers) const;
-    std::expected<ResultRow, UnexpectedCellValue> resolve_row(const TablesGathered& gatherers, const ColumnsContainer& columns) const;
+    ExpectedOrStr<std::pair<TablesGathered, OrderedGatherers>> create_gatherers(const TableValueGathererFactory& gatherer_factory, bool& has_empty_table) const;
+    ExpectedOrStr<StringType> resolve_and_stringfy(const Selector& column, const TablesGathered& gatherers) const;
+    ExpectedOrStr<ResultRow> resolve_row(const TablesGathered& gatherers, const ColumnsContainer& columns) const;
     static bool jump_to_next_row(OrderedGatherers& gatherers);
 
     TablesContainer tables_ {};

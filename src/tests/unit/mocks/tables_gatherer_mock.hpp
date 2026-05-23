@@ -20,7 +20,7 @@ public:
     ExpectedColumnType get_tables_column_type(TableNameType, ColumnNameType) const {
         return type_or_error_;
     }
-    std::expected<std::vector<ColumnInfo>, StringType> get_tables_header(const TableNameType&) const {
+    ExpectedOrStr<std::vector<ColumnInfo>> get_tables_header(const TableNameType&) const {
         if(!type_or_error_)
             return std::unexpected(type_or_error_.error());
         return std::vector<ColumnInfo>{

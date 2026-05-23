@@ -5,7 +5,7 @@ namespace garlic {
 TypedTable::TypedTable(std::initializer_list<PublicColumnInfo> container) 
 : TypedTable(container.begin(), container.end()) {}
 
-std::expected<size_t, StringType> TypedTable::get_column_number_by_name(const std::string& column_name) const {
+ExpectedOrStr<size_t> TypedTable::get_column_number_by_name(const std::string& column_name) const {
     auto find_result = 
 	std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
 	    return ci.name == column_name;

@@ -1,5 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
+
 namespace garlic {
 
 using Byte = unsigned char;
@@ -11,5 +12,9 @@ using uptr = std::unique_ptr<T, Deleter>;
 
 template<typename T>
 using sptr = std::shared_ptr<T>;
+
+using UnexpectedData = std::string;
+template<typename T>
+using ExpectedOrStr = std::expected<T, UnexpectedData>;
 
 }

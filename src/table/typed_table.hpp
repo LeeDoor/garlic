@@ -58,13 +58,13 @@ public:
 
     /// Returns index of the column with given name.
     /*! @throws std::logic_error if no such column in table. */
-    std::expected<size_t, StringType> get_column_number_by_name(const std::string& column_name) const;
+    ExpectedOrStr<size_t> get_column_number_by_name(const std::string& column_name) const;
 
     ExpectedColumnType get_column_type(const ColumnNameType& column) const;
 
     bool is_row_index_overflow(size_t row_index) const;
 
-    std::vector<ColumnInfo> get_header() const;
+    TableHeader get_header() const;
 
     /// Creates empty row. You can't access a row without creating it.
     size_t create_empty_row();
@@ -204,7 +204,7 @@ private:
     }
 
     size_t row_size_bytes_;
-    std::vector<ColumnInfo> header_;
+    TableHeader header_;
     std::unordered_map<ColumnNameType, size_t> column_name_to_idx_;
     ByteMatrix content_;
 };

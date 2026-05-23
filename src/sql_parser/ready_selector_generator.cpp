@@ -6,7 +6,7 @@ ReadySelectorGenerator::ReadySelectorGenerator(Selector&& selector)
 : selector_{ std::move(selector) }
 {}
 
-std::expected<std::list<Selector>, StringType> ReadySelectorGenerator::generate(const TablesContainer& ) {
+ExpectedOrStr<std::list<Selector>> ReadySelectorGenerator::generate(const TablesContainer& ) {
     return std::list<Selector>{ selector_ };
 }
 Expression::UsedTables ReadySelectorGenerator::get_used_tables() const {

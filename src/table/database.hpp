@@ -31,7 +31,7 @@ public:
     ExpectedCellValueGatherer build_cell_value_gatherer(const TableNameType& table_name) {
         return build_cell_value_gatherer_impl(*this, table_name);
     }
-    std::expected<std::vector<ColumnInfo>, StringType> get_tables_header(const TableNameType& table_name) const {
+    ExpectedOrStr<std::vector<ColumnInfo>> get_tables_header(const TableNameType& table_name) const {
         auto table = get_table_by_name(table_name);
         if (!table)
             return std::unexpected(table.error());
@@ -47,7 +47,7 @@ private:
             return std::unexpected(table.error());
         return std::make_shared<CellValueGathererImpl>(*table);
     }
-    std::expected<sptr<TableGathererT>, StringType>
+    ExpectedOrStr<sptr<TableGathererT>>
     get_table_by_name(const TableNameType &table_name) const {
         if (!tables_.contains(table_name))
             return std::unexpected("Table " + table_name + " does not exist.");

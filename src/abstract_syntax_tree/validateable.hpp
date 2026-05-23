@@ -4,13 +4,13 @@
 namespace garlic {
 
 using InvalidError = StringType;
-using ExpectedValid = std::expected<void, InvalidError>;
+using ExpectedValid = ExpectedOrStr<void>;
 
 template<typename T>
 class CanBeValidated {
 public:
     using Error = StringType;
-    using TypeOrError = std::expected<T, Error>;
+    using TypeOrError = ExpectedOrStr<T>;
 
     CanBeValidated(TypeOrError toe)
     : type_or_err_{ toe }

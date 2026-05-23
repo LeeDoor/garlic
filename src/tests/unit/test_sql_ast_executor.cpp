@@ -20,7 +20,7 @@ class TestSelectorGeneratorForExecutorTest : public SelectorGenerator {
 public:
     explicit TestSelectorGeneratorForExecutorTest(Selector selector) : selector_{ std::move(selector) } {}
 
-    std::expected<std::list<Selector>, StringType> generate(const TablesContainer&) override {
+    ExpectedOrStr<std::list<Selector>> generate(const TablesContainer&) override {
         return std::list<Selector>{ selector_ };
     }
 
