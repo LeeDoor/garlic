@@ -7,23 +7,23 @@ TypedTable::TypedTable(std::initializer_list<PublicColumnInfo> container)
 
 ExpectedOrStr<size_t> TypedTable::get_column_number_by_name(const std::string& column_name) const {
     auto find_result = 
-	std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
-	    return ci.name == column_name;
-	});
+        std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
+            return ci.name == column_name;
+        });
     if(find_result == header_.end()) 
-	return std::unexpected("no such column name: " + column_name);
+        return std::unexpected("no such column name: " + column_name);
     return std::distance(header_.begin(), find_result);
 }
 
 CellType TypedTable::get_column_type(size_t column) const {
     if(column >= header_.size())
-	throw std::logic_error("trying to get column type with invalid column");
+        throw std::logic_error("trying to get column type with invalid column");
     return header_[column].type;
 }
 ExpectedColumnType TypedTable::get_column_type(const ColumnNameType& column) const {
     auto column_number = get_column_number_by_name(column);
     if(!column_number) 
-	return std::unexpected(column_number.error());
+        return std::unexpected(column_number.error());
     return get_column_type(*column_number);
 }
 
@@ -44,11 +44,11 @@ void TypedTable::set_value(size_t row, size_t column, const char value[]) {
 
 void TypedTable::set_value(size_t row, size_t column, const StringType& value) {
     if(column >= header_.size()) 
-	throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
+        throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
     if(header_[column].type != String) 
-	throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
+        throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
     if(header_[column].size_bytes < value.size())
-	throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
+        throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
 
     size_t row_offset = header_[column].offset;
     auto string_byte_represent = reinterpret_cast<const Byte*>(value.data());
