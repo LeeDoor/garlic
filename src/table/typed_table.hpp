@@ -52,18 +52,21 @@ public:
     , content_{ row_size_bytes_ }
     {}
 
-    /// Returns @ref CellType type of column with given id.
+    /// @returns @ref CellType type of column with given id.
     /*! @throws std::logic_error if column parameter is invalid. */
     CellType get_column_type(size_t column) const;
-
-    /// Returns index of the column with given name.
-    /*! @throws std::logic_error if no such column in table. */
-    ExpectedOrStr<size_t> get_column_number_by_name(const std::string& column_name) const;
-
+    /// @returns @ref CellType if column specified.
+    /// @returns @ref UnexpectedData of no such column specified.
     ExpectedColumnType get_column_type(const ColumnNameType& column) const;
 
+    /// Returns index of the column with given name.
+    /*! @returns @ref UnexpectedData if no such column in table. */
+    ExpectedOrStr<size_t> get_column_number_by_name(const std::string& column_name) const;
+
+    /// @returns true of given index is bigger than content size.
     bool is_row_index_overflow(size_t row_index) const;
 
+    /// Returns copy of header.
     TableHeader get_header() const;
 
     /// Creates empty row. You can't access a row without creating it.

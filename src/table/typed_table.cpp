@@ -5,16 +5,6 @@ namespace garlic {
 TypedTable::TypedTable(std::initializer_list<PublicColumnInfo> container) 
 : TypedTable(container.begin(), container.end()) {}
 
-ExpectedOrStr<size_t> TypedTable::get_column_number_by_name(const std::string& column_name) const {
-    auto find_result = 
-        std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
-            return ci.name == column_name;
-        });
-    if(find_result == header_.end()) 
-        return std::unexpected("no such column name: " + column_name);
-    return std::distance(header_.begin(), find_result);
-}
-
 CellType TypedTable::get_column_type(size_t column) const {
     if(column >= header_.size())
         throw std::logic_error("trying to get column type with invalid column");
@@ -25,6 +15,15 @@ ExpectedColumnType TypedTable::get_column_type(const ColumnNameType& column) con
     if(!column_number) 
         return std::unexpected(column_number.error());
     return get_column_type(*column_number);
+}
+ExpectedOrStr<size_t> TypedTable::get_column_number_by_name(const std::string& column_name) const {
+    auto find_result =
+        std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
+            return ci.name == column_name;
+        });
+    if(find_result == header_.end()) 
+        return std::unexpected("no such column name: " + column_name);
+    return std::distance(header_.begin(), find_result);
 }
 
 bool TypedTable::is_row_index_overflow(size_t row_index) const {
@@ -38,6 +37,7 @@ std::vector<ColumnInfo> TypedTable::get_header() const {
 size_t TypedTable::create_empty_row() {
     return content_.create_empty_row();
 }
+
 void TypedTable::set_value(size_t row, size_t column, const char value[]) {
     return set_value(row, column, std::string(value));
 }
