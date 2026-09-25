@@ -4,10 +4,10 @@
 namespace garlic {
 
 struct ColumnInfo {
-    CellType type;
-    ColumnNameType name;
-    size_t size_bytes;
-    size_t offset;
+	CellType type;
+	ColumnNameType name;
+	size_t size_bytes;
+	size_t offset;
 };
 
-}
+} // namespace garlic

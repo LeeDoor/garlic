@@ -2,42 +2,22 @@
 
 namespace garlic::sql_parser {
 
-ParsingLocation ParsingLocation::initialize_from(const ParsingLocation& other) {
-    ParsingLocation result = other;
-    result.initial_position_ = result.current_position_;
-    return result;
+ParsingLocation ParsingLocation::initialize_from(const ParsingLocation &other) {
+	ParsingLocation result = other;
+	result.initial_position_ = result.current_position_;
+	return result;
 }
 
-ParsingLocation::PositionType& ParsingLocation::cur() & {
-    return current_position_;
-}
-const ParsingLocation::PositionType& ParsingLocation::cur() const& {
-    return current_position_;
-}
-ParsingLocation::PositionType ParsingLocation::initial() const {
-    return initial_position_;
-}
-ParsingLocation::PositionType ParsingLocation::token_start() const {
-    return token_start_position_;
-}
-ParsingLocation::PositionType ParsingLocation::content_query_start() const {
-    return query_content_start_position_;
-}
-ParsingLocation::PositionType ParsingLocation::line_start() const {
-    return line_start_position_;
-}
+ParsingLocation::PositionType &ParsingLocation::cur() & { return current_position_; }
+const ParsingLocation::PositionType &ParsingLocation::cur() const & { return current_position_; }
+ParsingLocation::PositionType ParsingLocation::initial() const { return initial_position_; }
+ParsingLocation::PositionType ParsingLocation::token_start() const { return token_start_position_; }
+ParsingLocation::PositionType ParsingLocation::content_query_start() const { return query_content_start_position_; }
+ParsingLocation::PositionType ParsingLocation::line_start() const { return line_start_position_; }
 
-void ParsingLocation::reset_to_query_content_start() {
-    current_position_ = query_content_start_position_;
-}
-void ParsingLocation::on_content_query_start() {
-    query_content_start_position_ = current_position_;
-}
-void ParsingLocation::on_token_start() {
-    token_start_position_ = current_position_;
-}
-void ParsingLocation::on_line_start() {
-    line_start_position_ = current_position_;
-}
+void ParsingLocation::reset_to_query_content_start() { current_position_ = query_content_start_position_; }
+void ParsingLocation::on_content_query_start() { query_content_start_position_ = current_position_; }
+void ParsingLocation::on_token_start() { token_start_position_ = current_position_; }
+void ParsingLocation::on_line_start() { line_start_position_ = current_position_; }
 
-}
+} // namespace garlic::sql_parser

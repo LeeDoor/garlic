@@ -5,15 +5,15 @@
 namespace garlic {
 
 class UnaryLogicalCondition : public Condition {
-public:
-    UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
+  public:
+	UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op);
 
-    ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const override;
-    UsedTables get_used_tables() const override;
+	ExpectedCellBooleanValue resolve_bool(const TablesGathered &gatherers) const override;
+	UsedTables get_used_tables() const override;
 
-protected:
-    sptr<Condition> cond_;
-    UnaryLogicalOperator op_;
+  protected:
+	sptr<Condition> cond_;
+	UnaryLogicalOperator op_;
 };
 
-}
+} // namespace garlic

@@ -1,122 +1,115 @@
-#include "cell_value_gatherer_impl.hpp"
-#include "typed_table.hpp"
-#include "public_column_info.hpp"
-#include "cell_string_view_value.hpp"
+#include "cell_comparable.hpp"
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
-#include "cell_comparable.hpp"
+#include "cell_string_view_value.hpp"
+#include "cell_value_gatherer_impl.hpp"
+#include "public_column_info.hpp"
+#include "typed_table.hpp"
 
 namespace garlic {
 class CellValueGathererFixture : public ::testing::Test {
-protected:
+  protected:
+  public:
+	CellValueGathererFixture() : table_{initialize_table()} {}
 
+  protected:
+	sptr<TypedTable> initialize_table() {
+		auto table = std::make_shared<TypedTable>(std::initializer_list<PublicColumnInfo>{
+		    {String, "String field", 10}, {Float, "Float field", 0}, {Int, "Int field", 0}});
 
-public:
-    CellValueGathererFixture()
-        : table_{ initialize_table() }
-    {}
+		table->create_empty_row();
+		table->create_empty_row();
 
-protected:
-    sptr<TypedTable> initialize_table() {
-        auto table = std::make_shared<TypedTable>(
-            std::initializer_list<PublicColumnInfo>{
-            { String, "String field", 10 },
-            { Float,  "Float field",  0  },
-            { Int,    "Int field",    0  }
-        });
-        
-        table->create_empty_row();
-        table->create_empty_row();
+		table->set_value(0, 0, str_Aboba10_);
+		table->set_value(0, 1, 1.6f);
+		table->set_value(0, 2, 1);
 
-        table->set_value(0, 0, str_Aboba10_);
-        table->set_value(0, 1, 1.6f);
-        table->set_value(0, 2, 1);
+		table->set_value(1, 0, str_TEST2026_);
+		table->set_value(1, 1, 1e10f + 5);
+		table->set_value(1, 2, INT_MAX - 2024);
 
-        table->set_value(1, 0, str_TEST2026_);
-        table->set_value(1, 1, 1e10f + 5);
-        table->set_value(1, 2, INT_MAX - 2024);
+		return table;
+	}
 
-        return table;
-    }
-    
-#define STR(name) std::string str_##name##_ = #name; std::string_view str_##name = str_##name##_;
-    STR(Aboba10)
-    STR(TEST2026)
+#define STR(name)                                                                                                      \
+	std::string str_##name##_ = #name;                                                                                 \
+	std::string_view str_##name = str_##name##_;
+	STR(Aboba10)
+	STR(TEST2026)
 
-    sptr<TypedTable> table_;
+	sptr<TypedTable> table_;
 };
 
-
 TEST_F(CellValueGathererFixture, init) {
-    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
+	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 }
 
 TEST_F(CellValueGathererFixture, accessingData_0ByDefault) {
-    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
+	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 
-    sptr<CellValue> cellstr = tvg->get_table_value("String field");
-    sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
-    sptr<CellValue> cellint = tvg->get_table_value("Int field");
+	sptr<CellValue> cellstr = tvg->get_table_value("String field");
+	sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
+	sptr<CellValue> cellint = tvg->get_table_value("Int field");
 
-    auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
-    auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
-    auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
-    ASSERT_NE(cmp_str, nullptr);
-    ASSERT_NE(cmp_float, nullptr);
-    ASSERT_NE(cmp_int, nullptr);
+	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
+	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
+	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+	ASSERT_NE(cmp_str, nullptr);
+	ASSERT_NE(cmp_float, nullptr);
+	ASSERT_NE(cmp_int, nullptr);
 
-    EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_Aboba10)));
-    EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1.6f)));
-    EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(1)));
+	EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_Aboba10)));
+	EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1.6f)));
+	EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(1)));
 }
 
 TEST_F(CellValueGathererFixture, accessingData_rowSelect) {
-    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
-    EXPECT_FALSE(tvg->jump_to_next_row());
+	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
+	EXPECT_FALSE(tvg->jump_to_next_row());
 
-    sptr<CellValue> cellstr = tvg->get_table_value("String field");
-    sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
-    sptr<CellValue> cellint = tvg->get_table_value("Int field");
+	sptr<CellValue> cellstr = tvg->get_table_value("String field");
+	sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
+	sptr<CellValue> cellint = tvg->get_table_value("Int field");
 
-    auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
-    auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
-    auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
-    ASSERT_NE(cmp_str, nullptr);
-    ASSERT_NE(cmp_float, nullptr);
-    ASSERT_NE(cmp_int, nullptr);
+	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
+	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
+	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+	ASSERT_NE(cmp_str, nullptr);
+	ASSERT_NE(cmp_float, nullptr);
+	ASSERT_NE(cmp_int, nullptr);
 
-    EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_TEST2026)));
-    EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1e10f + 5)));
-    EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(INT_MAX - 2024)));
+	EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_TEST2026)));
+	EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1e10f + 5)));
+	EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(INT_MAX - 2024)));
 }
 
 TEST_F(CellValueGathererFixture, jumpToNextRow_afterLastRowShouldResetAndReturnFalse) {
-    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
-    EXPECT_FALSE(tvg->jump_to_next_row());
-    EXPECT_TRUE(tvg->jump_to_next_row());
+	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
+	EXPECT_FALSE(tvg->jump_to_next_row());
+	EXPECT_TRUE(tvg->jump_to_next_row());
 
-    sptr<CellValue> cellstr = tvg->get_table_value("String field");
-    sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
-    sptr<CellValue> cellint = tvg->get_table_value("Int field");
+	sptr<CellValue> cellstr = tvg->get_table_value("String field");
+	sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
+	sptr<CellValue> cellint = tvg->get_table_value("Int field");
 
-    auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
-    auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
-    auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
-    ASSERT_NE(cmp_str, nullptr);
-    ASSERT_NE(cmp_float, nullptr);
-    ASSERT_NE(cmp_int, nullptr);
+	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
+	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
+	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+	ASSERT_NE(cmp_str, nullptr);
+	ASSERT_NE(cmp_float, nullptr);
+	ASSERT_NE(cmp_int, nullptr);
 
-    EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_Aboba10)));
-    EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1.6f)));
-    EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(1)));
+	EXPECT_TRUE(cmp_str->equals(std::make_shared<CellStringViewValue>(str_Aboba10)));
+	EXPECT_TRUE(cmp_float->equals(std::make_shared<CellFloatValue>(1.6f)));
+	EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(1)));
 }
 
 TEST_F(CellValueGathererFixture, misspellColumnName_throwLogic) {
-    sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
+	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 
-    EXPECT_THROW(tvg->get_table_value("sTRING FIELD"), std::logic_error);
-    EXPECT_THROW(tvg->get_table_value("afaejpffield"), std::logic_error);
-    EXPECT_THROW(tvg->get_table_value("Int field@@@"), std::logic_error);
+	EXPECT_THROW(tvg->get_table_value("sTRING FIELD"), std::logic_error);
+	EXPECT_THROW(tvg->get_table_value("afaejpffield"), std::logic_error);
+	EXPECT_THROW(tvg->get_table_value("Int field@@@"), std::logic_error);
 }
 
-}
+} // namespace garlic

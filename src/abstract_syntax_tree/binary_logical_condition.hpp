@@ -5,16 +5,16 @@
 namespace garlic {
 
 class BinaryLogicalCondition : public Condition {
-public:
-    BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
+  public:
+	BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op);
 
-    ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const override;
-    UsedTables get_used_tables() const override;
+	ExpectedCellBooleanValue resolve_bool(const TablesGathered &gatherers) const override;
+	UsedTables get_used_tables() const override;
 
-protected:
-    sptr<Condition> lhs_;
-    sptr<Condition> rhs_;
-    BinaryLogicalOperator op_;
+  protected:
+	sptr<Condition> lhs_;
+	sptr<Condition> rhs_;
+	BinaryLogicalOperator op_;
 };
 
-}
+} // namespace garlic

@@ -1,40 +1,40 @@
 #include "binary_math_expression.hpp"
-#include "type_rules.hpp"
 #include "cell_accept_math_op.hpp"
+#include "type_rules.hpp"
 
 namespace garlic {
 
 BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression> rhs, BinaryMathOperator op)
-: Expression{ TypeRules::binary_math_comp(lhs->get_type(), rhs->get_type()) }
-, lhs_{ lhs }
-, rhs_{ rhs }
-, op_ { op }
-{}
+    : Expression{TypeRules::binary_math_comp(lhs->get_type(), rhs->get_type())}, lhs_{lhs}, rhs_{rhs}, op_{op} {}
 
-ExpectedCellValue BinaryMathExpression::resolve(const TablesGathered& gatherers) const {
-    const auto lvalue = lhs_->resolve(gatherers); if(!lvalue) return lvalue;
-    const auto rvalue = rhs_->resolve(gatherers); if(!rvalue) return rvalue;
-    sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);
-    sptr<CellAcceptMathOp> rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*rvalue);
-    if(!lhs || !rhs)
-	throw std::logic_error("Invalid math operation on operands not allowing such actions"); 
+ExpectedCellValue BinaryMathExpression::resolve(const TablesGathered &gatherers) const {
+	const auto lvalue = lhs_->resolve(gatherers);
+	if (!lvalue)
+		return lvalue;
+	const auto rvalue = rhs_->resolve(gatherers);
+	if (!rvalue)
+		return rvalue;
+	sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);
+	sptr<CellAcceptMathOp> rhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*rvalue);
+	if (!lhs || !rhs)
+		throw std::logic_error("Invalid math operation on operands not allowing such actions");
 
-    switch(op_) {
-    case Add:
-	return lhs->add(rhs);
-    case Sub:
-	return lhs->sub(rhs);
-    case Div:
-	return lhs->div(rhs);
-    case Mul:
-	return lhs->mul(rhs);	
-    case Remdiv:
-	return lhs->remdiv(rhs);
-    }
-    throw std::logic_error("Unary math operator not implemented in unary math expression");
+	switch (op_) {
+	case Add:
+		return lhs->add(rhs);
+	case Sub:
+		return lhs->sub(rhs);
+	case Div:
+		return lhs->div(rhs);
+	case Mul:
+		return lhs->mul(rhs);
+	case Remdiv:
+		return lhs->remdiv(rhs);
+	}
+	throw std::logic_error("Unary math operator not implemented in unary math expression");
 }
 BinaryMathExpression::UsedTables BinaryMathExpression::get_used_tables() const {
-    return get_used_tables_from(lhs_, rhs_);
+	return get_used_tables_from(lhs_, rhs_);
 }
 
-}
+} // namespace garlic

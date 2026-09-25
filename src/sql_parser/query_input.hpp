@@ -5,25 +5,25 @@ namespace garlic::sql_parser {
 
 /// Manages user's input and output. provides an interface to modify the buffer.
 class QueryInput {
-public:
-    QueryInput() : is_{ std::cin } {}
+  public:
+	QueryInput() : is_{std::cin} {}
 
-    /// Reads one line to buffer
-    void readline();
-    /// Shrinks passed amount of characters
-    void shrink_n_characters(size_t n);
+	/// Reads one line to buffer
+	void readline();
+	/// Shrinks passed amount of characters
+	void shrink_n_characters(size_t n);
 
-    StringViewType get_query() const;
-    bool is_more_context_available() const;
-    bool is_query_empty() const;
-    
-private:
-    void print_prompt() const;
+	StringViewType get_query() const;
+	bool is_more_context_available() const;
+	bool is_query_empty() const;
 
-    std::istream& is_;
-    bool more_ctx_available_ { true };
-    StringType query_ {};
-    StringType input_line_ {};
+  private:
+	void print_prompt() const;
+
+	std::istream &is_;
+	bool more_ctx_available_{true};
+	StringType query_{};
+	StringType input_line_{};
 };
 
-}
+} // namespace garlic::sql_parser

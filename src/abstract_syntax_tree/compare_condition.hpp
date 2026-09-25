@@ -1,21 +1,21 @@
 #pragma once
-#include "condition.hpp"
 #include "binary_operator.hpp"
+#include "condition.hpp"
 
 namespace garlic {
 class Expression;
 
 class CompareCondition : public Condition {
-public:
-    CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op);
+  public:
+	CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op);
 
-    ExpectedCellBooleanValue resolve_bool(const TablesGathered& gatherers) const override;
-    UsedTables get_used_tables() const override;
+	ExpectedCellBooleanValue resolve_bool(const TablesGathered &gatherers) const override;
+	UsedTables get_used_tables() const override;
 
-private:
-    sptr<Expression> lhs_;
-    sptr<Expression> rhs_;
-    BinaryOperator operator_;
+  private:
+	sptr<Expression> lhs_;
+	sptr<Expression> rhs_;
+	BinaryOperator operator_;
 };
 
-}
+} // namespace garlic

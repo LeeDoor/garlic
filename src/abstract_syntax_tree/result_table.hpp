@@ -6,4 +6,4 @@ namespace garlic {
 using ResultRow = std::vector<StringType>;
 using ResultTable = std::vector<ResultRow>;
 
-}
+} // namespace garlic

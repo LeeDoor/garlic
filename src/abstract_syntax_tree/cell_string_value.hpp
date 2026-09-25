@@ -4,17 +4,13 @@
 namespace garlic {
 
 class CellStringValue : public CellStringViewValue {
-public:
-    CellStringValue(StringType&& value)
-    : CellValue{ String }
-    , CellStringViewValue{ "" }
-    , stored_{ std::move(value) }
-    {
-	CellStringViewValue::value_ = stored_;
-    }
+  public:
+	CellStringValue(StringType &&value) : CellValue{String}, CellStringViewValue{""}, stored_{std::move(value)} {
+		CellStringViewValue::value_ = stored_;
+	}
 
-protected:
-    StringType stored_;
+  protected:
+	StringType stored_;
 };
 
-}
+} // namespace garlic

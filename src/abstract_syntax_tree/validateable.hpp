@@ -6,36 +6,34 @@ namespace garlic {
 using InvalidError = StringType;
 using ExpectedValid = ExpectedOrStr<void>;
 
-template<typename T>
+template <typename T>
 class CanBeValidated {
-public:
-    using Error = StringType;
-    using TypeOrError = ExpectedOrStr<T>;
+  public:
+	using Error = StringType;
+	using TypeOrError = ExpectedOrStr<T>;
 
-    CanBeValidated(TypeOrError toe)
-    : type_or_err_{ toe }
-    {}
+	CanBeValidated(TypeOrError toe) : type_or_err_{toe} {}
 
-    /// Checks if given node is valid and may be resolved without semantic errors.
-    /*! @returns nothing if OK or StringType with error message. */
-    ExpectedValid validate() const {
-	if(type_or_err_.has_value())
-	    return ExpectedValid{};
-	return std::unexpected(type_or_err_.error());
-    }
+	/// Checks if given node is valid and may be resolved without semantic errors.
+	/*! @returns nothing if OK or StringType with error message. */
+	ExpectedValid validate() const {
+		if (type_or_err_.has_value())
+			return ExpectedValid{};
+		return std::unexpected(type_or_err_.error());
+	}
 
-    /// Returns the type of underlying value or resulting type after some operation
-    /// made by this Expression.
-    /*! @returns @ref CellType if type is valid. 
-     *  @throws std::logic_error if type was not recognized. */
-    virtual T get_type() const { 
-	if(!type_or_err_.has_value()) // Throwing std::logic_error (not std::bad_expected_access)
-	    throw std::logic_error("Calling get_type of Validateable object which is invalid");
-	return type_or_err_.value();
-    }
+	/// Returns the type of underlying value or resulting type after some operation
+	/// made by this Expression.
+	/*! @returns @ref CellType if type is valid.
+	 *  @throws std::logic_error if type was not recognized. */
+	virtual T get_type() const {
+		if (!type_or_err_.has_value()) // Throwing std::logic_error (not std::bad_expected_access)
+			throw std::logic_error("Calling get_type of Validateable object which is invalid");
+		return type_or_err_.value();
+	}
 
-protected:
-    TypeOrError type_or_err_;
+  protected:
+	TypeOrError type_or_err_;
 };
 
-}
+} // namespace garlic

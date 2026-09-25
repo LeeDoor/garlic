@@ -5,15 +5,15 @@
 namespace garlic::sql_parser {
 
 class ReadySelectorGenerator : public SelectorGenerator {
-public:
-    ReadySelectorGenerator(Selector&& selector);
+  public:
+	ReadySelectorGenerator(Selector &&selector);
 
-    ExpectedOrStr<std::list<Selector>> generate(const Tables& ) override;
-    Expression::UsedTables get_used_tables() const override;
-    bool requires_from_clause() const override { return false; }
-    
-private:
-    Selector selector_;
+	ExpectedOrStr<std::list<Selector>> generate(const Tables &) override;
+	Expression::UsedTables get_used_tables() const override;
+	bool requires_from_clause() const override { return false; }
+
+  private:
+	Selector selector_;
 };
 
-}
+} // namespace garlic::sql_parser

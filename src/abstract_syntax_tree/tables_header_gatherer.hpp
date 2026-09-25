@@ -6,4 +6,4 @@ namespace garlic {
 using TablesHeaderGatherer = Database;
 static_assert(TablesHeaderGathererImpl<TablesHeaderGatherer>);
 
-}
+} // namespace garlic

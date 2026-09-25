@@ -3,37 +3,37 @@
 
 namespace garlic {
 
-class CellIntValue; 
-class CellFloatValue; 
+class CellIntValue;
+class CellFloatValue;
 class CellStringViewValue;
 class CellBooleanValue;
 
-template<IsAnyColumnType T>
+template <IsAnyColumnType T>
 struct get_cell_type;
 
-template<>
+template <>
 struct get_cell_type<StringViewType> {
-    using Type = CellStringViewValue;
+	using Type = CellStringViewValue;
 };
 
-template<>
+template <>
 struct get_cell_type<StringType> {
-    using Type = CellStringViewValue;
+	using Type = CellStringViewValue;
 };
 
-template<>
+template <>
 struct get_cell_type<FloatType> {
-    using Type = CellFloatValue;
+	using Type = CellFloatValue;
 };
 
-template<>
+template <>
 struct get_cell_type<IntType> {
-    using Type = CellIntValue;
+	using Type = CellIntValue;
 };
 
-template<>
+template <>
 struct get_cell_type<bool> {
-    using Type = CellBooleanValue;
+	using Type = CellBooleanValue;
 };
 
-}
+} // namespace garlic

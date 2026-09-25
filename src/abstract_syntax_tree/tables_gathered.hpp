@@ -7,4 +7,4 @@ class CellValueGatherer;
 
 using TablesGathered = std::map<TableNameType, sptr<CellValueGatherer>>;
 
-}
+} // namespace garlic

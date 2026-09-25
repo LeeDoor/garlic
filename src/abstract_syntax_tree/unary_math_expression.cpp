@@ -1,32 +1,29 @@
-#include "type_rules.hpp"
 #include "unary_math_expression.hpp"
 #include "cell_accept_math_op.hpp"
+#include "type_rules.hpp"
 
 namespace garlic {
 
 UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op)
-: Expression{ TypeRules::unary_math_comp(operand->get_type()) }
-, operand_{ operand }
-, op_{ op }
-{}
+    : Expression{TypeRules::unary_math_comp(operand->get_type())}, operand_{operand}, op_{op} {}
 
-ExpectedCellValue UnaryMathExpression::resolve(const TablesGathered& gatherers) const {
-    const auto value = operand_->resolve(gatherers); if(!value) return value;
-    sptr<CellAcceptMathOp> operand = std::dynamic_pointer_cast<CellAcceptMathOp>(*value);
-    if(!operand)
-	throw std::logic_error("Invalid math operation on operands not allowing such actions");
-    switch(op_) {
-    case Abs:
-	return operand->abs();
-    case Neg:
-	return operand->neg();
-      break;
-    }
-    throw std::logic_error("Unary math operator not implemented in unary math expression");
+ExpectedCellValue UnaryMathExpression::resolve(const TablesGathered &gatherers) const {
+	const auto value = operand_->resolve(gatherers);
+	if (!value)
+		return value;
+	sptr<CellAcceptMathOp> operand = std::dynamic_pointer_cast<CellAcceptMathOp>(*value);
+	if (!operand)
+		throw std::logic_error("Invalid math operation on operands not allowing such actions");
+	switch (op_) {
+	case Abs:
+		return operand->abs();
+	case Neg:
+		return operand->neg();
+		break;
+	}
+	throw std::logic_error("Unary math operator not implemented in unary math expression");
 }
 
-UnaryMathExpression::UsedTables UnaryMathExpression::get_used_tables() const {
-    return operand_->get_used_tables();
-}
+UnaryMathExpression::UsedTables UnaryMathExpression::get_used_tables() const { return operand_->get_used_tables(); }
 
-}
+} // namespace garlic

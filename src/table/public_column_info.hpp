@@ -4,9 +4,9 @@
 namespace garlic {
 
 struct PublicColumnInfo {
-    CellType type;
-    StringType name;
-    size_t size_characters;
+	CellType type;
+	StringType name;
+	size_t size_characters;
 };
 
-}
+} // namespace garlic

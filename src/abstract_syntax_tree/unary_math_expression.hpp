@@ -6,15 +6,15 @@ namespace garlic {
 enum UnaryMathOperator { Abs, Neg };
 
 class UnaryMathExpression : public Expression {
-public:
-    UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op);
+  public:
+	UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op);
 
-    ExpectedCellValue resolve(const TablesGathered& gatherers) const override;
-    UsedTables get_used_tables() const override;
+	ExpectedCellValue resolve(const TablesGathered &gatherers) const override;
+	UsedTables get_used_tables() const override;
 
-private:
-    sptr<Expression> operand_;
-    UnaryMathOperator op_;
+  private:
+	sptr<Expression> operand_;
+	UnaryMathOperator op_;
 };
 
-}
+} // namespace garlic

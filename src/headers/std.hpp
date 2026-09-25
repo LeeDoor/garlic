@@ -7,14 +7,14 @@ using Byte = unsigned char;
 using ByteVector = std::vector<Byte>;
 using ByteSpan = std::span<const Byte>;
 
-template<typename T, typename Deleter = std::default_delete<T>>
+template <typename T, typename Deleter = std::default_delete<T>>
 using uptr = std::unique_ptr<T, Deleter>;
 
-template<typename T>
+template <typename T>
 using sptr = std::shared_ptr<T>;
 
 using UnexpectedData = std::string;
-template<typename T>
+template <typename T>
 using ExpectedOrStr = std::expected<T, UnexpectedData>;
 
-}
+} // namespace garlic

@@ -7,10 +7,10 @@ namespace garlic {
 
 using TableHeader = std::vector<ColumnInfo>;
 
-template<typename T>
-concept TableColumnTypeGatherer = requires (const T& table_header_gatherer) {
-    { table_header_gatherer.get_column_type(ColumnNameType{}) } -> std::convertible_to<ExpectedColumnType>;
-    { table_header_gatherer.get_header() } -> std::convertible_to<TableHeader>;
+template <typename T>
+concept TableColumnTypeGatherer = requires(const T &table_header_gatherer) {
+	{ table_header_gatherer.get_column_type(ColumnNameType{}) } -> std::convertible_to<ExpectedColumnType>;
+	{ table_header_gatherer.get_header() } -> std::convertible_to<TableHeader>;
 };
 
-}
+} // namespace garlic

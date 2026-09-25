@@ -9,44 +9,32 @@ using ColumnNameType = StringType;
 using TableNameType = StringType;
 using IntType = int;
 using FloatType = float;
-template<typename T>
+template <typename T>
 using ArrayType = std::vector<T>;
 
-template<typename... Ts>
+template <typename... Ts>
 struct TypeList {};
 
-using ReadonlyColumnTypes = TypeList<
-    StringViewType,
-    IntType,
-    FloatType,
-    bool
->;
+using ReadonlyColumnTypes = TypeList<StringViewType, IntType, FloatType, bool>;
 
-using StoringColumnTypes = TypeList<
-    StringType,
-    IntType,
-    FloatType,
-    bool
->;
+using StoringColumnTypes = TypeList<StringType, IntType, FloatType, bool>;
 
-template<typename VerifiedType, typename TypeContainer>
+template <typename VerifiedType, typename TypeContainer>
 struct MatchesTypeArray;
 
-template<typename VerifiedType, typename... TypeContainer>
-struct MatchesTypeArray<VerifiedType, TypeList<TypeContainer...>> : 
-    std::bool_constant<(std::is_same_v<VerifiedType, TypeContainer> || ...)> {};
+template <typename VerifiedType, typename... TypeContainer>
+struct MatchesTypeArray<VerifiedType, TypeList<TypeContainer...>>
+    : std::bool_constant<(std::is_same_v<VerifiedType, TypeContainer> || ...)> {};
 
-template<typename T>
+template <typename T>
 concept IsStoringColumnType = MatchesTypeArray<T, garlic::StoringColumnTypes>::value;
 
-template<typename T>
+template <typename T>
 concept IsReadonlyColumnType = MatchesTypeArray<T, garlic::ReadonlyColumnTypes>::value;
 
-template<typename T>
+template <typename T>
 concept IsAnyColumnType = IsStoringColumnType<T> || IsReadonlyColumnType<T>;
 
-enum CellType {
-    String, Int, Float, Boolean, Error
-};
+enum CellType { String, Int, Float, Boolean, Error };
 
-}
+} // namespace garlic

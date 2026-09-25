@@ -4,8 +4,8 @@
 namespace garlic {
 
 struct TableColumnReference {
-    TableNameType table_name;
-    ColumnNameType column_name;
+	TableNameType table_name;
+	ColumnNameType column_name;
 };
 
-}
+} // namespace garlic

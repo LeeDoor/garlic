@@ -7,22 +7,19 @@
 namespace garlic::sql_parser {
 
 class SqlRepl {
-public:
-    SqlRepl(
-	ParserEngine debug_mode, 
-	QueryInput query_input, 
-	ErrorPrinter error_printer,
-	SqlAstExecutor ast_executor);
+  public:
+	SqlRepl(ParserEngine debug_mode, QueryInput query_input, ErrorPrinter error_printer, SqlAstExecutor ast_executor);
 
-    void run();
-private:
-    void print_error(const ParsingError& error) const;
-    void handle_results(const ParserEngine::Results& results) const;
+	void run();
 
-    ParserEngine parser_engine_;
-    QueryInput query_input_;
-    ErrorPrinter error_printer_;
-    SqlAstExecutor ast_executor_;
+  private:
+	void print_error(const ParsingError &error) const;
+	void handle_results(const ParserEngine::Results &results) const;
+
+	ParserEngine parser_engine_;
+	QueryInput query_input_;
+	ErrorPrinter error_printer_;
+	SqlAstExecutor ast_executor_;
 };
 
-}
+} // namespace garlic::sql_parser

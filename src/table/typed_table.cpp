@@ -2,58 +2,50 @@
 
 namespace garlic {
 
-TypedTable::TypedTable(std::initializer_list<PublicColumnInfo> container) 
-: TypedTable(container.begin(), container.end()) {}
+TypedTable::TypedTable(std::initializer_list<PublicColumnInfo> container)
+    : TypedTable(container.begin(), container.end()) {}
 
 CellType TypedTable::get_column_type(size_t column) const {
-    if(column >= header_.size())
-        throw std::logic_error("trying to get column type with invalid column");
-    return header_[column].type;
+	if (column >= header_.size())
+		throw std::logic_error("trying to get column type with invalid column");
+	return header_[column].type;
 }
-ExpectedColumnType TypedTable::get_column_type(const ColumnNameType& column) const {
-    auto column_number = get_column_number_by_name(column);
-    if(!column_number) 
-        return std::unexpected(column_number.error());
-    return get_column_type(*column_number);
+ExpectedColumnType TypedTable::get_column_type(const ColumnNameType &column) const {
+	auto column_number = get_column_number_by_name(column);
+	if (!column_number)
+		return std::unexpected(column_number.error());
+	return get_column_type(*column_number);
 }
-ExpectedOrStr<size_t> TypedTable::get_column_number_by_name(const std::string& column_name) const {
-    auto find_result =
-        std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) {
-            return ci.name == column_name;
-        });
-    if(find_result == header_.end()) 
-        return std::unexpected("no such column name: " + column_name);
-    return std::distance(header_.begin(), find_result);
+ExpectedOrStr<size_t> TypedTable::get_column_number_by_name(const std::string &column_name) const {
+	auto find_result =
+	    std::find_if(header_.begin(), header_.end(), [&](ColumnInfo ci) { return ci.name == column_name; });
+	if (find_result == header_.end())
+		return std::unexpected("no such column name: " + column_name);
+	return std::distance(header_.begin(), find_result);
 }
 
-bool TypedTable::is_row_index_overflow(size_t row_index) const {
-    return row_index >= content_.get_rows_amount();
-}
+bool TypedTable::is_row_index_overflow(size_t row_index) const { return row_index >= content_.get_rows_amount(); }
 
-std::vector<ColumnInfo> TypedTable::get_header() const {
-    return header_;
-}
+std::vector<ColumnInfo> TypedTable::get_header() const { return header_; }
 
-size_t TypedTable::create_empty_row() {
-    return content_.create_empty_row();
-}
+size_t TypedTable::create_empty_row() { return content_.create_empty_row(); }
 
 void TypedTable::set_value(size_t row, size_t column, const char value[]) {
-    return set_value(row, column, std::string(value));
+	return set_value(row, column, std::string(value));
 }
 
-void TypedTable::set_value(size_t row, size_t column, const StringType& value) {
-    if(column >= header_.size()) 
-        throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
-    if(header_[column].type != String) 
-        throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
-    if(header_[column].size_bytes < value.size())
-        throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
+void TypedTable::set_value(size_t row, size_t column, const StringType &value) {
+	if (column >= header_.size())
+		throw std::logic_error(ERROR_COLUMN_ID_TOO_BIG);
+	if (header_[column].type != String)
+		throw std::logic_error(ERROR_DATA_TYPE_MISMATCH);
+	if (header_[column].size_bytes < value.size())
+		throw std::logic_error(ERROR_DATA_SIZE_MISMATCH);
 
-    size_t row_offset = header_[column].offset;
-    auto string_byte_represent = reinterpret_cast<const Byte*>(value.data());
-    content_.set_value(row, row_offset, ByteSpan{ string_byte_represent, value.size() });
-    content_.clear_value(row, row_offset + value.size(), header_[column].size_bytes - value.size());
+	size_t row_offset = header_[column].offset;
+	auto string_byte_represent = reinterpret_cast<const Byte *>(value.data());
+	content_.set_value(row, row_offset, ByteSpan{string_byte_represent, value.size()});
+	content_.clear_value(row, row_offset + value.size(), header_[column].size_bytes - value.size());
 }
 
-}
+} // namespace garlic

@@ -2,35 +2,33 @@
 #include "parsing_session.hpp"
 
 namespace garlic::sql_parser {
-    class ParsingResult;
+class ParsingResult;
 
 class ParserEngine {
-public:
-    struct Results { 
-	ParsingSession::ParsingResults results;
-	size_t characters_parsed;
+  public:
+	struct Results {
+		ParsingSession::ParsingResults results;
+		size_t characters_parsed;
 
-	Results(ParsingSession::IntermediateResult&& inter)
-	: results{ std::move(inter.parsing_results) }
-	, characters_parsed{ inter.characters_parsed }
-	{}
-    };
-    explicit ParserEngine(const TablesHeaderGatherer& tables_header_gatherer, bool debug = false);
+		Results(ParsingSession::IntermediateResult &&inter)
+		    : results{std::move(inter.parsing_results)}, characters_parsed{inter.characters_parsed} {}
+	};
+	explicit ParserEngine(const TablesHeaderGatherer &tables_header_gatherer, bool debug = false);
 
-    /// Driver API
-    Results parse(StringViewType query_string);
+	/// Driver API
+	Results parse(StringViewType query_string);
 
-private:
-    using ContinuationState = ParsingSession::ContinuationState;
+  private:
+	using ContinuationState = ParsingSession::ContinuationState;
 
-    decltype(auto) create_parser(ParsingSession& session, StringViewType query_string);
+	decltype(auto) create_parser(ParsingSession &session, StringViewType query_string);
 
-    void scan_begin(StringViewType query_string);
-    void scan_end();
+	void scan_begin(StringViewType query_string);
+	void scan_end();
 
-    const TablesHeaderGatherer& tables_header_gatherer_;
-    bool debug_mode_;
-    std::optional<ContinuationState> continuation_state_ {std::nullopt};
+	const TablesHeaderGatherer &tables_header_gatherer_;
+	bool debug_mode_;
+	std::optional<ContinuationState> continuation_state_{std::nullopt};
 };
 
-}
+} // namespace garlic::sql_parser

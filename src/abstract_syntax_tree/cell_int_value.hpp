@@ -7,31 +7,31 @@ namespace garlic {
 class CellFloatValue;
 
 class CellIntValue : public CellComparable, public CellAcceptMathOp {
-public:
-    CellIntValue(IntType value);
+  public:
+	CellIntValue(IntType value);
 
-    explicit operator IntType() const;
-    IntType get_int() const;
-    FloatType get_float() const;
+	explicit operator IntType() const;
+	IntType get_int() const;
+	FloatType get_float() const;
 
-    void format(std::ostream& os) const override;
+	void format(std::ostream &os) const override;
 
-    bool equals(sptr<CellValue> other) const override;
-    bool le(sptr<CellValue> other) const override;
-    bool lt(sptr<CellValue> other) const override;
-    bool ge(sptr<CellValue> other) const override;
-    bool gt(sptr<CellValue> other) const override;
+	bool equals(sptr<CellValue> other) const override;
+	bool le(sptr<CellValue> other) const override;
+	bool lt(sptr<CellValue> other) const override;
+	bool ge(sptr<CellValue> other) const override;
+	bool gt(sptr<CellValue> other) const override;
 
-    ExpectedCellValue add(sptr<CellValue> other) const override;
-    ExpectedCellValue sub(sptr<CellValue> other) const override;
-    ExpectedCellValue mul(sptr<CellValue> other) const override;
-    ExpectedCellValue div(sptr<CellValue> other) const override;
-    ExpectedCellValue remdiv(sptr<CellValue> other) const override;
-    ExpectedCellValue abs() const override;
-    ExpectedCellValue neg() const override;
+	ExpectedCellValue add(sptr<CellValue> other) const override;
+	ExpectedCellValue sub(sptr<CellValue> other) const override;
+	ExpectedCellValue mul(sptr<CellValue> other) const override;
+	ExpectedCellValue div(sptr<CellValue> other) const override;
+	ExpectedCellValue remdiv(sptr<CellValue> other) const override;
+	ExpectedCellValue abs() const override;
+	ExpectedCellValue neg() const override;
 
-protected:
-    IntType value_;
+  protected:
+	IntType value_;
 };
 
-}
+} // namespace garlic

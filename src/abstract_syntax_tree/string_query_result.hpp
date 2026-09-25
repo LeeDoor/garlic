@@ -3,28 +3,27 @@
 
 namespace garlic {
 
-/// @ref QueryResult 's subclass defining query result containing 
+/// @ref QueryResult 's subclass defining query result containing
 /// one line of output. It also may be any number converted to string.
 class StringQueryResult : public QueryResult {
-public:
-    StringQueryResult() = default;
+  public:
+	StringQueryResult() = default;
 
-    template<IsAnyColumnType T>
-    StringQueryResult(const T& res)
-    : result_str_{ form_string(res) }
-    {}
+	template <IsAnyColumnType T>
+	StringQueryResult(const T &res) : result_str_{form_string(res)} {}
 
-    StringViewType format() const override;
+	StringViewType format() const override;
 
-private:
-    template<IsAnyColumnType T>
-    static std::string form_string(const T& res) {
-	if constexpr(std::is_same_v<T, StringType>)
-	    return res;
-	else return std::to_string(res);
-    }
+  private:
+	template <IsAnyColumnType T>
+	static std::string form_string(const T &res) {
+		if constexpr (std::is_same_v<T, StringType>)
+			return res;
+		else
+			return std::to_string(res);
+	}
 
-    std::string result_str_;
+	std::string result_str_;
 };
 
-}
+} // namespace garlic

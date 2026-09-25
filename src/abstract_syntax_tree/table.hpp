@@ -4,7 +4,7 @@
 namespace garlic {
 
 struct Table {
-    TableNameType table_name;
+	TableNameType table_name;
 };
 
-}
+} // namespace garlic

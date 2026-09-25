@@ -2,8 +2,6 @@
 
 namespace garlic {
 
-StringViewType StringQueryResult::format() const {
-    return result_str_;   
-}
+StringViewType StringQueryResult::format() const { return result_str_; }
 
-}
+} // namespace garlic

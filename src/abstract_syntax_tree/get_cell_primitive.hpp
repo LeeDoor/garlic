@@ -8,20 +8,20 @@ class CellIntValue;
 class CellFloatValue;
 class CellStringViewValue;
 
-template<typename T>
+template <typename T>
 struct get_cell_primitive;
 
-template<>
+template <>
 struct get_cell_primitive<CellIntValue> {
-    using Type = IntType;
+	using Type = IntType;
 };
-template<>
+template <>
 struct get_cell_primitive<CellFloatValue> {
-    using Type = FloatType;
+	using Type = FloatType;
 };
-template<>
+template <>
 struct get_cell_primitive<CellStringViewValue> {
-    using Type = StringViewType;
+	using Type = StringViewType;
 };
 
-}
+} // namespace garlic

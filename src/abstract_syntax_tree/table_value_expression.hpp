@@ -5,20 +5,19 @@
 namespace garlic {
 
 class TableValueExpression : public Expression {
-public:
-    template<TablesHeaderGathererImpl TablesGathererType>
-    TableValueExpression(const TablesGathererType& tables_gatherer, const TableNameType& table_name, const ColumnNameType& column_name)
-    : Expression{ tables_gatherer.get_tables_column_type(table_name, column_name) }
-    , table_name_{ table_name }
-    , column_name_{ column_name }
-    {}
+  public:
+	template <TablesHeaderGathererImpl TablesGathererType>
+	TableValueExpression(const TablesGathererType &tables_gatherer, const TableNameType &table_name,
+	                     const ColumnNameType &column_name)
+	    : Expression{tables_gatherer.get_tables_column_type(table_name, column_name)}, table_name_{table_name},
+	      column_name_{column_name} {}
 
-    ExpectedCellValue resolve(const TablesGathered& gatherers) const override;
-    UsedTables get_used_tables() const override;
+	ExpectedCellValue resolve(const TablesGathered &gatherers) const override;
+	UsedTables get_used_tables() const override;
 
-private:
-    TableNameType table_name_;
-    ColumnNameType column_name_;
+  private:
+	TableNameType table_name_;
+	ColumnNameType column_name_;
 };
 
-}
+} // namespace garlic

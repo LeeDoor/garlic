@@ -7,10 +7,10 @@ namespace garlic::sql_parser {
 
 /// Defines an error while parsing process.
 struct ParsingError {
-    bool more_context_required; 
-    ErrorStage stage; 
-    Position location;
-    StringType message;
+	bool more_context_required;
+	ErrorStage stage;
+	Position location;
+	StringType message;
 };
 
-}
+} // namespace garlic::sql_parser
