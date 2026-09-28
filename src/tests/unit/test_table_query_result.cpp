@@ -2,6 +2,9 @@
 #include "table_query_result.hpp"
 
 namespace garlic::tests {
+
+using namespace garlic::abstract_syntax_tree;
+
 namespace {
 
 struct CliZebraStyle {

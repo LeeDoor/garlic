@@ -3,7 +3,7 @@
 #include "cell_value_gatherer.hpp"
 #include "expression.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class CellBooleanValue;
 
@@ -26,4 +26,4 @@ class Condition : public Expression {
 	ExpectedCellValue resolve(const TablesGathered &gatherers) const override { return resolve_bool(gatherers); }
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

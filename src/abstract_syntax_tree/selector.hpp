@@ -3,7 +3,7 @@
 #include "expression.hpp"
 #include "type_rules.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 struct Selector {
 	ColumnNameType column_name;
@@ -19,4 +19,4 @@ struct Selector {
 	    : column_name{column_name}, ast{std::move(expression)} {}
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

@@ -2,7 +2,7 @@
 #include "expression.hpp"
 #include "tables_header_gatherer_impl.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class TableValueExpression : public Expression {
   public:
@@ -20,4 +20,4 @@ class TableValueExpression : public Expression {
 	ColumnNameType column_name_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

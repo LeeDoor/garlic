@@ -1,7 +1,7 @@
 #pragma once
 #include "query_result.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 /// @ref QueryResult 's subclass defining query result containing
 /// one line of output. It also may be any number converted to string.
@@ -26,4 +26,4 @@ class StringQueryResult : public QueryResult {
 	std::string result_str_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

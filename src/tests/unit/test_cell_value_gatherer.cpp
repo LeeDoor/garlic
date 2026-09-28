@@ -7,6 +7,9 @@
 #include "typed_table.hpp"
 
 namespace garlic::tests {
+
+using namespace garlic::abstract_syntax_tree;
+
 class CellValueGathererFixture : public ::testing::Test {
   protected:
   public:

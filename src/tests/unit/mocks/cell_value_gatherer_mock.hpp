@@ -3,6 +3,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 class CellValueGathererMock : public CellValueGatherer {
   public:
 	MOCK_METHOD(bool, is_table_empty, (), (const, override));

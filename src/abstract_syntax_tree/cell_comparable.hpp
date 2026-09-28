@@ -1,7 +1,7 @@
 #pragma once
 #include "cell_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 /// @ref CellValue subclass defining comparable objects.
 class CellComparable : virtual public CellValue {
@@ -39,4 +39,4 @@ class CellComparable : virtual public CellValue {
 	virtual bool gt(sptr<CellValue> other) const = 0;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

@@ -2,7 +2,7 @@
 #include "condition.hpp"
 #include "logical_operator.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class UnaryLogicalCondition : public Condition {
   public:
@@ -16,4 +16,4 @@ class UnaryLogicalCondition : public Condition {
 	UnaryLogicalOperator op_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

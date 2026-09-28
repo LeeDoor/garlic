@@ -1,6 +1,6 @@
 #include "cell_string_view_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 CellStringViewValue::CellStringViewValue(StringViewType value) : CellValue(String), value_{value} {}
 
@@ -31,4 +31,4 @@ int CellStringViewValue::get_cmp(sptr<CellValue> other) const {
 	return 1;
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

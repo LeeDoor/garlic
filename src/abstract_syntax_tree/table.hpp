@@ -1,10 +1,10 @@
 #pragma once
 
 #include "cell_type.hpp"
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 struct Table {
 	TableNameType table_name;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

@@ -3,6 +3,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 TEST(test_cell_boolean_value, initializationAndAccessors) {
 	CellBooleanValue t(true);
 	CellBooleanValue f(false);

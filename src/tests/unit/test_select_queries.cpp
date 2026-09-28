@@ -8,6 +8,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 class ThrowingCondition : public Condition {
   public:
 	ThrowingCondition() : Condition{Boolean} {}

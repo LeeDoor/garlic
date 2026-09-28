@@ -1,7 +1,7 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class CellIntValue;
 class CellFloatValue;
@@ -36,4 +36,4 @@ struct get_cell_type<bool> {
 	using Type = CellBooleanValue;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

@@ -4,6 +4,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 static sptr<CellValue> unwrap_value(ExpectedCellValue value) {
 	EXPECT_TRUE(value.has_value()) << value.error();
 	return value ? *value : nullptr;

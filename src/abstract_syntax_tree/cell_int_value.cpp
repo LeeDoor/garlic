@@ -1,7 +1,7 @@
 #include "cell_int_value.hpp"
 #include "cell_float_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 CellIntValue::CellIntValue(IntType value) : CellValue{Int}, value_{value} {}
 
@@ -93,4 +93,4 @@ ExpectedCellValue CellIntValue::neg() const {
 
 void CellIntValue::format(std::ostream &os) const { os << value_; }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

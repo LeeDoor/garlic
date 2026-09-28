@@ -2,7 +2,7 @@
 #include "binary_operator.hpp"
 #include "condition.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 class Expression;
 
 class CompareCondition : public Condition {
@@ -18,4 +18,4 @@ class CompareCondition : public Condition {
 	BinaryOperator operator_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

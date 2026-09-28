@@ -5,7 +5,7 @@
 #include "selector_generator.hpp"
 #include "table.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class SelectQuery : public Query {
   public:
@@ -42,4 +42,4 @@ class SelectQuery : public Query {
 	SelectorGenerators selector_generators_{};
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

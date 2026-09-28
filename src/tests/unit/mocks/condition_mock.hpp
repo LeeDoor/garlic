@@ -4,6 +4,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 class ConditionMock : public Condition {
   public:
 	ConditionMock(bool val, UsedTables used_tables = {}) : Condition{Boolean}, used_tables_{std::move(used_tables)} {

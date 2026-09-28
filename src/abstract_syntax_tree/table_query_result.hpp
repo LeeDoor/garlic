@@ -2,7 +2,7 @@
 #include "query_result.hpp"
 #include "result_table.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class TableQueryResult : public QueryResult {
   public:
@@ -52,4 +52,4 @@ class TableQueryResultGenerator {
 	std::stringstream out_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

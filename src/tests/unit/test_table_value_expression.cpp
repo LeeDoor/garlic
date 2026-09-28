@@ -5,6 +5,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 class TestValueExpressionFixture : public ::testing::Test {
   public:
 	TestValueExpressionFixture()

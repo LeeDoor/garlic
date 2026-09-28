@@ -3,7 +3,7 @@
 #include "tables_gathered.hpp"
 #include "validateable.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 /// Base class for all expressions in queries.
 /*! Expression is an entity that can be resolved as number, string or other primitive. */
@@ -32,4 +32,4 @@ class Expression : public CanBeValidated<CellType> {
 	static UsedTables get_used_tables_from(sptr<Expression> expr) { return expr->get_used_tables(); }
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

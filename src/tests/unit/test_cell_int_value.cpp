@@ -3,6 +3,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 TEST(test_cell_int_value, initialization) {
 	sptr<CellComparable> a5 = std::make_shared<CellIntValue>(5);
 	sptr<CellComparable> b5 = std::make_shared<CellIntValue>(5);

@@ -1,8 +1,8 @@
 #pragma once
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 enum BinaryLogicalOperator { And, Or, Xor, Iff, Implication };
 enum UnaryLogicalOperator { IsTrue, IsFalse };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

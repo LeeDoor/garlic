@@ -2,6 +2,8 @@
 #include "cell_type.hpp"
 
 namespace garlic::tests {
+
+using namespace garlic::abstract_syntax_tree;
 using namespace std::literals;
 
 auto str_hello = "Hello"sv;

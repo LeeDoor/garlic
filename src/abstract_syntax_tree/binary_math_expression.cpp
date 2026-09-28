@@ -2,7 +2,7 @@
 #include "cell_accept_math_op.hpp"
 #include "type_rules.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression> rhs, BinaryMathOperator op)
     : Expression{TypeRules::binary_math_comp(lhs->get_type(), rhs->get_type())}, lhs_{lhs}, rhs_{rhs}, op_{op} {}
@@ -37,4 +37,4 @@ BinaryMathExpression::UsedTables BinaryMathExpression::get_used_tables() const {
 	return get_used_tables_from(lhs_, rhs_);
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

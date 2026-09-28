@@ -4,7 +4,7 @@
 #include "expression.hpp"
 #include "type_rules.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 CompareCondition::CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op)
     : Condition{TypeRules::comparison_comp(lhs->get_type(), rhs->get_type())}, lhs_{std::move(lhs)},
@@ -47,4 +47,4 @@ CompareCondition::ExpectedCellBooleanValue CompareCondition::resolve_bool(const 
 }
 CompareCondition::UsedTables CompareCondition::get_used_tables() const { return get_used_tables_from(lhs_, rhs_); }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

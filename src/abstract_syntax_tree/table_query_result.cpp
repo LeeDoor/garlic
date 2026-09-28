@@ -1,7 +1,7 @@
 #include "table_query_result.hpp"
 #include "manual_io.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 TableQueryResult::TableQueryResult(ResultTable &&table)
     : table_result_{TableQueryResultGenerator::form_table_result(std::move(table))} {}
@@ -151,4 +151,4 @@ void TableQueryResultGenerator::print_cell_subline(const StringViewType &cell_st
 	     << (is_last_subline ? SPACE : ETC);
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

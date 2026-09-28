@@ -1,9 +1,8 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
-class CellValue;
 class CellIntValue;
 class CellFloatValue;
 class CellStringViewValue;
@@ -24,4 +23,4 @@ struct get_cell_primitive<CellStringViewValue> {
 	using Type = StringViewType;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

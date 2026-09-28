@@ -17,7 +17,7 @@ void ErrorPrinter::print_error(const ParsingError &error) const {
 	print_error_code(error.stage);
 	os_ << "at [" << error.location << "] " << error.message << std::endl << std::endl;
 }
-void ErrorPrinter::print_error(const RuntimeError &error) const {
+void ErrorPrinter::print_error(const garlic::abstract_syntax_tree::RuntimeError &error) const {
 	print_error_code(Runtime);
 	os_ << error << std::endl << std::endl;
 }

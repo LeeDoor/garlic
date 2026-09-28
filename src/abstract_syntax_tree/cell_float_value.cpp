@@ -1,7 +1,7 @@
 #include "cell_float_value.hpp"
 #include "cell_int_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 CellFloatValue::CellFloatValue(FloatType value) : CellValue{Float}, value_{value} {}
 
 CellFloatValue::operator FloatType() const { return value_; }
@@ -58,4 +58,4 @@ bool CellFloatValue::fl_equals(sptr<CellValue> other) const {
 	return std::abs(get_float() - number_to_float(other)) < e;
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

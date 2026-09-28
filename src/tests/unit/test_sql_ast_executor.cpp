@@ -5,6 +5,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 class ThrowingExpressionForExecutorTest : public Expression {
   public:
 	ThrowingExpressionForExecutorTest() : Expression{Int} {}

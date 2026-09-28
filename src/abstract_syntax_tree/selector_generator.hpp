@@ -2,7 +2,7 @@
 #include "expression.hpp"
 #include "table.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class Selector;
 
@@ -17,4 +17,4 @@ class SelectorGenerator {
 	virtual bool requires_from_clause() const = 0;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

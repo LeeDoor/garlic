@@ -1,10 +1,10 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class CellValueGatherer;
 
 using TablesGathered = std::map<TableNameType, sptr<CellValueGatherer>>;
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

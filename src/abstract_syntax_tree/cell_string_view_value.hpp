@@ -2,7 +2,7 @@
 #include "cell_comparable.hpp"
 #include "cell_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class CellStringViewValue : public CellComparable {
   public:
@@ -26,4 +26,4 @@ class CellStringViewValue : public CellComparable {
 	StringViewType value_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

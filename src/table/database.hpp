@@ -43,7 +43,7 @@ class DatabaseImpl {
 		auto table = self.get_table_by_name(table_name);
 		if (!table)
 			return std::unexpected(table.error());
-		return std::make_shared<CellValueGathererImpl>(*table);
+		return std::make_shared<abstract_syntax_tree::CellValueGathererImpl>(*table);
 	}
 	ExpectedOrStr<sptr<TableGathererT>> get_table_by_name(const TableNameType &table_name) const {
 		if (!tables_.contains(table_name))

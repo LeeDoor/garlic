@@ -4,16 +4,17 @@
 
 namespace garlic::sql_parser {
 
-class EverythingSelectorGenerator : public SelectorGenerator {
+class EverythingSelectorGenerator : public garlic::abstract_syntax_tree::SelectorGenerator {
   public:
-	EverythingSelectorGenerator(const TablesHeaderGatherer &header_gatherer);
+	EverythingSelectorGenerator(const garlic::abstract_syntax_tree::TablesHeaderGatherer &header_gatherer);
 
-	ExpectedOrStr<std::list<Selector>> generate(const Tables &tables) override;
-	Expression::UsedTables get_used_tables() const override;
+	ExpectedOrStr<std::list<garlic::abstract_syntax_tree::Selector>>
+	generate(const garlic::abstract_syntax_tree::SelectorGenerator::Tables &tables) override;
+	garlic::abstract_syntax_tree::Expression::UsedTables get_used_tables() const override;
 	bool requires_from_clause() const override { return true; }
 
   private:
-	const TablesHeaderGatherer &header_gatherer_;
+	const garlic::abstract_syntax_tree::TablesHeaderGatherer &header_gatherer_;
 };
 
 } // namespace garlic::sql_parser

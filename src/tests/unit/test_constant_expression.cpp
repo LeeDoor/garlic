@@ -2,6 +2,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 static const TablesGathered gatherers{};
 
 static sptr<CellComparable> as_comparable(ExpectedCellValue result) {

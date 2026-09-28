@@ -6,6 +6,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::abstract_syntax_tree;
+
 static const TablesGathered gatherers{};
 
 static sptr<CellValue> unwrap_value(ExpectedCellValue result) {

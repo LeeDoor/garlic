@@ -2,6 +2,7 @@
 #include "parsing_session.hpp"
 
 namespace garlic::sql_parser {
+
 class ParsingResult;
 
 class ParserEngine {
@@ -13,7 +14,8 @@ class ParserEngine {
 		Results(ParsingSession::IntermediateResult &&inter)
 		    : results{std::move(inter.parsing_results)}, characters_parsed{inter.characters_parsed} {}
 	};
-	explicit ParserEngine(const TablesHeaderGatherer &tables_header_gatherer, bool debug = false);
+	explicit ParserEngine(const garlic::abstract_syntax_tree::TablesHeaderGatherer &tables_header_gatherer,
+	                      bool debug = false);
 
 	/// Driver API
 	Results parse(StringViewType query_string);
@@ -26,7 +28,7 @@ class ParserEngine {
 	void scan_begin(StringViewType query_string);
 	void scan_end();
 
-	const TablesHeaderGatherer &tables_header_gatherer_;
+	const garlic::abstract_syntax_tree::TablesHeaderGatherer &tables_header_gatherer_;
 	bool debug_mode_;
 	std::optional<ContinuationState> continuation_state_{std::nullopt};
 };

@@ -30,7 +30,7 @@ void ParsingSession::invoke_error(ErrorStage stage, const std::string &msg) {
 	                                                      .location = error_relative_location,
 	                                                      .message = msg}});
 }
-void ParsingSession::query_parsed(uptr<Query> query) {
+void ParsingSession::query_parsed(uptr<garlic::abstract_syntax_tree::Query> query) {
 	parsing_results_.push_back({std::move(query)});
 	finished_previous_query();
 }
@@ -83,6 +83,8 @@ void ParsingSession::met_eof() { more_context_required_ = true; }
 
 Position ParsingSession::current_position() const { return location_.cur(); }
 
-const TablesHeaderGatherer &ParsingSession::get_database() const & { return tables_header_gatherer_; }
+const garlic::abstract_syntax_tree::TablesHeaderGatherer &ParsingSession::get_database() const & {
+	return tables_header_gatherer_;
+}
 
 } // namespace garlic::sql_parser
