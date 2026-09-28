@@ -4,6 +4,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::table;
+
 using namespace garlic::abstract_syntax_tree;
 
 static sptr<CellValue> unwrap_value(ExpectedCellValue value) {

@@ -3,6 +3,8 @@
 
 namespace garlic::sql_parser {
 
+using namespace garlic::table;
+
 /// Manages user's input and output. provides an interface to modify the buffer.
 class QueryInput {
   public:

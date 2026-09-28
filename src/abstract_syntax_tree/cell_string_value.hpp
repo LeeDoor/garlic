@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 class CellStringValue : public CellStringViewValue {
   public:
 	CellStringValue(StringType &&value) : CellValue{String}, CellStringViewValue{""}, stored_{std::move(value)} {

@@ -2,6 +2,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 CellBooleanValue::CellBooleanValue(bool bool_value) : CellValue{Boolean}, value_{bool_value} {}
 
 void CellBooleanValue::format(std::ostream &os) const { os << std::boolalpha << value_; }

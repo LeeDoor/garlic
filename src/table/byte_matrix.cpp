@@ -1,6 +1,6 @@
 #include "byte_matrix.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 ByteMatrix::ByteMatrix(size_t row_size_bytes) : row_size_bytes_{row_size_bytes}, content_{} {}
 
@@ -48,4 +48,4 @@ ByteSpan ByteMatrix::get_value(size_t row_id, size_t offset, size_t count) const
 
 size_t ByteMatrix::get_rows_amount() const { return content_.size(); }
 
-} // namespace garlic
+} // namespace garlic::table

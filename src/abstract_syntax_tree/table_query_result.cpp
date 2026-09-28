@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 TableQueryResult::TableQueryResult(ResultTable &&table)
     : table_result_{TableQueryResultGenerator::form_table_result(std::move(table))} {}
 

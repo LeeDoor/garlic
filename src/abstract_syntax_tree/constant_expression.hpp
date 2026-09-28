@@ -10,6 +10,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 template <IsStoringColumnType ValueType>
 class ConstantExpression : public Expression {
   public:

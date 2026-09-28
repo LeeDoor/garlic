@@ -6,7 +6,7 @@
 #include "table_value_gatherer.hpp"
 #include "type_rules.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 static std::string ERROR_COLUMN_ID_TOO_BIG = "incoming column id is more than columns amount";
 static std::string ERROR_DATA_TYPE_MISMATCH = "trying to read/write wrong type of data";
@@ -166,7 +166,7 @@ class TypedTable {
 	static size_t calculate_row_bytes(Iter begin, Iter end) {
 		auto row_size = std::accumulate(begin, end, 0, [](size_t lhs, const PublicColumnInfo &rhs) {
 			size_t column_size = rhs.type == String ? rhs.size_characters * sizeof(CharType)
-			                                        : abstract_syntax_tree::TypeRules::get_type_size(rhs.type);
+			                                        : garlic::abstract_syntax_tree::TypeRules::get_type_size(rhs.type);
 			return lhs + column_size;
 		});
 		if (row_size == 0)
@@ -183,7 +183,7 @@ class TypedTable {
 		std::unordered_set<std::string> taken_col_names;
 		std::for_each(begin, end, [&](auto &column) {
 			size_t column_size = column.type == String ? column.size_characters * sizeof(CharType)
-			                                           : abstract_syntax_tree::TypeRules::get_type_size(column.type);
+			                                           : garlic::abstract_syntax_tree::TypeRules::get_type_size(column.type);
 			if (taken_col_names.contains(column.name))
 				throw std::logic_error("Cannot have two columns with same names");
 			taken_col_names.insert(column.name);
@@ -211,4 +211,4 @@ class TypedTable {
 static_assert(TableColumnTypeGatherer<TypedTable>);
 static_assert(TableValueGatherer<TypedTable>);
 
-} // namespace garlic
+} // namespace garlic::table

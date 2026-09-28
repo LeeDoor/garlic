@@ -2,6 +2,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 CellStringViewValue::CellStringViewValue(StringViewType value) : CellValue(String), value_{value} {}
 
 CellStringViewValue::operator StringViewType() const { return value_; }

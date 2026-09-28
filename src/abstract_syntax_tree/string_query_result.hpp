@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 /// @ref QueryResult 's subclass defining query result containing
 /// one line of output. It also may be any number converted to string.
 class StringQueryResult : public QueryResult {

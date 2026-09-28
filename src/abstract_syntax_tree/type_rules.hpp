@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 /// Static class to determine the rules of operations.
 class TypeRules {
   public:

@@ -6,7 +6,9 @@
 
 namespace garlic::abstract_syntax_tree {
 
-CellValueGathererImpl::CellValueGathererImpl(sptr<garlic::TypedTable> table) : table_{table}, row_number_{0} {}
+using namespace garlic::table;
+
+CellValueGathererImpl::CellValueGathererImpl(sptr<garlic::table::TypedTable> table) : table_{table}, row_number_{0} {}
 
 bool CellValueGathererImpl::is_table_empty() const { return table_->is_row_index_overflow(0); }
 

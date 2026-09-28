@@ -4,6 +4,8 @@ bool operator==(const garlic::ByteSpan &lhs, const garlic::ByteVector &rhs) { re
 
 namespace garlic::tests {
 
+using namespace garlic::table;
+
 TEST(test_byte_matrix, empty_initialization) {
 	ByteMatrix tc(0);
 

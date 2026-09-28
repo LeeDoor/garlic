@@ -5,6 +5,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 /// Base class for all expressions in queries.
 /*! Expression is an entity that can be resolved as number, string or other primitive. */
 class Expression : public CanBeValidated<CellType> {

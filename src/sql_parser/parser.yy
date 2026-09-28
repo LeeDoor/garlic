@@ -24,6 +24,7 @@
 
     namespace garlic::sql_parser { class ParsingSession; }
     using namespace garlic;
+    using namespace garlic::table;
     using namespace garlic::abstract_syntax_tree;
     using namespace garlic::sql_parser;
 }

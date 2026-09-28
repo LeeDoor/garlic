@@ -4,6 +4,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::table;
+
 using namespace garlic::sql_parser;
 
 static std::string extract_string_token_value(yy::parser::symbol_type &symbol) {

@@ -3,7 +3,7 @@
 #include "get_cell_primitive.hpp"
 #include "get_cell_type.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function which does not match this data type.";
 
@@ -64,4 +64,4 @@ class CellValue {
 	CellType cell_type_;
 };
 
-} // namespace garlic
+} // namespace garlic::table

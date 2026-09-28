@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 CellIntValue::CellIntValue(IntType value) : CellValue{Int}, value_{value} {}
 
 CellIntValue::operator IntType() const { return value_; }

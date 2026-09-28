@@ -2,6 +2,8 @@
 #include "cell_int_value.hpp"
 
 namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 CellFloatValue::CellFloatValue(FloatType value) : CellValue{Float}, value_{value} {}
 
 CellFloatValue::operator FloatType() const { return value_; }

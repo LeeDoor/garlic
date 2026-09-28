@@ -3,6 +3,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::table;
+
 class TablesGathererMock {
   public:
 	explicit TablesGathererMock(ExpectedColumnType type_or_error) : type_or_error_{std::move(type_or_error)} {}

@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 /// @ref CellValue subclass defining comparable objects.
 class CellComparable : virtual public CellValue {
   public:

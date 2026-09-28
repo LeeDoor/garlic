@@ -3,7 +3,7 @@
 #include "expected_column_type.hpp"
 #include "table_column_type_gatherer.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 template <typename T>
 concept TablesHeaderGathererImpl = requires(const T &tables_gatherer) {
@@ -13,4 +13,4 @@ concept TablesHeaderGathererImpl = requires(const T &tables_gatherer) {
 	{ tables_gatherer.get_tables_header(TableNameType{}) } -> std::convertible_to<ExpectedOrStr<TableHeader>>;
 };
 
-} // namespace garlic
+} // namespace garlic::table

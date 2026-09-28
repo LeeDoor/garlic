@@ -5,6 +5,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 struct Selector {
 	ColumnNameType column_name;
 	sptr<Expression> ast;

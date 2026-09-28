@@ -12,6 +12,8 @@ YY_DECL;
 
 namespace garlic::sql_parser {
 
+using namespace garlic::table;
+
 class ParserEngine;
 
 /// Handles each parse() call.

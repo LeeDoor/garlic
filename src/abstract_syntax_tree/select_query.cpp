@@ -4,6 +4,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 SelectQuery::SelectQuery() : SelectQuery{{}, {}} {}
 SelectQuery::SelectQuery(SelectorGenerators selector_gens) : SelectQuery{std::move(selector_gens), {}} {}
 SelectQuery::SelectQuery(SelectorGenerators selector_gens, Tables tables)

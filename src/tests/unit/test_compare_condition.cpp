@@ -9,6 +9,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::table;
+
 using namespace garlic::abstract_syntax_tree;
 
 static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {

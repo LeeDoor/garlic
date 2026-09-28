@@ -1,6 +1,6 @@
 #pragma once
 
-namespace garlic {
+namespace garlic::table {
 
 using CharType = char;
 using StringType = std::basic_string<CharType>;
@@ -27,14 +27,14 @@ struct MatchesTypeArray<VerifiedType, TypeList<TypeContainer...>>
     : std::bool_constant<(std::is_same_v<VerifiedType, TypeContainer> || ...)> {};
 
 template <typename T>
-concept IsStoringColumnType = MatchesTypeArray<T, garlic::StoringColumnTypes>::value;
+concept IsStoringColumnType = MatchesTypeArray<T, StoringColumnTypes>::value;
 
 template <typename T>
-concept IsReadonlyColumnType = MatchesTypeArray<T, garlic::ReadonlyColumnTypes>::value;
+concept IsReadonlyColumnType = MatchesTypeArray<T, ReadonlyColumnTypes>::value;
 
 template <typename T>
 concept IsAnyColumnType = IsStoringColumnType<T> || IsReadonlyColumnType<T>;
 
 enum CellType { String, Int, Float, Boolean, Error };
 
-} // namespace garlic
+} // namespace garlic::table

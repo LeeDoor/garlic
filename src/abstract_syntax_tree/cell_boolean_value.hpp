@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 class CellBooleanValue : public CellValue {
   public:
 	CellBooleanValue(bool bool_value);

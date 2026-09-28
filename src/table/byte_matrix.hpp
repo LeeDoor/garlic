@@ -1,6 +1,6 @@
 #pragma once
 
-namespace garlic {
+namespace garlic::table {
 
 /*!
  * @brief Byte-based table.
@@ -50,4 +50,4 @@ class ByteMatrix {
 	std::vector<ByteVector> content_;
 };
 
-} // namespace garlic
+} // namespace garlic::table

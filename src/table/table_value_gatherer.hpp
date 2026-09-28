@@ -1,7 +1,7 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 namespace details {
 
@@ -29,4 +29,4 @@ struct TableValueGathererAll<TableValueGathererT, TypeList<ResultingColumnTypesT
 template <typename TableValueGathererT>
 concept TableValueGatherer = details::TableValueGathererAll<TableValueGathererT, ReadonlyColumnTypes>::value;
 
-} // namespace garlic
+} // namespace garlic::table

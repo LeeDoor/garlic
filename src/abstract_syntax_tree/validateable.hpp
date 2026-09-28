@@ -3,6 +3,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 using InvalidError = StringType;
 using ExpectedValid = ExpectedOrStr<void>;
 

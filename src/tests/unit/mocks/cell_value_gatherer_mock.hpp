@@ -3,6 +3,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::table;
+
 using namespace garlic::abstract_syntax_tree;
 
 class CellValueGathererMock : public CellValueGatherer {

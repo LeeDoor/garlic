@@ -2,6 +2,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 void TypeRules::as_str(std::ostream &os, CellType ct) {
 	std::unordered_map<CellType, StringType> map{
 	    {String, "String"}, {Int, "Int"}, {Float, "Float"}, {Boolean, "Boolean"}};

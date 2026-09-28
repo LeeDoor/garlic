@@ -5,6 +5,8 @@
 
 namespace garlic::sql_parser {
 
+using namespace garlic::table;
+
 /// Defines an error while parsing process.
 struct ParsingError {
 	bool more_context_required;

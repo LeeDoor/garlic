@@ -2,6 +2,8 @@
 
 namespace garlic::tests {
 
+using namespace garlic::table;
+
 template <typename T>
 static T unwrap_expected(const ExpectedOrStr<T> &result) {
 	EXPECT_TRUE(result.has_value()) << result.error();

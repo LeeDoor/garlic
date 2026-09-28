@@ -4,6 +4,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 class TableQueryResult : public QueryResult {
   public:
 	TableQueryResult(ResultTable &&table);

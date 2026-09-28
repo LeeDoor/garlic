@@ -7,6 +7,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 class SelectQuery : public Query {
   public:
 	// #TODO rename: remove Container suffix and Selectors -> Selectors

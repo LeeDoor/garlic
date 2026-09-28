@@ -4,6 +4,8 @@
 
 namespace garlic::abstract_syntax_tree {
 
+using namespace garlic::table;
+
 /// @ref CellValue subclass defining numbers or other entities
 /// that accept math operations.
 class CellAcceptMathOp : virtual public CellValue {

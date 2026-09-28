@@ -1,6 +1,8 @@
 #include "manual_io.hpp"
 #include "sql_repl.hpp"
 
+using namespace garlic::table;
+
 void handle_args(int argc, char **argv, bool &debug_mode) {
 	for (int i = 1; i < argc; ++i) {
 		char *arg = argv[i];

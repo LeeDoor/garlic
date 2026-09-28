@@ -3,6 +3,8 @@
 #include "cell_comparable.hpp"
 
 namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 class CellIntValue;
 class CellFloatValue : public CellComparable, public CellAcceptMathOp {
   public:
