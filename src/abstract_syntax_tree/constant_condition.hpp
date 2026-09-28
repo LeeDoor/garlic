@@ -1,6 +1,6 @@
 #pragma once
-#include "type_rules.hpp"
 #include "condition.hpp"
+#include "type_rules.hpp"
 
 namespace garlic {
 

@@ -107,7 +107,8 @@ void TableQueryResultGenerator::print_row(size_t row_id, bool highlight_row) {
 		if (heights_.empty()) {
 			print_row_subline(newline_pos, row_id);
 		} else {
-			highlight(highlight_row ? accent_bash_color() : blend_bash_color(),
+			highlight(highlight_row ? garlic::terminal_api::accent_bash_color()
+			                        : garlic::terminal_api::blend_bash_color(),
 			          [&] { print_row_subline(newline_pos, row_id); });
 		}
 		out_ << V_BAR << std::endl;
@@ -119,7 +120,7 @@ size_t TableQueryResultGenerator::get_height(size_t row) { return heights_.conta
 void TableQueryResultGenerator::highlight(StringViewType color, auto action) {
 	out_ << color;
 	action();
-	out_ << reset_bash_color();
+	out_ << garlic::terminal_api::reset_bash_color();
 }
 
 void TableQueryResultGenerator::print_row_subline(std::vector<size_t> &newline_pos, size_t row_id) {

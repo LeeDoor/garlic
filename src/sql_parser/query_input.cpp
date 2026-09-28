@@ -25,7 +25,7 @@ void QueryInput::shrink_n_characters(size_t n) {
 }
 StringViewType QueryInput::get_query() const { return query_; }
 void QueryInput::print_prompt() const {
-	if (is_manual_IO())
+	if (garlic::terminal_api::is_manual_IO())
 		std::cout << "#> " << std::flush;
 }
 

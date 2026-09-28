@@ -1,5 +1,7 @@
 #include "manual_io.hpp"
 
+namespace garlic::terminal_api {
+
 #ifdef _WIN32
 static bool IS_MANUAL_IO = _isatty(_fileno(stdin)) && _isatty(_fileno(stdout));
 #else
@@ -38,3 +40,5 @@ std::string_view reset_bash_color() {
 #ifndef NDEBUG
 void set_manual_IO(bool value) { IS_MANUAL_IO = value; }
 #endif
+
+} // namespace garlic::terminal_api

@@ -23,7 +23,7 @@ void ParsingSession::invoke_error(ErrorStage stage, const std::string &msg) {
 	recovery_ = !more_context_required_;
 	auto &loc = location_;
 	auto error_relative_location = location_.token_start();
-	if (is_manual_IO())
+	if (garlic::terminal_api::is_manual_IO())
 		error_relative_location -= std::min(loc.content_query_start(), loc.line_start());
 	parsing_results_.push_back(ParsingResult{ParsingError{.more_context_required = more_context_required_,
 	                                                      .stage = stage,
