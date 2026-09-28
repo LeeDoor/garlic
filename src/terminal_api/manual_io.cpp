@@ -8,10 +8,10 @@ static bool IS_MANUAL_IO = _isatty(_fileno(stdin)) && _isatty(_fileno(stdout));
 static bool IS_MANUAL_IO = isatty(STDIN_FILENO) && isatty(STDOUT_FILENO);
 #endif
 
-static constexpr std::string ERROR_HIGHLIGHT_BASH_COLOR = "\033[38;5;9m";
-static constexpr std::string ACCENT_BASH_COLOR = "\033[7m";
-static constexpr std::string BLEND_BASH_COLOR = "\033[0m";
-static constexpr std::string RESET_BASH_COLOR = "\033[0m";
+inline constexpr const char ERROR_HIGHLIGHT_BASH_COLOR[] = "\033[38;5;9m";
+inline constexpr const char ACCENT_BASH_COLOR[] = "\033[7m";
+inline constexpr const char BLEND_BASH_COLOR[] = "\033[0m";
+inline constexpr const char RESET_BASH_COLOR[] = "\033[0m";
 
 bool is_manual_IO() { return IS_MANUAL_IO; }
 

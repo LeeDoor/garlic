@@ -15,12 +15,12 @@ TableQueryResultGenerator::TableQueryResultGenerator(ResultTable &&table)
 
 void TableQueryResultGenerator::replace_tabs(ResultTable &table) {
 	auto replace_tab = [&](StringType &str) {
-		static constexpr StringType from = "\t";
-		static constexpr StringType to = " -> ";
+		constexpr const char from[] = "\t";
+		constexpr const char to[] = " -> ";
 		size_t pos = 0;
 		while ((pos = str.find(from, pos)) != std::string::npos) {
-			str.replace(pos, from.length(), to);
-			pos += to.length();
+			str.replace(pos, sizeof(from) - 1, to);
+			pos += sizeof(to) - 1;
 		}
 	};
 	for (auto &row : table) {

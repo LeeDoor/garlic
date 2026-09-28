@@ -8,9 +8,9 @@
 
 namespace garlic::table {
 
-static std::string ERROR_COLUMN_ID_TOO_BIG = "incoming column id is more than columns amount";
-static std::string ERROR_DATA_TYPE_MISMATCH = "trying to read/write wrong type of data";
-static std::string ERROR_DATA_SIZE_MISMATCH = "trying to read/write data with wrong size";
+inline constexpr const char ERROR_COLUMN_ID_TOO_BIG[] = "incoming column id is more than columns amount";
+inline constexpr const char ERROR_DATA_TYPE_MISMATCH[] = "trying to read/write wrong type of data";
+inline constexpr const char ERROR_DATA_SIZE_MISMATCH[] = "trying to read/write data with wrong size";
 
 /// Check if Iter is an iterator with type T inside.
 template <typename Iter, typename T>

@@ -5,7 +5,8 @@
 
 namespace garlic::table {
 
-const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function which does not match this data type.";
+inline constexpr const char TYPE_MISMATCH[] =
+    "calling get_<INT|FLOAT|STRING> to a function which does not match this data type.";
 
 /// Multitype value wrapper. Populated by @ref Expression .
 /*! Base class for values of each type. One child - one type.
