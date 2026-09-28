@@ -1,7 +1,7 @@
 #include "cell_boolean_value.hpp"
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 TEST(test_cell_boolean_value, initializationAndAccessors) {
 	CellBooleanValue t(true);
@@ -65,4 +65,4 @@ TEST(test_cell_boolean_value, exclusiveOrTruthTable) {
 	EXPECT_FALSE(t->exclusiveor(t));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

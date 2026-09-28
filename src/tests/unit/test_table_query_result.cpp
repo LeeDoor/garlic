@@ -1,7 +1,7 @@
 #include "manual_io.hpp"
 #include "table_query_result.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 namespace {
 
 struct CliZebraStyle {
@@ -130,4 +130,4 @@ TEST(test_table_query_result, cliZebraHandlesTabsAndNewlinesInsideCells) {
 	EXPECT_EQ(result.format(), expected);
 }
 
-} // namespace garlic
+} // namespace garlic::tests

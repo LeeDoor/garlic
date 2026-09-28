@@ -1,6 +1,6 @@
 #include "constant_expression.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 static const TablesGathered gatherers{};
 
@@ -62,4 +62,4 @@ TEST(test_constant_expression, usedTablesAreEmpty) {
 	EXPECT_TRUE(StringConstExpr("Hello").get_used_tables().empty());
 }
 
-} // namespace garlic
+} // namespace garlic::tests

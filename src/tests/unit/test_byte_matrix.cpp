@@ -2,7 +2,7 @@
 
 bool operator==(const garlic::ByteSpan &lhs, const garlic::ByteVector &rhs) { return std::ranges::equal(lhs, rhs); }
 
-namespace garlic {
+namespace garlic::tests {
 
 TEST(test_byte_matrix, empty_initialization) {
 	ByteMatrix tc(0);
@@ -125,4 +125,4 @@ TEST(test_byte_matrix, constQualifier_shouldCompile) {
 	std::ignore = bm.get_value(0, 0, 1);
 }
 
-} // namespace garlic
+} // namespace garlic::tests

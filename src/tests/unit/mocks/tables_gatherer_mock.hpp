@@ -1,7 +1,7 @@
 #pragma once
 #include "tables_header_gatherer.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 class TablesGathererMock {
   public:
@@ -24,4 +24,4 @@ class TablesGathererMock {
 
 static_assert(TablesHeaderGathererImpl<TablesGathererMock>);
 
-} // namespace garlic
+} // namespace garlic::tests

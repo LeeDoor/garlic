@@ -2,7 +2,7 @@
 #include "cell_boolean_value.hpp"
 #include "condition.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 class ConditionMock : public Condition {
   public:
@@ -18,4 +18,4 @@ class ConditionMock : public Condition {
 	UsedTables used_tables_;
 };
 
-} // namespace garlic
+} // namespace garlic::tests

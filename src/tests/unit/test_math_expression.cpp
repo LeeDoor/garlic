@@ -2,7 +2,7 @@
 #include "cell_int_value.hpp"
 #include "cell_string_view_value.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 static sptr<CellValue> unwrap_value(ExpectedCellValue value) {
 	EXPECT_TRUE(value.has_value()) << value.error();
@@ -132,4 +132,4 @@ TEST(test_math_expression, arithmeticWithStringShouldThrow) {
 	EXPECT_THROW(f->remdiv(s), std::logic_error);
 }
 
-} // namespace garlic
+} // namespace garlic::tests

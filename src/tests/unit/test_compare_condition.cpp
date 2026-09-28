@@ -7,7 +7,7 @@
 #include "table_value_expression.hpp"
 #include "tables_gatherer_mock.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
 	EXPECT_TRUE(result.has_value()) << result.error();
@@ -106,4 +106,4 @@ TEST_F(TestCompareCondition, getUsedTables_MergesBothExpressions) {
 	EXPECT_EQ(cond.get_used_tables(), Condition::UsedTables({"users", "offices"}));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

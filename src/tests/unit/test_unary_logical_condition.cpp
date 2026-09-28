@@ -2,7 +2,7 @@
 #include "condition_mock.hpp"
 #include "unary_logical_condition.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 static const TablesGathered gatherers{};
 
@@ -69,4 +69,4 @@ TEST_F(TestUnaryLogicalCondition, getUsedTables_ForwardsNestedConditionTables) {
 	EXPECT_EQ(cond.get_used_tables(), Condition::UsedTables({"offices"}));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

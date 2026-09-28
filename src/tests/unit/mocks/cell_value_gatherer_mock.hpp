@@ -1,7 +1,7 @@
 #pragma once
 #include "cell_value_gatherer.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 
 class CellValueGathererMock : public CellValueGatherer {
   public:
@@ -10,4 +10,4 @@ class CellValueGathererMock : public CellValueGatherer {
 	MOCK_METHOD(bool, jump_to_next_row, (), (override));
 };
 
-} // namespace garlic
+} // namespace garlic::tests

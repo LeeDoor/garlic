@@ -6,7 +6,7 @@
 #include "public_column_info.hpp"
 #include "typed_table.hpp"
 
-namespace garlic {
+namespace garlic::tests {
 class CellValueGathererFixture : public ::testing::Test {
   protected:
   public:
@@ -112,4 +112,4 @@ TEST_F(CellValueGathererFixture, misspellColumnName_throwLogic) {
 	EXPECT_THROW(tvg->get_table_value("Int field@@@"), std::logic_error);
 }
 
-} // namespace garlic
+} // namespace garlic::tests
