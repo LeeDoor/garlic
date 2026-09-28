@@ -1,7 +1,7 @@
 #pragma once
 #include "expression.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 enum UnaryMathOperator { Abs, Neg };
 
@@ -17,4 +17,4 @@ class UnaryMathExpression : public Expression {
 	UnaryMathOperator op_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

@@ -1,7 +1,7 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 struct ColumnInfo {
 	CellType type;
@@ -10,4 +10,4 @@ struct ColumnInfo {
 	size_t offset;
 };
 
-} // namespace garlic
+} // namespace garlic::table

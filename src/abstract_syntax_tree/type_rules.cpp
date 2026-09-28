@@ -1,6 +1,8 @@
 #include "type_rules.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 void TypeRules::as_str(std::ostream &os, CellType ct) {
 	std::unordered_map<CellType, StringType> map{
@@ -46,4 +48,4 @@ TypeRules::TypeOrError TypeRules::comparison_comp(CellType lhs, CellType rhs) {
 	return std::unexpected(write_error(Comparison, lhs, rhs));
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

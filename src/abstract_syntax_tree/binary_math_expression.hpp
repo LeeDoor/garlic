@@ -1,7 +1,7 @@
 #pragma once
 #include "expression.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 enum BinaryMathOperator { Add, Sub, Div, Mul, Remdiv };
 class CellAcceptMathOp;
@@ -18,4 +18,4 @@ class BinaryMathExpression : public Expression {
 	BinaryMathOperator op_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

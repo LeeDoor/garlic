@@ -1,7 +1,7 @@
 #include "binary_logical_condition.hpp"
 #include "cell_boolean_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Condition> rhs, BinaryLogicalOperator op)
     : Condition{Boolean}, lhs_{std::move(lhs)}, rhs_{std::move(rhs)}, op_{op} {}
@@ -40,4 +40,4 @@ BinaryLogicalCondition::UsedTables BinaryLogicalCondition::get_used_tables() con
 	return get_used_tables_from(lhs_, rhs_);
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

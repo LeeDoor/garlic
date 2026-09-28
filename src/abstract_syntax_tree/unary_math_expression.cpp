@@ -2,7 +2,7 @@
 #include "cell_accept_math_op.hpp"
 #include "type_rules.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op)
     : Expression{TypeRules::unary_math_comp(operand->get_type())}, operand_{operand}, op_{op} {}
@@ -26,4 +26,4 @@ ExpectedCellValue UnaryMathExpression::resolve(const TablesGathered &gatherers) 
 
 UnaryMathExpression::UsedTables UnaryMathExpression::get_used_tables() const { return operand_->get_used_tables(); }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

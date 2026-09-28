@@ -1,7 +1,11 @@
 #include "cell_string_view_value.hpp"
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::abstract_syntax_tree;
 using namespace std::literals;
 
 auto str_hello = "Hello"sv;
@@ -57,4 +61,4 @@ TEST(test_cell_string_view_value, SameLettersDifferentSize) {
 	EXPECT_TRUE(AAA->gt(A));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

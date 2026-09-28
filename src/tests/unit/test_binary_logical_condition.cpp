@@ -2,7 +2,9 @@
 #include "cell_boolean_value.hpp"
 #include "condition_mock.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::abstract_syntax_tree;
 
 static const TablesGathered gatherers{};
 
@@ -87,4 +89,4 @@ TEST_F(TestBinaryLogicalCondition, getUsedTables_MergesBothConditions) {
 	EXPECT_EQ(cond.get_used_tables(), Condition::UsedTables({"users", "foods"}));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

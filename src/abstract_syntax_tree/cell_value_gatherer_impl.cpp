@@ -4,9 +4,11 @@
 #include "cell_string_view_value.hpp"
 #include "typed_table.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
-CellValueGathererImpl::CellValueGathererImpl(sptr<TypedTable> table) : table_{table}, row_number_{0} {}
+using namespace garlic::table;
+
+CellValueGathererImpl::CellValueGathererImpl(sptr<garlic::table::TypedTable> table) : table_{table}, row_number_{0} {}
 
 bool CellValueGathererImpl::is_table_empty() const { return table_->is_row_index_overflow(0); }
 
@@ -37,4 +39,4 @@ bool CellValueGathererImpl::jump_to_next_row() {
 	return false;
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

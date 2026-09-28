@@ -1,7 +1,9 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 /// Abstract class used to specify output from any resolved query.
 /// It may be a single string @ref StringQueryResult, a table, etc.
@@ -14,4 +16,4 @@ class QueryResult {
 	virtual StringViewType format() const = 0;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

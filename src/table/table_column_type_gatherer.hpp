@@ -3,7 +3,7 @@
 #include "column_info.hpp"
 #include "expected_column_type.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 using TableHeader = std::vector<ColumnInfo>;
 
@@ -13,4 +13,4 @@ concept TableColumnTypeGatherer = requires(const T &table_header_gatherer) {
 	{ table_header_gatherer.get_header() } -> std::convertible_to<TableHeader>;
 };
 
-} // namespace garlic
+} // namespace garlic::table

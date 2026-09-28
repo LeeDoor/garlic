@@ -2,7 +2,11 @@
 #include "parser.tab.hpp"
 #include "position.hpp"
 
-namespace garlic::sql_parser {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::sql_parser;
 
 static std::string extract_string_token_value(yy::parser::symbol_type &symbol) {
 	EXPECT_EQ(symbol.kind(), yy::parser::symbol_kind::S_STRING);
@@ -50,4 +54,4 @@ TEST(test_sql_lexer_make_string, emptyQuotedStringShouldProduceEmptyValue) {
 	EXPECT_EQ(extract_string_token_value(symbol), "");
 }
 
-} // namespace garlic::sql_parser
+} // namespace garlic::tests

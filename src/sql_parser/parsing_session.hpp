@@ -10,10 +10,9 @@
 
 YY_DECL;
 
-namespace garlic {
-class Query;
-}
 namespace garlic::sql_parser {
+
+using namespace garlic::table;
 
 class ParserEngine;
 
@@ -27,9 +26,10 @@ class ParsingSession {
 		bool waiting_query_content;
 	};
 
-	ParsingSession(const TablesHeaderGatherer &tables_header_gatherer)
+	ParsingSession(const garlic::abstract_syntax_tree::TablesHeaderGatherer &tables_header_gatherer)
 	    : tables_header_gatherer_{tables_header_gatherer} {}
-	ParsingSession(const TablesHeaderGatherer &tables_header_gatherer, ContinuationState cont_state)
+	ParsingSession(const garlic::abstract_syntax_tree::TablesHeaderGatherer &tables_header_gatherer,
+	               ContinuationState cont_state)
 	    : ParsingSession{tables_header_gatherer} {
 		location_ = ParsingLocation::initialize_from(cont_state.location);
 		waiting_query_content_ = cont_state.waiting_query_content;
@@ -44,7 +44,7 @@ class ParsingSession {
 	IntermediateResult get_parsing_result();
 
 	/// Called when valid non-empty query parsed.
-	void query_parsed(uptr<Query> query);
+	void query_parsed(uptr<garlic::abstract_syntax_tree::Query> query);
 	/// Called when valid query without content parsed.
 	void blank_parsed();
 	/// Called when reached a semicolon after an error.
@@ -82,13 +82,13 @@ class ParsingSession {
 	/// returns current position as object.
 	Position current_position() const;
 	const ParsingLocation &location() const & { return location_; }
-	const TablesHeaderGatherer &get_database() const &;
+	const garlic::abstract_syntax_tree::TablesHeaderGatherer &get_database() const &;
 
   private:
 	/// Called if just finished a query and started a new  one.
 	void finished_previous_query();
 
-	const TablesHeaderGatherer &tables_header_gatherer_;
+	const garlic::abstract_syntax_tree::TablesHeaderGatherer &tables_header_gatherer_;
 	ParsingResults parsing_results_{};
 	ParsingLocation location_{};
 	StringType multiline_string_buffer_{};

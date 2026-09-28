@@ -1,7 +1,11 @@
 #include "cell_int_value.hpp"
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::abstract_syntax_tree;
 
 TEST(test_cell_int_value, initialization) {
 	sptr<CellComparable> a5 = std::make_shared<CellIntValue>(5);
@@ -62,4 +66,4 @@ TEST(test_cell_int_value, basicComparingRange10) {
 	EXPECT_TRUE(a4->gt(an7));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

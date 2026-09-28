@@ -8,7 +8,9 @@
 #include "cell_int_value.hpp"
 #include "cell_string_view_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 template <IsStoringColumnType ValueType>
 class ConstantExpression : public Expression {
@@ -29,4 +31,4 @@ using IntConstExpr = ConstantExpression<IntType>;
 using FloatConstExpr = ConstantExpression<FloatType>;
 using StringConstExpr = ConstantExpression<StringType>;
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

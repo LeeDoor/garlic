@@ -1,7 +1,11 @@
 #include "cell_string_value.hpp"
 #include "cell_string_view_value.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::abstract_syntax_tree;
 using namespace std::literals;
 
 TEST(test_cell_string_value, movedStringShouldBeStoredAndViewBound) {
@@ -55,4 +59,4 @@ TEST(test_cell_string_value, stressManyLargeStringsShouldKeepValidViews) {
 	}
 }
 
-} // namespace garlic
+} // namespace garlic::tests

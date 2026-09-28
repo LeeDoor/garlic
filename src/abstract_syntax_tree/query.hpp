@@ -3,7 +3,7 @@
 #include "table_value_gatherer_factory.hpp"
 #include "validateable.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 class QueryResult;
 class CellValueGatherer;
 
@@ -24,4 +24,4 @@ class Query : public CanBeValidated<void> {
 	[[nodiscard]] virtual ExpectedQueryResult resolve(const TableValueGathererFactory &gatherer_factory) = 0;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

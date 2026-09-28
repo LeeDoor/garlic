@@ -2,7 +2,7 @@
 #include "condition.hpp"
 #include "logical_operator.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 class BinaryLogicalCondition : public Condition {
   public:
@@ -17,4 +17,4 @@ class BinaryLogicalCondition : public Condition {
 	BinaryLogicalOperator op_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

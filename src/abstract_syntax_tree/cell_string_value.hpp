@@ -1,7 +1,9 @@
 #pragma once
 #include "cell_string_view_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 class CellStringValue : public CellStringViewValue {
   public:
@@ -13,4 +15,4 @@ class CellStringValue : public CellStringViewValue {
 	StringType stored_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

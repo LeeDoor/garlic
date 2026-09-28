@@ -1,7 +1,10 @@
 #include "manual_io.hpp"
 #include "table_query_result.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::abstract_syntax_tree;
+
 namespace {
 
 struct CliZebraStyle {
@@ -12,9 +15,11 @@ struct CliZebraStyle {
 
 class ScopedManualIOMode {
   public:
-	explicit ScopedManualIOMode(bool value) : old_value_{is_manual_IO()} { set_manual_IO(value); }
+	explicit ScopedManualIOMode(bool value) : old_value_{garlic::terminal_api::is_manual_IO()} {
+		garlic::terminal_api::set_manual_IO(value);
+	}
 
-	~ScopedManualIOMode() { set_manual_IO(old_value_); }
+	~ScopedManualIOMode() { garlic::terminal_api::set_manual_IO(old_value_); }
 
   private:
 	bool old_value_;
@@ -130,4 +135,4 @@ TEST(test_table_query_result, cliZebraHandlesTabsAndNewlinesInsideCells) {
 	EXPECT_EQ(result.format(), expected);
 }
 
-} // namespace garlic
+} // namespace garlic::tests

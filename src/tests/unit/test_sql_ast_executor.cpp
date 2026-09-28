@@ -3,7 +3,11 @@
 #include "select_query.hpp"
 #include "sql_ast_executor.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::abstract_syntax_tree;
 
 class ThrowingExpressionForExecutorTest : public Expression {
   public:
@@ -98,4 +102,4 @@ TEST(test_sql_ast_executor, runtimeErrorWritesOnlyToStderr) {
 	EXPECT_EQ(stderr_stream.str(), "[RUNTIME_ERROR] expression evaluate failed\n\n");
 }
 
-} // namespace garlic
+} // namespace garlic::tests

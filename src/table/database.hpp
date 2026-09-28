@@ -5,7 +5,7 @@
 #include "tables_header_gatherer_impl.hpp"
 #include "typed_table.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 /// Array of all tables in the database
 template <typename TableGathererT>
@@ -43,7 +43,7 @@ class DatabaseImpl {
 		auto table = self.get_table_by_name(table_name);
 		if (!table)
 			return std::unexpected(table.error());
-		return std::make_shared<CellValueGathererImpl>(*table);
+		return std::make_shared<garlic::abstract_syntax_tree::CellValueGathererImpl>(*table);
 	}
 	ExpectedOrStr<sptr<TableGathererT>> get_table_by_name(const TableNameType &table_name) const {
 		if (!tables_.contains(table_name))
@@ -58,4 +58,4 @@ using Database = DatabaseImpl<TypedTable>;
 static_assert(TablesHeaderGathererImpl<Database>);
 static_assert(CellValueGathererFactoryImpl<Database>);
 
-} // namespace garlic
+} // namespace garlic::table

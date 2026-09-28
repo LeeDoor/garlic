@@ -1,6 +1,6 @@
 #include "typed_table.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 TypedTable::TypedTable(std::initializer_list<PublicColumnInfo> container)
     : TypedTable(container.begin(), container.end()) {}
@@ -48,4 +48,4 @@ void TypedTable::set_value(size_t row, size_t column, const StringType &value) {
 	content_.clear_value(row, row_offset + value.size(), header_[column].size_bytes - value.size());
 }
 
-} // namespace garlic
+} // namespace garlic::table

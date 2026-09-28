@@ -1,7 +1,7 @@
 #include "unary_logical_condition.hpp"
 #include "cell_boolean_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 UnaryLogicalCondition::UnaryLogicalCondition(sptr<Condition> condition, UnaryLogicalOperator op)
     : Condition{Boolean}, cond_{std::move(condition)}, op_{op} {}
@@ -27,4 +27,4 @@ UnaryLogicalCondition::resolve_bool(const TablesGathered &gatherers) const {
 
 UnaryLogicalCondition::UsedTables UnaryLogicalCondition::get_used_tables() const { return get_used_tables_from(cond_); }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

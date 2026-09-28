@@ -12,7 +12,7 @@ class ErrorPrinter {
 	ErrorPrinter();
 
 	void print_error(const ParsingError &error) const;
-	void print_error(const RuntimeError &error) const;
+	void print_error(const garlic::abstract_syntax_tree::RuntimeError &error) const;
 
   private:
 	void print_error_code(ErrorStage stage) const;

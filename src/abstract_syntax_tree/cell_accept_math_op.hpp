@@ -2,7 +2,9 @@
 #include "cell_value.hpp"
 #include "expected_cell_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 /// @ref CellValue subclass defining numbers or other entities
 /// that accept math operations.
@@ -19,4 +21,4 @@ class CellAcceptMathOp : virtual public CellValue {
 	virtual ExpectedCellValue neg() const = 0;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

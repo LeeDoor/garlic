@@ -1,6 +1,8 @@
 #include "cell_boolean_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 CellBooleanValue::CellBooleanValue(bool bool_value) : CellValue{Boolean}, value_{bool_value} {}
 
@@ -15,4 +17,4 @@ bool CellBooleanValue::equivalence(sptr<CellBooleanValue> other) const { return 
 bool CellBooleanValue::implication(sptr<CellBooleanValue> other) const { return value_ <= other->get_bool(); }
 bool CellBooleanValue::exclusiveor(sptr<CellBooleanValue> other) const { return value_ ^ other->get_bool(); }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

@@ -1,6 +1,8 @@
 #include "typed_table.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
 
 template <typename T>
 static T unwrap_expected(const ExpectedOrStr<T> &result) {
@@ -368,4 +370,4 @@ TEST(test_typed_table, fullWidthStringRead_shouldNotBleedIntoNextColumns) {
 	EXPECT_EQ(name, "1234567890");
 }
 
-} // namespace garlic
+} // namespace garlic::tests

@@ -1,7 +1,9 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 using InvalidError = StringType;
 using ExpectedValid = ExpectedOrStr<void>;
@@ -36,4 +38,4 @@ class CanBeValidated {
 	TypeOrError type_or_err_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

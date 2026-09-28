@@ -1,7 +1,9 @@
 #pragma once
 #include "cell_value.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 class CellBooleanValue : public CellValue {
   public:
@@ -22,4 +24,4 @@ class CellBooleanValue : public CellValue {
 	bool value_;
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

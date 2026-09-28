@@ -3,7 +3,9 @@
 #include "table_value_expression.hpp"
 #include "tables_gatherer_mock.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::abstract_syntax_tree;
 
 class TestValueExpressionFixture : public ::testing::Test {
   public:
@@ -49,4 +51,4 @@ TEST_F(TestValueExpressionFixture, getUsedTables_ReturnsReferencedTable) {
 	EXPECT_EQ(expr.get_used_tables(), TableValueExpression::UsedTables({"Table name"}));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

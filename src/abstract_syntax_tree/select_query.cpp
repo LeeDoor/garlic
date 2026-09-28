@@ -2,7 +2,9 @@
 #include "table_query_result.hpp"
 #include "table_value_gatherer_factory.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 SelectQuery::SelectQuery() : SelectQuery{{}, {}} {}
 SelectQuery::SelectQuery(SelectorGenerators selector_gens) : SelectQuery{std::move(selector_gens), {}} {}
@@ -151,4 +153,4 @@ ExpectedOrStr<StringType> SelectQuery::resolve_and_stringfy(const Selector &colu
 	return ss.str();
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

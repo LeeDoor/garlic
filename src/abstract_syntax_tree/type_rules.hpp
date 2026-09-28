@@ -1,7 +1,9 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 /// Static class to determine the rules of operations.
 class TypeRules {
@@ -71,4 +73,4 @@ class TypeRules {
 	static StringType write_error(OperationError err, CellType lhs, std::optional<CellType> rhs = std::nullopt);
 };
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

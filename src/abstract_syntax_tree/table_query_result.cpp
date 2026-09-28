@@ -1,7 +1,9 @@
 #include "table_query_result.hpp"
 #include "manual_io.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 TableQueryResult::TableQueryResult(ResultTable &&table)
     : table_result_{TableQueryResultGenerator::form_table_result(std::move(table))} {}
@@ -107,7 +109,8 @@ void TableQueryResultGenerator::print_row(size_t row_id, bool highlight_row) {
 		if (heights_.empty()) {
 			print_row_subline(newline_pos, row_id);
 		} else {
-			highlight(highlight_row ? accent_bash_color() : blend_bash_color(),
+			highlight(highlight_row ? garlic::terminal_api::accent_bash_color()
+			                        : garlic::terminal_api::blend_bash_color(),
 			          [&] { print_row_subline(newline_pos, row_id); });
 		}
 		out_ << V_BAR << std::endl;
@@ -119,7 +122,7 @@ size_t TableQueryResultGenerator::get_height(size_t row) { return heights_.conta
 void TableQueryResultGenerator::highlight(StringViewType color, auto action) {
 	out_ << color;
 	action();
-	out_ << reset_bash_color();
+	out_ << garlic::terminal_api::reset_bash_color();
 }
 
 void TableQueryResultGenerator::print_row_subline(std::vector<size_t> &newline_pos, size_t row_id) {
@@ -150,4 +153,4 @@ void TableQueryResultGenerator::print_cell_subline(const StringViewType &cell_st
 	     << (is_last_subline ? SPACE : ETC);
 }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

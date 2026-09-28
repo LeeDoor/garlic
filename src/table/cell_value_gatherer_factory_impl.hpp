@@ -2,9 +2,9 @@
 #include "cell_type.hpp"
 #include "cell_value_gatherer.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
-using ExpectedCellValueGatherer = ExpectedOrStr<sptr<CellValueGatherer>>;
+using ExpectedCellValueGatherer = ExpectedOrStr<sptr<abstract_syntax_tree::CellValueGatherer>>;
 
 template <typename CellValueGathererFactoryT>
 concept CellValueGathererFactoryImpl = requires(CellValueGathererFactoryT cell_value_gatherer_factory) {
@@ -13,4 +13,4 @@ concept CellValueGathererFactoryImpl = requires(CellValueGathererFactoryT cell_v
 	} -> std::convertible_to<ExpectedCellValueGatherer>;
 };
 
-} // namespace garlic
+} // namespace garlic::table

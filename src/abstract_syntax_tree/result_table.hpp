@@ -1,9 +1,11 @@
 #pragma once
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
+
+using namespace garlic::table;
 
 using ResultRow = std::vector<StringType>;
 using ResultTable = std::vector<ResultRow>;
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree

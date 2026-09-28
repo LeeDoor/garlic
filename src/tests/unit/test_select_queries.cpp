@@ -6,7 +6,11 @@
 #include <limits>
 #include <sstream>
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::abstract_syntax_tree;
 
 class ThrowingCondition : public Condition {
   public:
@@ -399,4 +403,4 @@ TEST_F(TestSelectQueries, multilineHeadersAndBodiesFormatIndependently) {
 	EXPECT_EQ(std::string(result->format()), expected);
 }
 
-} // namespace garlic
+} // namespace garlic::tests

@@ -1,7 +1,11 @@
 #include "cell_float_value.hpp"
 #include "cell_type.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::abstract_syntax_tree;
 
 TEST(test_cell_float_value, initialization) {
 	sptr<CellComparable> a5 = std::make_shared<CellFloatValue>(5.0);
@@ -68,4 +72,4 @@ TEST(test_cell_float_value, basicComparingRange10) {
 	EXPECT_TRUE(a4->gt(an7));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

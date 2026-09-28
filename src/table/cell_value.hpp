@@ -3,7 +3,7 @@
 #include "get_cell_primitive.hpp"
 #include "get_cell_type.hpp"
 
-namespace garlic {
+namespace garlic::table {
 
 const std::string TYPE_MISMATCH = "calling get_<INT|FLOAT|STRING> to a function which does not match this data type.";
 
@@ -45,7 +45,7 @@ class CellValue {
 	 */
 	template <IsAnyColumnType T>
 	static T to_type(sptr<CellValue> other) {
-		auto ptr = as_casted_ptr<typename get_cell_type<T>::Type>(other);
+		auto ptr = as_casted_ptr<typename abstract_syntax_tree::get_cell_type<T>::Type>(other);
 		if (ptr == nullptr)
 			throw std::logic_error("Trying to cast uncastable type");
 		return static_cast<T>(*ptr);
@@ -64,4 +64,4 @@ class CellValue {
 	CellType cell_type_;
 };
 
-} // namespace garlic
+} // namespace garlic::table

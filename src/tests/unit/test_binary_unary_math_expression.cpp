@@ -4,7 +4,11 @@
 #include "tables_gatherer_mock.hpp"
 #include "unary_math_expression.hpp"
 
-namespace garlic {
+namespace garlic::tests {
+
+using namespace garlic::table;
+
+using namespace garlic::abstract_syntax_tree;
 
 static const TablesGathered gatherers{};
 
@@ -113,4 +117,4 @@ TEST(test_unary_math_expression, getUsedTables_ForwardsOperandTables) {
 	EXPECT_EQ(UnaryMathExpression(operand, Neg).get_used_tables(), Expression::UsedTables({"users"}));
 }
 
-} // namespace garlic
+} // namespace garlic::tests

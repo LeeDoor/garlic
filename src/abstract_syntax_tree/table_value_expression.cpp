@@ -1,7 +1,7 @@
 #include "table_value_expression.hpp"
 #include "cell_value_gatherer.hpp"
 
-namespace garlic {
+namespace garlic::abstract_syntax_tree {
 
 ExpectedCellValue TableValueExpression::resolve(const TablesGathered &gatherers) const {
 	if (!gatherers.contains(table_name_)) {
@@ -13,4 +13,4 @@ ExpectedCellValue TableValueExpression::resolve(const TablesGathered &gatherers)
 
 TableValueExpression::UsedTables TableValueExpression::get_used_tables() const { return {table_name_}; }
 
-} // namespace garlic
+} // namespace garlic::abstract_syntax_tree
