@@ -17,7 +17,7 @@ class Expression : public CanBeValidated<CellType> {
 
 	/// Resolves underlying subexpressions or values and forms the @ref CellValue object.
 	/*! @throws std::logic_error may throw if did not validate first. */
-	virtual ExpectedCellValue resolve(const TablesGathered &gatherers) const = 0;
+	virtual ExpectedCellValue resolve(const MultipleTablesRow& row) const = 0;
 
 	using UsedTables = std::unordered_set<TableNameType>;
 	/// Inspects AST to get used tables. Used to validate used and FROM-selected tables.

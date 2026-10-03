@@ -10,7 +10,7 @@ class BinaryMathExpression : public Expression {
   public:
 	BinaryMathExpression(sptr<Expression> lhs, sptr<Expression> rhs, BinaryMathOperator op);
 
-	ExpectedCellValue resolve(const TablesGathered &gatherers) const override;
+	ExpectedCellValue resolve(const MultipleTablesRow& row) const override;
 	UsedTables get_used_tables() const override;
 
   private:

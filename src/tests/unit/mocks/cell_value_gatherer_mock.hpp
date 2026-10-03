@@ -10,7 +10,7 @@ using namespace garlic::abstract_syntax_tree;
 class CellValueGathererMock : public CellValueGatherer {
   public:
 	MOCK_METHOD(bool, is_table_empty, (), (const, override));
-	MOCK_METHOD(sptr<CellValue>, get_table_value, (const std::string &column_name), (override));
+	MOCK_METHOD(SingleTableRow, gather_single_row, (), (override));
 	MOCK_METHOD(bool, jump_to_next_row, (), (override));
 };
 

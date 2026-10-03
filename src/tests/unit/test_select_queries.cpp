@@ -15,8 +15,7 @@ using namespace garlic::abstract_syntax_tree;
 class ThrowingCondition : public Condition {
   public:
 	ThrowingCondition() : Condition{Boolean} {}
-	ExpectedCellBooleanValue resolve_bool(const TablesGathered &gatherers) const override {
-		(void)gatherers;
+	ExpectedCellBooleanValue resolve_bool(const MultipleTablesRow&) const override {
 		return std::unexpected("condition resolve failed");
 	}
 	UsedTables get_used_tables() const override { return {}; }
@@ -25,8 +24,7 @@ class ThrowingCondition : public Condition {
 class ThrowingExpression : public Expression {
   public:
 	ThrowingExpression() : Expression{Int} {}
-	ExpectedCellValue resolve(const TablesGathered &gatherers) const override {
-		(void)gatherers;
+	ExpectedCellValue resolve(const MultipleTablesRow&) const override {
 		return std::unexpected("expression evaluate failed");
 	}
 	UsedTables get_used_tables() const override { return {}; }

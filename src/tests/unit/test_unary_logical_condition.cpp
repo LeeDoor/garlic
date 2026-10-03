@@ -6,7 +6,7 @@ namespace garlic::tests {
 
 using namespace garlic::abstract_syntax_tree;
 
-static const TablesGathered gatherers{};
+static const MultipleTablesRow gatherers{};
 
 static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
 	EXPECT_TRUE(result.has_value()) << result.error();

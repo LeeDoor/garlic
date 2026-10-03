@@ -20,7 +20,7 @@ static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
 	return (*result)->get_bool();
 }
 
-static const TablesGathered gatherers{};
+static const MultipleTablesRow row{};
 
 class TestCompareCondition : public ::testing::Test {
   public:
@@ -50,12 +50,12 @@ TEST_F(TestCompareCondition, intComparison) {
 	sptr<Condition> condle = create_condition(5, 12, Le);
 	sptr<Condition> condlt = create_condition(5, 12, Lt);
 
-	EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condne->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condge->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condle->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(gatherers)));
+	EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condne->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condge->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condle->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(row)));
 }
 
 TEST_F(TestCompareCondition, floatComparison) {
@@ -72,17 +72,17 @@ TEST_F(TestCompareCondition, floatComparison) {
 	sptr<Condition> condsamegt = create_condition(5.f, 5.f + half_ep, Gt);
 	sptr<Condition> condsamelt = create_condition(5.f, 5.f + half_ep, Lt);
 
-	EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condne->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condge->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condle->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condsameeq->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condsamele->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condsamege->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condsamelt->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condsamegt->resolve_bool(gatherers)));
+	EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condne->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condge->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condle->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condsameeq->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condsamele->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condsamege->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condsamelt->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condsamegt->resolve_bool(row)));
 }
 
 TEST_F(TestCompareCondition, stringComparison) {
@@ -94,12 +94,12 @@ TEST_F(TestCompareCondition, stringComparison) {
 	sptr<Condition> condlt = create_condition("Hello"s, "Test"s, Lt);
 	sptr<Condition> condgt = create_condition("Hello"s, "Test"s, Gt);
 
-	EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condne->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condle->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condge->resolve_bool(gatherers)));
-	EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(gatherers)));
-	EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(gatherers)));
+	EXPECT_FALSE(unwrap_bool(condeq->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condne->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condle->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condge->resolve_bool(row)));
+	EXPECT_TRUE(unwrap_bool(condlt->resolve_bool(row)));
+	EXPECT_FALSE(unwrap_bool(condgt->resolve_bool(row)));
 }
 
 TEST_F(TestCompareCondition, getUsedTables_MergesBothExpressions) {

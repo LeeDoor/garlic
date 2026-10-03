@@ -14,7 +14,7 @@ class TableValueExpression : public Expression {
 	    : Expression{tables_gatherer.get_tables_column_type(table_name, column_name)}, table_name_{table_name},
 	      column_name_{column_name} {}
 
-	ExpectedCellValue resolve(const TablesGathered &gatherers) const override;
+	ExpectedCellValue resolve(const MultipleTablesRow& row) const override;
 	UsedTables get_used_tables() const override;
 
   private:

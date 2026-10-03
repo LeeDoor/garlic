@@ -9,7 +9,7 @@ class CompareCondition : public Condition {
   public:
 	CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, BinaryOperator op);
 
-	ExpectedCellBooleanValue resolve_bool(const TablesGathered &gatherers) const override;
+	ExpectedCellBooleanValue resolve_bool(const MultipleTablesRow& row) const override;
 	UsedTables get_used_tables() const override;
 
   private:

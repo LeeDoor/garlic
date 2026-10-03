@@ -1,0 +1,2 @@
+SELECT unexisting.column
+FROM unexisting;

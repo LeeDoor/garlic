@@ -7,11 +7,11 @@ namespace garlic::abstract_syntax_tree {
 BinaryMathExpression::BinaryMathExpression(sptr<Expression> lhs, sptr<Expression> rhs, BinaryMathOperator op)
     : Expression{TypeRules::binary_math_comp(lhs->get_type(), rhs->get_type())}, lhs_{lhs}, rhs_{rhs}, op_{op} {}
 
-ExpectedCellValue BinaryMathExpression::resolve(const TablesGathered &gatherers) const {
-	const auto lvalue = lhs_->resolve(gatherers);
+ExpectedCellValue BinaryMathExpression::resolve(const MultipleTablesRow& row) const {
+	const auto lvalue = lhs_->resolve(row);
 	if (!lvalue)
 		return lvalue;
-	const auto rvalue = rhs_->resolve(gatherers);
+	const auto rvalue = rhs_->resolve(row);
 	if (!rvalue)
 		return rvalue;
 	sptr<CellAcceptMathOp> lhs = std::dynamic_pointer_cast<CellAcceptMathOp>(*lvalue);
