@@ -7,8 +7,8 @@ namespace garlic::abstract_syntax_tree {
 UnaryMathExpression::UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op)
     : Expression{TypeRules::unary_math_comp(operand->get_type())}, operand_{operand}, op_{op} {}
 
-ExpectedCellValue UnaryMathExpression::resolve(const TablesGathered &gatherers) const {
-	const auto value = operand_->resolve(gatherers);
+ExpectedCellValue UnaryMathExpression::resolve(const MultipleTablesRow& row) const {
+	const auto value = operand_->resolve(row);
 	if (!value)
 		return value;
 	sptr<CellAcceptMathOp> operand = std::dynamic_pointer_cast<CellAcceptMathOp>(*value);

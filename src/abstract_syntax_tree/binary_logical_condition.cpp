@@ -7,11 +7,11 @@ BinaryLogicalCondition::BinaryLogicalCondition(sptr<Condition> lhs, sptr<Conditi
     : Condition{Boolean}, lhs_{std::move(lhs)}, rhs_{std::move(rhs)}, op_{op} {}
 
 BinaryLogicalCondition::ExpectedCellBooleanValue
-BinaryLogicalCondition::resolve_bool(const TablesGathered &gatherers) const {
-	auto lhs = lhs_->resolve_bool(gatherers);
+BinaryLogicalCondition::resolve_bool(const MultipleTablesRow& row) const {
+	auto lhs = lhs_->resolve_bool(row);
 	if (!lhs)
 		return std::unexpected(lhs.error());
-	auto rhs = rhs_->resolve_bool(gatherers);
+	auto rhs = rhs_->resolve_bool(row);
 	if (!rhs)
 		return std::unexpected(rhs.error());
 	bool result;

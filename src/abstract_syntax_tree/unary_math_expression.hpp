@@ -9,7 +9,7 @@ class UnaryMathExpression : public Expression {
   public:
 	UnaryMathExpression(sptr<Expression> operand, UnaryMathOperator op);
 
-	ExpectedCellValue resolve(const TablesGathered &gatherers) const override;
+	ExpectedCellValue resolve(const MultipleTablesRow& row) const override;
 	UsedTables get_used_tables() const override;
 
   private:

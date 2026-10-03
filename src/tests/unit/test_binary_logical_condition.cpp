@@ -6,7 +6,7 @@ namespace garlic::tests {
 
 using namespace garlic::abstract_syntax_tree;
 
-static const TablesGathered gatherers{};
+static const MultipleTablesRow multiple_tables_row{};
 
 static bool unwrap_bool(Condition::ExpectedCellBooleanValue result) {
 	EXPECT_TRUE(result.has_value()) << result.error();
@@ -58,7 +58,7 @@ class TestBinaryLogicalCondition : public ::testing::Test {
 		for (int i = 0; i < TABLE_SIZE; ++i) {
 			auto &inp = table_inp[i];
 			auto cond = create(inp.first, inp.second, op);
-			actual[i] = unwrap_bool(cond->resolve_bool(gatherers));
+			actual[i] = unwrap_bool(cond->resolve_bool(multiple_tables_row));
 			failed |= actual[i] != table_expected[i];
 		}
 		if (failed) {

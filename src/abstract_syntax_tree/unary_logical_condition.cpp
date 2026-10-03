@@ -7,8 +7,8 @@ UnaryLogicalCondition::UnaryLogicalCondition(sptr<Condition> condition, UnaryLog
     : Condition{Boolean}, cond_{std::move(condition)}, op_{op} {}
 
 UnaryLogicalCondition::ExpectedCellBooleanValue
-UnaryLogicalCondition::resolve_bool(const TablesGathered &gatherers) const {
-	auto value = cond_->resolve_bool(gatherers);
+UnaryLogicalCondition::resolve_bool(const MultipleTablesRow& row) const {
+	auto value = cond_->resolve_bool(row);
 	if (!value)
 		return value;
 	bool result;

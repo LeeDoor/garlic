@@ -13,7 +13,7 @@ class ConditionMock : public Condition {
 		EXPECT_CALL(*this, get_used_tables()).WillRepeatedly(Return(used_tables_));
 	}
 
-	MOCK_METHOD(ExpectedCellBooleanValue, resolve_bool, (const TablesGathered &gatherers), (const, override));
+	MOCK_METHOD(ExpectedCellBooleanValue, resolve_bool, (const MultipleTablesRow& row), (const, override));
 	MOCK_METHOD(UsedTables, get_used_tables, (), (const, override));
 
   private:

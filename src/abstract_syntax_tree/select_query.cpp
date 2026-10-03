@@ -146,7 +146,11 @@ ExpectedOrStr<ResultRow> SelectQuery::resolve_row(const TablesGathered &gatherer
 ExpectedOrStr<StringType> SelectQuery::resolve_and_stringfy(const Selector &column,
                                                             const TablesGathered &gatherers) const {
 	std::stringstream ss;
-	auto result = column.ast->resolve(gatherers);
+	MultipleTablesRow tables_single_row;
+	for (auto &gatherer : gatherers) {
+		tables_single_row.insert({gatherer.first, gatherer.second->gather_single_row()});
+	}
+	auto result = column.ast->resolve(tables_single_row);
 	if (!result)
 		return std::unexpected(result.error());
 	(*result)->format(ss);

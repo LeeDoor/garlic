@@ -1,14 +1,16 @@
 #include "table_value_expression.hpp"
-#include "cell_value_gatherer.hpp"
 
 namespace garlic::abstract_syntax_tree {
 
-ExpectedCellValue TableValueExpression::resolve(const TablesGathered &gatherers) const {
-	if (!gatherers.contains(table_name_)) {
-		return std::unexpected("Missed table name " + table_name_ + " in FROM section.");
+ExpectedCellValue TableValueExpression::resolve(const MultipleTablesRow &row) const {
+	if (!row.contains(table_name_)) {
+        throw std::logic_error("Table " + table_name_ + " is missing in FROM clause. Called TableValueExpression::resolve without validation.");
 	}
-	auto gatherer = gatherers.at(table_name_);
-	return gatherer->get_table_value(column_name_);
+	auto tables_column = row.at(table_name_);
+	if (!tables_column.contains(column_name_)) {
+        throw std::logic_error("Column " + column_name_ + " is missing in Table " + table_name_ + ". ");
+	}
+	return tables_column.at(column_name_);
 }
 
 TableValueExpression::UsedTables TableValueExpression::get_used_tables() const { return {table_name_}; }

@@ -10,11 +10,11 @@ CompareCondition::CompareCondition(sptr<Expression> lhs, sptr<Expression> rhs, B
     : Condition{TypeRules::comparison_comp(lhs->get_type(), rhs->get_type())}, lhs_{std::move(lhs)},
       rhs_{std::move(rhs)}, operator_{op} {}
 
-CompareCondition::ExpectedCellBooleanValue CompareCondition::resolve_bool(const TablesGathered &gatherers) const {
-	auto lvalue = lhs_->resolve(gatherers);
+CompareCondition::ExpectedCellBooleanValue CompareCondition::resolve_bool(const MultipleTablesRow& row) const {
+	auto lvalue = lhs_->resolve(row);
 	if (!lvalue)
 		return std::unexpected(lvalue.error());
-	auto rvalue = rhs_->resolve(gatherers);
+	auto rvalue = rhs_->resolve(row);
 	if (!rvalue)
 		return std::unexpected(rvalue.error());
 	sptr<CellComparable> lhs = std::dynamic_pointer_cast<CellComparable>(*lvalue),

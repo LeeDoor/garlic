@@ -11,7 +11,7 @@ class ConstantCondition : public Condition {
 	ConstantCondition(ValueType value)
 	    : Condition{TypeRules::get_cell_from_type<ValueType>()}, value_(std::move(value)) {}
 
-	ExpectedCellBooleanValue resolve_bool(const TablesGathered &) const override {
+	ExpectedCellBooleanValue resolve_bool(const MultipleTablesRow& ) const override {
 		return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);
 	}
 	UsedTables get_used_tables() const override { return {}; }

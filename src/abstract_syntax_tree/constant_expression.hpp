@@ -18,7 +18,7 @@ class ConstantExpression : public Expression {
 	ConstantExpression(ValueType value)
 	    : Expression{TypeRules::get_cell_from_type<ValueType>()}, value_(std::move(value)) {}
 
-	ExpectedCellValue resolve(const TablesGathered &) const override {
+	ExpectedCellValue resolve(const MultipleTablesRow& ) const override {
 		return std::make_shared<typename get_cell_type<ValueType>::Type>(value_);
 	}
 	UsedTables get_used_tables() const override { return {}; }

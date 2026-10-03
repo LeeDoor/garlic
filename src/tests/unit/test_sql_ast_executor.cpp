@@ -13,8 +13,7 @@ class ThrowingExpressionForExecutorTest : public Expression {
   public:
 	ThrowingExpressionForExecutorTest() : Expression{Int} {}
 
-	ExpectedCellValue resolve(const TablesGathered &gatherers) const override {
-		(void)gatherers;
+	ExpectedCellValue resolve(const MultipleTablesRow& ) const override {
 		return std::unexpected("expression evaluate failed");
 	}
 	UsedTables get_used_tables() const override { return {}; }

@@ -50,6 +50,7 @@ class TypedTable {
 	/// @returns @ref CellType type of column with given id.
 	/*! @throws std::logic_error if column parameter is invalid. */
 	CellType get_column_type(size_t column) const;
+
 	/// @returns @ref CellType if column specified.
 	/// @returns @ref UnexpectedData of no such column specified.
 	ExpectedColumnType get_column_type(const ColumnNameType &column) const;

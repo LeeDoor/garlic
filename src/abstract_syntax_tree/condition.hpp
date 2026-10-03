@@ -1,6 +1,5 @@
 #pragma once
 #include "cell_boolean_value.hpp"
-#include "cell_value_gatherer.hpp"
 #include "expression.hpp"
 
 namespace garlic::abstract_syntax_tree {
@@ -18,12 +17,12 @@ class Condition : public Expression {
 	using ExpectedCellBooleanValue = ExpectedOrStr<sptr<CellBooleanValue>>;
 
 	/// Same as @ref Expression::resolve(), but ensures the boolean return type (or error).
-	virtual ExpectedCellBooleanValue resolve_bool(const TablesGathered &gatherers) const = 0;
+	virtual ExpectedCellBooleanValue resolve_bool(const MultipleTablesRow& row) const = 0;
 
   private:
 	/// Performs logical operations on underlying objects.
 	/*! @throws std::logic_error may throw if did not validate first. */
-	ExpectedCellValue resolve(const TablesGathered &gatherers) const override { return resolve_bool(gatherers); }
+	ExpectedCellValue resolve(const MultipleTablesRow& row) const override { return resolve_bool(row); }
 };
 
 } // namespace garlic::abstract_syntax_tree

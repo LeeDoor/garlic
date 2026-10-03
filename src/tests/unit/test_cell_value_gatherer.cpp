@@ -52,13 +52,10 @@ TEST_F(CellValueGathererFixture, init) {
 TEST_F(CellValueGathererFixture, accessingData_0ByDefault) {
 	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 
-	sptr<CellValue> cellstr = tvg->get_table_value("String field");
-	sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
-	sptr<CellValue> cellint = tvg->get_table_value("Int field");
-
-	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
-	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
-	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+	SingleTableRow row = tvg->gather_single_row();
+	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(row["String field"]);
+	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(row["Float field"]);
+	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(row["Int field"]);
 	ASSERT_NE(cmp_str, nullptr);
 	ASSERT_NE(cmp_float, nullptr);
 	ASSERT_NE(cmp_int, nullptr);
@@ -72,13 +69,11 @@ TEST_F(CellValueGathererFixture, accessingData_rowSelect) {
 	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 	EXPECT_FALSE(tvg->jump_to_next_row());
 
-	sptr<CellValue> cellstr = tvg->get_table_value("String field");
-	sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
-	sptr<CellValue> cellint = tvg->get_table_value("Int field");
+	SingleTableRow row = tvg->gather_single_row();
 
-	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
-	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
-	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(row["String field"]);
+	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(row["Float field"]);
+	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(row["Int field"]);
 	ASSERT_NE(cmp_str, nullptr);
 	ASSERT_NE(cmp_float, nullptr);
 	ASSERT_NE(cmp_int, nullptr);
@@ -88,18 +83,16 @@ TEST_F(CellValueGathererFixture, accessingData_rowSelect) {
 	EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(INT_MAX - 2024)));
 }
 
-TEST_F(CellValueGathererFixture, jumpToNextRow_afterLastRowShouldResetAndReturnFalse) {
+TEST_F(CellValueGathererFixture, jumpToNextRow_afterLastRowShouldResetAndReturnTrue) {
 	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 	EXPECT_FALSE(tvg->jump_to_next_row());
 	EXPECT_TRUE(tvg->jump_to_next_row());
 
-	sptr<CellValue> cellstr = tvg->get_table_value("String field");
-	sptr<CellValue> cellfloat = tvg->get_table_value("Float field");
-	sptr<CellValue> cellint = tvg->get_table_value("Int field");
+	SingleTableRow row = tvg->gather_single_row();
 
-	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(cellstr);
-	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(cellfloat);
-	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(cellint);
+	auto cmp_str = std::dynamic_pointer_cast<CellComparable>(row["String field"]);
+	auto cmp_float = std::dynamic_pointer_cast<CellComparable>(row["Float field"]);
+	auto cmp_int = std::dynamic_pointer_cast<CellComparable>(row["Int field"]);
 	ASSERT_NE(cmp_str, nullptr);
 	ASSERT_NE(cmp_float, nullptr);
 	ASSERT_NE(cmp_int, nullptr);
@@ -109,12 +102,18 @@ TEST_F(CellValueGathererFixture, jumpToNextRow_afterLastRowShouldResetAndReturnF
 	EXPECT_TRUE(cmp_int->equals(std::make_shared<CellIntValue>(1)));
 }
 
-TEST_F(CellValueGathererFixture, misspellColumnName_throwLogic) {
+TEST_F(CellValueGathererFixture, gatheredRowContainsOnlyExistingColumns) {
 	sptr<CellValueGathererImpl> tvg = std::make_shared<CellValueGathererImpl>(table_);
 
-	EXPECT_THROW(tvg->get_table_value("sTRING FIELD"), std::logic_error);
-	EXPECT_THROW(tvg->get_table_value("afaejpffield"), std::logic_error);
-	EXPECT_THROW(tvg->get_table_value("Int field@@@"), std::logic_error);
+	SingleTableRow row = tvg->gather_single_row();
+
+	EXPECT_EQ(row.size(), 3);
+	EXPECT_TRUE(row.contains("String field"));
+	EXPECT_TRUE(row.contains("Float field"));
+	EXPECT_TRUE(row.contains("Int field"));
+	EXPECT_FALSE(row.contains("sTRING FIELD"));
+	EXPECT_FALSE(row.contains("afaejpffield"));
+	EXPECT_FALSE(row.contains("Int field@@@"));
 }
 
 } // namespace garlic::tests

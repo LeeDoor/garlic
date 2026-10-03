@@ -14,7 +14,7 @@ class CellValueGathererImpl : public CellValueGatherer {
 	CellValueGathererImpl(sptr<garlic::table::TypedTable> table);
 
 	bool is_table_empty() const override;
-	sptr<CellValue> get_table_value(const ColumnNameType &column_name) override;
+	SingleTableRow gather_single_row() override;
 	bool jump_to_next_row() override;
 
   protected:
