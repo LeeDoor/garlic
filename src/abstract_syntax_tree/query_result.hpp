@@ -6,7 +6,7 @@ namespace garlic::abstract_syntax_tree {
 using namespace garlic::table;
 
 /// Abstract class used to specify output from any resolved query.
-/// It may be a single string @ref StringQueryResult, a table, etc.
+/// It may be a single string @ref StringQueryResult, @ref TableQueryResult, etc.
 class QueryResult {
   public:
 	virtual ~QueryResult() = default;
